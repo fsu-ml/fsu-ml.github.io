@@ -12,26 +12,18 @@ We are a group of people located in and around Tallahassee, all sharing an inter
 
 ## Past Topics Included
 
-- Sample past topic 1
-- Sample past topic 2
-- Sample past topic 3
+You can find an overview of past topics [here](#). 
 
 ## Current Members and Their Interests
 
 ![Member 1](member1.jpg)
 **Member Name 1**
-- Interest 1
-- Interest 2
-- Interest 3
+- Interest 1, Interest 2, Interest 3
 
 ![Member 2](member2.jpg)
 **Member Name 2**
-- Interest 1
-- Interest 2
-- Interest 3
+- Interest 1, Interest 2, Interest 3
 
 ![Member 3](member3.jpg)
 **Member Name 3**
-- Interest 1
-- Interest 2
-- Interest 3
+- Interest 1, Interest 2, Interest 3
