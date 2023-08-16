@@ -1,70 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>University Machine Learning Group</title>
-    <style>
-        /* Add your CSS styling here */
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .header {
-            text-align: center;
-            padding: 20px;
-        }
-        .schedule-table {
-            width: 80%;
-            margin: 0 auto;
-            border-collapse: collapse;
-        }
-        .schedule-table th, .schedule-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        .members {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .member {
-            width: 30%;
-            padding: 10px;
-            text-align: center;
-        }
-        .member img {
-            max-width: 100px;
-            max-height: 100px;
-            border-radius: 50%;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>University Machine Learning Group</h1>
-        <p>We are a group of people located in and around Tallahassee, all sharing an interest in machine learning. Our primary objective is the exchange of knowledge and ideas. If you are interested in getting to know us and possibly joining, we convene every DAY-OF-THE-WEEK at LOCATION during the academic term. To become a part of our mailing list, please send an email to NAME/ADDRESS.</p>
-    </div>
+# University Machine Learning Group
 
-    <h2>Schedule for Fall 23</h2>
-    <table class="schedule-table">
-        <tr>
-            <th>Date</th>
-            <th>Topic</th>
-            <th>Person</th>
-            <th>Materials/Links</th>
-        </tr>
-        <!-- Add your schedule table rows here -->
-    </table>
+We are a group of people located in and around Tallahassee, all sharing an interest in machine learning. Our primary objective is the exchange of knowledge and ideas. If you are interested in getting to know us and possibly joining, we convene every DAY-OF-THE-WEEK at LOCATION during the academic term. To become a part of our mailing list, please send an email to NAME/ADDRESS.
 
-    <h2>Past Topics Included</h2>
-    <ul>
-        <!-- Add your list of past topics here -->
-    </ul>
+## Schedule for Fall 23
 
-    <h2>Current Members and Their Interests</h2>
-    <div class="members">
-        <!-- Add member tiles here -->
-    </div>
-</body>
-</html>
+| Date       | Topic        | Person | Materials/Links |
+|------------|--------------|--------|-----------------|
+| Date 1     | Topic 1      | Person 1 | [Link 1](#) |
+| Date 2     | Topic 2      | Person 2 | [Link 2](#) |
+| Date 3     | Topic 3      | Person 3 | [Link 3](#) |
+
+## Past Topics Included
+
+- Sample past topic 1
+- Sample past topic 2
+- Sample past topic 3
+
+## Current Members and Their Interests
+
+![Member 1](member1.jpg)
+**Member Name 1**
+- Interest 1
+- Interest 2
+- Interest 3
+
+![Member 2](member2.jpg)
+**Member Name 2**
+- Interest 1
+- Interest 2
+- Interest 3
+
+![Member 3](member3.jpg)
+**Member Name 3**
+- Interest 1
+- Interest 2
+- Interest 3
