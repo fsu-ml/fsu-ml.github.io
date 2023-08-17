@@ -32,7 +32,7 @@ You can find an overview of past topics [here](#) .
 
 |            |            |            |            |
 |------------|------------|------------|------------|
-| ![Member 1](member1.jpg) <br /> [**Member Name 1**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 | ![Member 2](member2.jpg) <br /> [**Member Name 2**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 | ![Member 3](member3.jpg) <br /> [**Member Name 3**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 | ![Member 4](member4.jpg) <br /> [**Member Name 4**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 |
+| ![Member 1](member1.jpg) <br /> [**Member Name 1**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 | ![Member 2](member2.jpg) <br /> [**Member Name 2**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 | ![Member 3](member_jpgs/tjuzek2.jpg) <br /> [**Tom Juzek**](https://modlang.fsu.edu/person/tom-juzek) <br /> FSU <br /> LLMs | ![Member 4](member4.jpg) <br /> [**Member Name 4**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 |
 
 
 
