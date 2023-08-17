@@ -1,3 +1,5 @@
+![Inspiring_banner](inspiring_banner.jpg)
+
 # University Machine Learning Group
 
 We are a group of people located in and around Tallahassee, all sharing an interest in machine learning. Our primary objective is the exchange of knowledge and ideas. If you are interested in getting to know us and possibly joining, we convene every DAY-OF-THE-WEEK at LOCATION during the academic term. To become a part of our mailing list, please send an email to NAME/ADDRESS.
