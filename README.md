@@ -1,4 +1,4 @@
-![Inspiring_banner](inspiring_banner.jpg)
+![Inspiring_banner](inspiring_banner2.jpg)
 
 # FSU SC Machine Learning Seminar
 
