@@ -26,7 +26,7 @@ We are a group of people located in and around Tallahassee, all sharing an inter
 
 ## Past Topics
 
-You can find an overview of past topics [here](#) . 
+You can find an overview of past topics [here](#). 
 
 ## Current members and their interests
 
