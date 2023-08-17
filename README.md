@@ -12,7 +12,7 @@ We are a group of people located in and around Tallahassee, all sharing an inter
 | Date 2     | Topic 2      | Person 2 | [Link 2](#) |
 | Date 3     | Topic 3      | Person 3 | [Link 3](#) |
 
-## Past Topics Included
+## Past Topics
 
 You can find an overview of past topics [here](#). 
 
