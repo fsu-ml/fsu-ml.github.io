@@ -1,8 +1,8 @@
 ![Inspiring_banner](inspiring_banner2.jpg)
 
-# FSU SC Machine Learning Seminar
-
 **We have our first meeting on Fri 29 Aug (see below), do come and join!! We will then agree on topics and fill in the table below.**
+
+# FSU SC Machine Learning Seminar
 
 We are a group of people located in and around Tallahassee, all sharing an interest in machine learning. Our primary objective is the exchange of knowledge and ideas. The seminar is hosted by the Department of Scientific Computing at the Florida State University (thus FSU SC). If you are interested in getting to know us and possibly joining, we convene every DAY-OF-THE-WEEK at TIME at LOCATION ([directions](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6)) during the academic term. To become a part of our mailing list, please send an email to NAME/ADDRESS.
 
