@@ -1,6 +1,6 @@
 ![Inspiring_banner](inspiring_banner2.jpg)
 
-**We have our first meeting on Fri 29 Aug (see below), do come and join!! We will then agree on topics and fill in the table below.**
+**We have our first meeting on Fri 1 Sep (see below), do come and join!! We will then agree on topics and fill in the table below.**
 
 # FSU SC Machine Learning Seminar
 
