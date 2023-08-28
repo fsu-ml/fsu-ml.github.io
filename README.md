@@ -23,7 +23,7 @@ You can find an overview of past topics [here](#).
 
 |            |            |            |            |
 |------------|------------|------------|------------|
-| <img src="member_jpgs/gerlebacher.jpg" alt="gerlebacher.jpg" width="196" height="196"> <br /> [**Gordon Erlebacher**](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) <br /> FSU <br /> Neuronal Populations, Evolving Topologies, LLMs | <img src="member_jpgs/ncrock.jpg" alt="ncrock.jpg" width="196" height="196"> <br /> [**Nathan Crock**](https://www.sc.fsu.edu/people?uid=ndc08) <br /> FSU <br /> Neural Networks | <img src="member_jpgs/tjuzek2.jpg" alt="tjuzek.jpg" width="196" height="196"> <br /> [**Tom Juzek**](https://modlang.fsu.edu/person/tom-juzek) <br /> FSU <br /> Morpho-syntax, NLP, LLMs | ![Member 4](member4.jpg) <br /> [**Member Name 4**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 |
+| <img src="member_jpgs/gerlebacher.jpg" alt="gerlebacher.jpg" width="196" height="196"> <br /> [**Gordon Erlebacher**](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) <br /> FSU <br /> Neuronal Populations <br /> Evolving Topologies <br /> LLMs | <img src="member_jpgs/ncrock.jpg" alt="ncrock.jpg" width="196" height="196"> <br /> [**Nathan Crock**](https://www.sc.fsu.edu/people?uid=ndc08) <br /> FSU <br /> Neural Networks <br /> . <br /> . | <img src="member_jpgs/tjuzek2.jpg" alt="tjuzek.jpg" width="196" height="196"> <br /> [**Tom Juzek**](https://modlang.fsu.edu/person/tom-juzek) <br /> FSU <br /> Morpho-syntax <br /> NLP <br /> LLMs | ![Member 4](member4.jpg) <br /> [**Member Name 4**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 |
 
 
 
