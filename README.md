@@ -34,7 +34,7 @@ You can find an overview of past topics [here](#).
 
 |            |            |            |            |
 |------------|------------|------------|------------|
-| ![Member 1](member1.jpg) <br /> [**Member Name 1**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 | ![Member 2](member2.jpg) <br /> [**Member Name 2**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 | <img src="member_jpgs/tjuzek2.jpg" alt="tjuzek.jpg" width="196" height="196"> <br /> [**Tom Juzek**](https://modlang.fsu.edu/person/tom-juzek) <br /> FSU <br /> LLMs | ![Member 4](member4.jpg) <br /> [**Member Name 4**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 |
+| ![Member 1](member1.jpg) <br /> [**Member Name 1**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 | ![Member 2](member2.jpg) <br /> <img src="member_jpgs/ncrock.jpg" alt="ncrock.jpg" width="196" height="196"> <br /> [**Nathan Crock**](https://www.sc.fsu.edu/people?uid=ndc08) <br /> FSU <br /> Neural Networks | <img src="member_jpgs/tjuzek2.jpg" alt="tjuzek.jpg" width="196" height="196"> <br /> [**Tom Juzek**](https://modlang.fsu.edu/person/tom-juzek) <br /> FSU <br /> Morpho-syntax, NLP, LLMs | ![Member 4](member4.jpg) <br /> [**Member Name 4**](#) <br /> Affiliation <br /> Interest 1, Interest 2, Interest 3 |
 
 
 
