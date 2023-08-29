@@ -13,8 +13,9 @@ Ethics (toxicity, bias, ...) (Zina Ward)
 How to minimize bias, toxicity, etc. (technical)
 From Zero to Hero (several hours)
 Loss functions (Develop intuition, regression, ELBO,...)
-Langchain and LLama-index
+Langchain and LLama-index, Autonomous agents (plugins)
 Multi-modality: another step towards AGI
+
 
 Non-LLM topics
 Scientific Machine Learning
