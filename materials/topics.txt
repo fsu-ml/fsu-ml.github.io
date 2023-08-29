@@ -1,0 +1,24 @@
+Transformer Architecture
+Attention for very long contexts
+The ins and outs of Vector Databases
+Retentive Architecture
+Transformer Circuitry
+Emergent properties (data size vs model size vs training time)
+Pre-training / Fine-tuning
+Reinforcement Learning with Human Feedback (RLHF)
+Synthetic data for RHLAI
+Various forms of prompt engineering
+Instruction fine-tuning
+Ethics (toxicity, bias, ...) (Zina Ward)
+How to minimize bias, toxicity, etc. (technical)
+From Zero to Hero (several hours)
+Loss functions (Develop intuition, regression, ELBO,...)
+Langchain and LLama-index
+
+Non-LLM topics
+Scientific Machine Learning
+ML developments in Quantum Computing
+PINN algorithms
+Interpretability, Explainable AI (xAI)
+
+
