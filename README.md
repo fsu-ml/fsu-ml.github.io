@@ -6,7 +6,7 @@
 
 We are a group of people located in and around Tallahassee, all sharing an interest in machine learning. Our primary objective is the exchange of knowledge and ideas. The seminar is hosted by the Department of Scientific Computing at the Florida State University (thus FSU SC). If you are interested in getting to know us and possibly joining, we convene every ... -- *TBD at our first meeting on 8 Sep at SC-499 ([directions](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6))*. To become a part of our mailing list, please send an email to [**Nathan Crock**](https://www.sc.fsu.edu/people?uid=ndc08). We are a diverse crowd, so presenting takes some thought. Our approach is best expressed by the following trichotomy, illustrated by Nathan: 
 
-<img src="member_jpgs/columbian_trichotomy.jpg" alt="columbian_trichotomy.jpg" width="906" height="431">
+<img src="member_jpgs/columbian_trichotomy_2.jpg" alt="columbian_trichotomy_2.jpg" width="600" height="700">
 
 ## Schedule for Fall 23
 
