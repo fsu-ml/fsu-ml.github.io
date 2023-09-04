@@ -13,7 +13,7 @@ We are a group of people located in and around Tallahassee, all sharing an inter
 | Date       | Topic        | Person | Materials/Links |
 |------------|--------------|--------|-----------------|
 | 2023-09-01 | No meeting, stay safe! | - | this page |
-| 2023-09-08, 1pm at [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6) | First get together | - | this page |
+| 2023-09-08, 1pm at [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6) | First get together | - | - |
 | wk 3 | Topic tbd     | Person tbd | [Link tbd](#) |
 | wk 4    | Topic tbd      | Person tbd | [Link tbd](#) |
 | wk ...    | ...      | Person ... | [Link ...](#) |
