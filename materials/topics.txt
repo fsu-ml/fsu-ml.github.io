@@ -22,5 +22,5 @@ Scientific Machine Learning
 ML developments in Quantum Computing
 PINN algorithms
 Interpretability, Explainable AI (xAI)
-
-
+Neuro-biological foundations of neural networks
+Language model optimizations  (compression, LORA, quantization)
