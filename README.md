@@ -14,9 +14,19 @@ We are a group of people located in and around Tallahassee, all sharing an inter
 |------------|--------------|--------|-----------------|
 | 2023-09-01 | No meeting, stay safe! | - | - |
 | 2023-09-08, 1pm at [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6) | First get together | - | this page |
-| wk 3 | Topic tbd     | Person tbd | [Link tbd](#) |
-| wk 4    | Topic tbd      | Person tbd | [Link tbd](#) |
-| wk ...    | ...      | Person ... | [Link ...](#) |
+| 2023-09-15 | The Transformer Architecture | Olmo |  [Link tbd](#) |
+| 2023-09-22 | Vector Databases | Tyler | [Link tbd](#) |
+| 2023-09-29 | Multimodal AI | Gordon | [Link tbd](#) |
+| 2023-10-06 | LLM Training Lifecycle | Nathan | [Link tbd](#) |
+| 2023-10-13 | Neural Operators | Nick | [Link tbd](#) |
+| 2023-10-20 | Emergent Properties | Tom | [Link tbd](#) |
+| 2023-10-27 (tbd) | The Ethics of Generative AI | Guest Speaker (tbd) | [Link tbd](#) |
+| 2023-11-03 | Langchain | Jose & Pankaj | [Link tbd](#) |
+| 2023-11-10 | Multi-agents | Nathan | [Link tbd](#) |
+| 2023-11-17 | Retentive Architecture | Gordon | [Link tbd](#) |
+| 2023-11-24 | Happy | Thanksgiving | [Link tbd](#) |
+| 2023-12-01 | Reinforcement Learning (possibly with Human Feedback) | Tyler | [Link tbd](#) |
+| 2023-12-08 (tbd) | A neural perspective | Guest Speaker (tbd) | [Link tbd](#) |
 
 We will agree on a schedule during our first get together. Topics that are of interest to us can be found here: [list of potential topics](/materials/topics.txt). This list is not exhaustive, and we welcome additional topics!
 
