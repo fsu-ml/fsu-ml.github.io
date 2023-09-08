@@ -4,16 +4,16 @@
 
 # FSU SC Machine Learning Seminar
 
-We are a group of people located in and around Tallahassee, all sharing an interest in machine learning. Our primary objective is the exchange of knowledge and ideas. The seminar is hosted by the Department of Scientific Computing at the Florida State University (thus FSU SC). If you are interested in getting to know us and possibly joining, we convene every Friday at 1pm at SC-499 ([directions](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6)). To become a part of our mailing list, please send an email to [**Nathan Crock**](https://www.sc.fsu.edu/people?uid=ndc08). We are a diverse crowd, so presenting takes some thought. Our approach is best expressed by the NASA Trichotomy of Presenting, illustrated by Nathan: 
+We are a group of people located in and around Tallahassee, all sharing an interest in machine learning. Our primary objective is the exchange of knowledge and ideas. The seminar is hosted by the Department of Scientific Computing at the Florida State University (thus FSU SC). If you are interested in getting to know us and possibly joining, we convene every Friday at 1pm at [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6). To become a part of our mailing list, please send an email to [**Nathan Crock**](https://www.sc.fsu.edu/people?uid=ndc08). We are a diverse crowd, so presenting takes some thought. Our approach is best expressed by the NASA Trichotomy of Presenting, illustrated by Nathan: 
 
 <img src="member_jpgs/columbian_trichotomy.jpg" alt="columbian_trichotomy.jpg" width="1200" height="300">
 
 ## Schedule for Fall 23
 
+Fridays, 1pm, [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6). 
+
 | Date       | Topic        | Person | Materials/Links |
 |------------|--------------|--------|-----------------|
-| 2023-09-01 | No meeting, stay safe! | - | - |
-| 2023-09-08 | First get together | - | this page |
 | 2023-09-15 | The Transformer Architecture | [Olmo Zavala Romero](https://www.sc.fsu.edu/people?uid=osz09) |  tbd |
 | 2023-09-22 | Vector Databases | [Tyler Foster](https://www.linkedin.com/in/tyler-foster-04a796b5) | tbd |
 | 2023-09-29 | Multimodal AI | [Gordon Erlebacher](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | tbd |
@@ -26,14 +26,10 @@ We are a group of people located in and around Tallahassee, all sharing an inter
 | 2023-11-17 | Retentive Architecture | [Gordon Erlebacher](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | tbd |
 | 2023-11-24 | Happy Thanksgiving ~ | - | - |
 | 2023-12-01 | Reinforcement Learning (possibly RLHF) | [Tyler Foster](https://www.linkedin.com/in/tyler-foster-04a796b5) | tbd |
-| 2023-12-08 (tbd) | A neural perspective | Guest Speaker (tbd) | tbd |
+| 2023-12-08 (tbd) | Neuro-biology and Neural Networks | Guest Speaker (tbd) | tbd |
 
-Always Fridays 1pm at SC-499 ([directions](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6)). A list of topics that are of general interest to us can be found here: [list of potential topics](/materials/topics.txt). This list is not exhaustive, and we welcome additional topics!
+A list of topics that are of general interest to us can be found here: [list of potential topics](/materials/topics.txt). This list is not exhaustive, and we welcome additional topics!
 
-
-## Past Topics
-
-You can find an overview of past topics [here](#). 
 
 ## Current members and their ML interests
 
