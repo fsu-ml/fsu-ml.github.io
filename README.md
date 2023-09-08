@@ -14,21 +14,21 @@ We are a group of people located in and around Tallahassee, all sharing an inter
 |------------|--------------|--------|-----------------|
 | 2023-09-01 | No meeting, stay safe! | - | - |
 | 2023-09-08 | First get together | - | this page |
-| 2023-09-15 | The Transformer Architecture | Olmo |  [Link tbd](#) |
-| 2023-09-22 | Vector Databases | Tyler Foster | [Link tbd](#) |
-| 2023-09-29 | Multimodal AI | Gordon Erlebacher | [Link tbd](#) |
-| 2023-10-06 | LLM Training Lifecycle | Nathan Crock | [Link tbd](#) |
-| 2023-10-13 | Neural Operators | Nick Dexter | [Link tbd](#) |
-| 2023-10-20 | Emergent Properties | Tom Juzek | [Link tbd](#) |
-| 2023-10-27 (tbd) | The Ethics of Generative AI | Guest Speaker (tbd) | [Link tbd](#) |
-| 2023-11-03 | Langchain | Jose & Pankaj | [Link tbd](#) |
-| 2023-11-10 | Multi-agents | Nathan Dexter | [Link tbd](#) |
-| 2023-11-17 | Retentive Architecture | Gordon Erlebacher | [Link tbd](#) |
-| 2023-11-24 | Happy Thanksgiving | - | [Link tbd](#) |
-| 2023-12-01 | Reinforcement Learning (possibly RLHF) | Tyler Foster | [Link tbd](#) |
-| 2023-12-08 (tbd) | A neural perspective | Guest Speaker (tbd) | [Link tbd](#) |
+| 2023-09-15 | The Transformer Architecture | [Olmo Zavala Romero](https://www.sc.fsu.edu/people?uid=osz09) |  tbd |
+| 2023-09-22 | Vector Databases | [Tyler Foster](https://www.linkedin.com/in/tyler-foster-04a796b5) | tbd |
+| 2023-09-29 | Multimodal AI | [Gordon Erlebacher](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | tbd |
+| 2023-10-06 | LLM Training Lifecycle | [Nathan Crock](https://www.sc.fsu.edu/people?uid=ndc08) | tbd |
+| 2023-10-13 | Neural Operators | [Nick Dexter](https://www.sc.fsu.edu/people?uid=nd22f) | tbd |
+| 2023-10-20 | Emergent Properties | [Tom Juzek](https://modlang.fsu.edu/person/tom-juzek) | tbd |
+| 2023-10-27 (tbd) | The Ethics of Generative AI | Guest Speaker (tbd) | tbd |
+| 2023-11-03 | Langchain | Jose & Pankaj | tbd |
+| 2023-11-10 | Multi-agents | [Nathan Dexter](https://www.sc.fsu.edu/people?uid=ndc08) | tbd |
+| 2023-11-17 | Retentive Architecture | [Gordon Erlebacher](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | tbd |
+| 2023-11-24 | Happy Thanksgiving ~ | - | - |
+| 2023-12-01 | Reinforcement Learning (possibly RLHF) | [Tyler Foster](https://www.linkedin.com/in/tyler-foster-04a796b5) | tbd |
+| 2023-12-08 (tbd) | A neural perspective | Guest Speaker (tbd) | tbd |
 
-A list of topics that are of general interest to us can be found here: [list of potential topics](/materials/topics.txt). This list is not exhaustive, and we welcome additional topics!
+Always Fridays 1pm at SC-499 ([directions](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6)). A list of topics that are of general interest to us can be found here: [list of potential topics](/materials/topics.txt). This list is not exhaustive, and we welcome additional topics!
 
 
 ## Past Topics
