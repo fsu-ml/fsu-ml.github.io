@@ -21,7 +21,7 @@ Fridays, 1pm, [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6).
 | 2023-10-13 | Neural Operators | [Nick Dexter](https://www.sc.fsu.edu/people?uid=nd22f) | tbd |
 | 2023-10-20 | Emergent Properties | [Tom Juzek](https://modlang.fsu.edu/person/tom-juzek) | tbd |
 | 2023-10-27 (tbd) | The Ethics of Generative AI | Guest Speaker (tbd) | tbd |
-| 2023-11-03 | Langchain | Jose & Pankaj | tbd |
+| 2023-11-03 | Langchain | [Jose Miranda](https://www.sc.fsu.edu/people?uid=jrm22n) & <br /> [Pankaj Chouhan](https://www.sc.fsu.edu/people?uid=pc19d) | tbd |
 | 2023-11-10 | Multi-agents | [Nathan Crock](https://www.sc.fsu.edu/people?uid=ndc08) | tbd |
 | 2023-11-17 | Retentive Architecture | [Gordon Erlebacher](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | tbd |
 | 2023-11-24 | Happy Thanksgiving ~ | - | - |
