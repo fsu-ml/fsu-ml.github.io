@@ -20,13 +20,13 @@ Fridays, 1pm, [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6).
 | 2023-10-06 | LLM Training Lifecycle | [Nathan Crock](https://www.sc.fsu.edu/people?uid=ndc08) | tbd |
 | 2023-10-13 | Neural Operators | [Nick Dexter](https://www.sc.fsu.edu/people?uid=nd22f) | tbd |
 | 2023-10-20 | Emergent Properties | [Tom Juzek](https://modlang.fsu.edu/person/tom-juzek) | tbd |
-| 2023-10-27 (tbd) | The Ethics of Generative AI | Guest Speaker (tbd) | tbd |
+| 2023-10-27 | Neuro-biology and Neural Networks | Guest Speaker (tbd) | tbd |
 | 2023-11-03 | Langchain | [Jose Miranda](https://www.sc.fsu.edu/people?uid=jrm22n) & <br /> [Pankaj Chouhan](https://www.sc.fsu.edu/people?uid=pc19d) | tbd |
-| 2023-11-10 | Multi-agents | [Nathan Crock](https://www.sc.fsu.edu/people?uid=ndc08) | tbd |
+| 2023-11-10 | No meeting: Veterans Day | - | - |
 | 2023-11-17 | Retentive Architecture | [Gordon Erlebacher](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | tbd |
-| 2023-11-24 | Happy Thanksgiving ~ | - | - |
+| 2023-11-24 | No meeting: Happy Thanksgiving ~ | - | - |
 | 2023-12-01 | Reinforcement Learning (possibly RLHF) | [Tyler Foster](https://www.linkedin.com/in/tyler-foster-04a796b5) | tbd |
-| 2023-12-08 (tbd) | Neuro-biology and Neural Networks | Guest Speaker (tbd) | tbd |
+| 2023-12-08 | Formal Measures of Fairness: Beyond the Impossibility Theorem | [Zina Ward](https://philosophy.fsu.edu/person/zina-ward) | tbd |
 
 A list of topics that are of general interest to us can be found here: [list of potential topics](/materials/topics.txt). This list is not exhaustive, and we welcome additional topics!
 
