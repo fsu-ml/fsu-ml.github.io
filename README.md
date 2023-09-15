@@ -10,8 +10,8 @@ We are a group of people located in and around Tallahassee, all sharing an inter
 
 ## Schedule for Fall 23
 
-Fridays, 1:00 p.m. ET, [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6). </br>
-Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210)
+Fridays, 1:00 p.m. ET, [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6). <br />
+Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 
 | Date       | Topic        | Person | Materials/Links |
 |------------|--------------|--------|-----------------|
