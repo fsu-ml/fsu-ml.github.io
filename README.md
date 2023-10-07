@@ -15,10 +15,10 @@ Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 
 | Date       | Topic        | Person | Materials/Links |
 |------------|--------------|--------|-----------------|
-| 2023-09-15 | The Transformer Architecture | [Olmo Zavala Romero](https://www.sc.fsu.edu/people?uid=osz09) | [slides](materials/23F/wk3_OZR_transformer.pdf) |
+| 2023-09-15 | The Transformer Architecture | [Olmo Zavala Romero](https://www.sc.fsu.edu/people?uid=osz09) | [slides](materials/olmo_zavala/wk3_OZR_transformer.pdf) |
 | 2023-09-22 | Open Forum (new) | misc. | - |
 | 2023-09-29 | Vector databases (moved) | Tyler Foster | [slides+code+refs](materials/tyler_foster) |
-| 2023-10-06 | LLM Training Lifecycle | [Nathan Crock](https://www.sc.fsu.edu/people?uid=ndc08) | [slides+code](mateterials/nathan_crock) |
+| 2023-10-06 | LLM Training Lifecycle | [Nathan Crock](https://www.sc.fsu.edu/people?uid=ndc08) | [slides+code](materials/nathan_crock) |
 LLM Training Lifecycle.pdf	nb_for_seminar.ipynb
 | 2023-10-13 | Neural Operators | [Nick Dexter](https://www.sc.fsu.edu/people?uid=nd22f) | tbd |
 | 2023-10-20 | Emergent Properties | [Tom Juzek](https://modlang.fsu.edu/person/tom-juzek) | tbd |
