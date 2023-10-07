@@ -13,8 +13,8 @@ We are a group of people located in and around Tallahassee, all sharing an inter
 Fridays, 1:00 p.m. ET, [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6). <br />
 Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 
-| Date       | Topic        | Person | Materials/Links |
-|------------|--------------|--------|-----------------|
+| Date       | Topic        | Person | Materials/Links | Video |
+|------------|--------------|--------|-----------------|---- --|
 | 2023-09-15 | The Transformer Architecture | [Olmo Zavala Romero](https://www.sc.fsu.edu/people?uid=osz09) | [slides](materials/olmo_zavala/wk3_OZR_transformer.pdf) | [video](https://fsu.zoom.us/rec/share/ZMvYDfsX-vzV4dvd_SXU8LoENwWON1rYpAUBDumjU3Bl5mzAQ-De8YNkUVveZ9hx.O8UInuzaeWQqDput) |
 | 2023-09-22 | Open Forum (new) | misc. | - | [video](https://fsu.zoom.us/rec/share/WLlRnPSBQv6sYNsMe1PkTFuKBks6232iC5KIPRW0bE3aU13LmT7tkZsSS5dBOFo-.jAewVv_17H0hewah) |
 | 2023-09-29 | Vector databases (moved) | Tyler Foster | [slides+code+refs](materials/tyler_foster) | [video](https://fsu.zoom.us/rec/share/_AWwK6usOPmoWLlPfO810DffMZlxfxmGpWKMeHZQHI7rEjNcc7o3jgBb5BG9QoE.9WQCpDmEx5wAe6pY) |
