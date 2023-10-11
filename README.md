@@ -19,7 +19,7 @@ Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 | 2023-09-22 | Open Forum (new) | misc. | [video](https://fsu.zoom.us/rec/share/WLlRnPSBQv6sYNsMe1PkTFuKBks6232iC5KIPRW0bE3aU13LmT7tkZsSS5dBOFo-.jAewVv_17H0hewah) |
 | 2023-09-29 | Vector databases (moved) | Tyler Foster | [slides+code+refs](materials/tyler_foster), [video](https://fsu.zoom.us/rec/share/_AWwK6usOPmoWLlPfO810DffMZlxfxmGpWKMeHZQHI7rEjNcc7o3jgBb5BG9QoE.9WQCpDmEx5wAe6pY) |
 | 2023-10-06 | LLM Training Lifecycle | [Nathan Crock](https://www.sc.fsu.edu/people?uid=ndc08) | [slides+code](materials/nathan_crock),  [video](https://fsu.zoom.us/rec/share/YAekvcFQTYEESH4j3n-6idQpI394jUFCWFn-20ufJ4Z_DOOimTHv5lc4mvcW-ibr.yASmyn_p7YHjBUJ9?startTime=1696611423000) |
-LLM Training Lifecycle.pdf	nb_for_seminar.ipynb
+LLM Training Lifecycle.pdf	nb_for_seminar.ipynb |
 | 2023-10-13 | Neural Operators | [Nick Dexter](https://www.sc.fsu.edu/people?uid=nd22f) | tbd |
 | 2023-10-20 | Emergent Properties | [Tom Juzek](https://modlang.fsu.edu/person/tom-juzek) | tbd |
 | 2023-10-27 | Neuro-biology and Neural Networks | Guest Speaker (tbd) | tbd |
