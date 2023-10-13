@@ -20,7 +20,7 @@ Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 | 2023-09-29 | Vector databases (moved) | Tyler Foster | [slides+code+refs](materials/tyler_foster), [video](https://fsu.zoom.us/rec/share/_AWwK6usOPmoWLlPfO810DffMZlxfxmGpWKMeHZQHI7rEjNcc7o3jgBb5BG9QoE.9WQCpDmEx5wAe6pY) |
 | 2023-10-06 | LLM Training Lifecycle | [Nathan Crock](https://www.sc.fsu.edu/people?uid=ndc08) | [slides+code](materials/nathan_crock),  [video](https://fsu.zoom.us/rec/share/YAekvcFQTYEESH4j3n-6idQpI394jUFCWFn-20ufJ4Z_DOOimTHv5lc4mvcW-ibr.yASmyn_p7YHjBUJ9?startTime=1696611423000) |
 LLM Training Lifecycle.pdf	nb_for_seminar.ipynb |
-| 2023-10-13 | Neural Operators | [Nick Dexter](https://www.sc.fsu.edu/people?uid=nd22f) | tbd |
+| 2023-10-13 | Neural Operators | [Nick Dexter](https://www.sc.fsu.edu/people?uid=nd22f) | [slides+code](materials/nick_dexter) |
 | 2023-10-20 | Emergent Properties | [Tom Juzek](https://modlang.fsu.edu/person/tom-juzek) | tbd |
 | 2023-10-27 | Neuro-biology and Neural Networks | Guest Speaker (tbd) | tbd |
 | 2023-11-03 | Langchain | [Jose Miranda](https://www.sc.fsu.edu/people?uid=jrm22n) & <br /> [Pankaj Chouhan](https://www.sc.fsu.edu/people?uid=pc19d) | tbd |
