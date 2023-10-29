@@ -19,7 +19,6 @@ Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 | 2023-09-22 | Open Forum (new) | misc. | [video](https://www.youtube.com/watch?v=qoZg7Ihp-0g&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=2&pp=iAQB) |
 | 2023-09-29 | Vector databases (moved) | Tyler Foster | [slides+code+refs](materials/tyler_foster), [video](https://www.youtube.com/watch?v=bJbbYm4ixKk&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=4&pp=iAQB) |
 | 2023-10-06 | LLM Training Lifecycle | [Nathan Crock](https://www.sc.fsu.edu/people?uid=ndc08) | [slides+code](materials/nathan_crock),  [video](https://www.youtube.com/watch?v=1bO0jGnoCOA&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=1&pp=iAQB) |
-LLM Training Lifecycle.pdf	nb_for_seminar.ipynb |
 | 2023-10-13 | Neural Operators | [Nick Dexter](https://www.sc.fsu.edu/people?uid=nd22f) | [slides+code](materials/nick_dexter), [video](https://www.youtube.com/watch?v=94IGMBhdEYQ&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=5&pp=iAQB) |
 | 2023-10-20 | Emergent Properties | [Tom Juzek](https://modlang.fsu.edu/person/tom-juzek) | [slides](materials/tom_juzek/2023-10-20_SCML_Emergent_properties.pdf), [video](https://fsu.zoom.us/rec/share/2ha395geQrCxXs1vll6697avhiT8uD1EouhaTTeJ0vvD3nJXsNdGbQPUiWfExK3A.XwGFKXpknAKj6Bni) |
 | 2023-10-27 | Non-emergent (Linguistic) Properties | Tom Juzek | [slides](materials/tom_juzek/2023-10-27_SCML_Non-emergent_properties.pdf), [video](https://fsu.zoom.us/rec/share/CLLjriEoUzzK3dY8fbfmgNVeEM9mIFbPttJ-lRRtRfGBU79Yg5mfdmb9LYmgTuen.WqLETsI7y-MVydxB) |
