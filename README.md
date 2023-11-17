@@ -24,7 +24,7 @@ Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 | 2023-10-27 | Non-emergent (Linguistic) Properties | [Tom Juzek](https://modlang.fsu.edu/person/tom-juzek) | [slides](materials/tom_juzek/2023-10-27_SCML_Non-emergent_properties.pdf), [video](https://fsu.zoom.us/rec/share/CLLjriEoUzzK3dY8fbfmgNVeEM9mIFbPttJ-lRRtRfGBU79Yg5mfdmb9LYmgTuen.WqLETsI7y-MVydxB) |
 | 2023-11-03 | Langchain | [Jose Miranda](https://www.sc.fsu.edu/people?uid=jrm22n) & <br /> [Pankaj Chouhan](https://www.sc.fsu.edu/people?uid=pc19d) | [slides](pankaj_chouhan_jose_miranda/LangChain Cookbook Part 1 - Fundamentals.ipynb)|
 | 2023-11-10 | No meeting: Veterans Day | - | - |
-| 2023-11-17 | Retentive Architecture | [Gordon Erlebacher](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | tbd |
+| 2023-11-17 | Retentive Architecture | [Gordon Erlebacher](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | [slides](materials/gordon_erlebacher/retentive_networks_2023-11-17.pdf) |
 | 2023-11-24 | No meeting: Happy Thanksgiving ~ | - | - |
 | 2023-12-01 | Reinforcement Learning (possibly RLHF) | [Tyler Foster](https://www.linkedin.com/in/tyler-foster-04a796b5) | tbd |
 | 2023-12-08 | Formal Measures of Fairness: Beyond the Impossibility Theorem | [Zina Ward](https://philosophy.fsu.edu/person/zina-ward) | tbd |
