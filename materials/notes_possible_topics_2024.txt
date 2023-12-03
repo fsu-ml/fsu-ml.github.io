@@ -1,0 +1,9 @@
+- 1 slot: where people give dry runs of upcoming conference talks
+- next semester Members' current research lines
+
+- PagedAttention
+- Reinforcement Learning with Human Feedback (RLHF)
+- How to minimize bias, toxicity, etc. (technical) -- and can it be un-undone for $800 as Tristen Harris says? 
+- Multi-modality: another step towards AGI
+
+- Neuro-biological foundations of neural networks
