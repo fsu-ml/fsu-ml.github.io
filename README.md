@@ -34,7 +34,7 @@ Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 
 |            |            |            |            | 
 |------------|------------|------------|------------|
-| <img src="member_jpgs/gerlebacher.jpg" alt="gerlebacher.jpg" width=500px> | <img src="member_jpgs/ncrock.jpg" alt="ncrock.jpg" width=500px> | <img src="member_jpgs/tjuzek2.jpg" alt="tjuzek.jpg" width=500px> | <img src="member_jpgs/ndexter.jpg" alt="ndexter.jpg" width=500px> |
+| <img src="member_jpgs/gerlebacher.jpg" alt="gerlebacher.jpg" width=250px> | <img src="member_jpgs/ncrock.jpg" alt="ncrock.jpg" width=250px> | <img src="member_jpgs/tjuzek2.jpg" alt="tjuzek.jpg" width=250px> | <img src="member_jpgs/ndexter.jpg" alt="ndexter.jpg" width=250px> |
 | [**Gordon Erlebacher**](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | [**Nathan Crock**](https://www.sc.fsu.edu/people?uid=ndc08) | [**Tom Juzek**](https://modlang.fsu.edu/person/tom-juzek) | [**Nick Dexter**](https://sites.google.com/view/ndexter) |
 | @FSU | @FSU | @FSU |   @FSU Scientific Computing |
 | - Neuronal Populations <br /> - Evolving Topologies <br /> - LLMs | - Interdisciplinary Data Science <br /> - LLMs <br /> - Retrieval Augmented Generation <br /> - Computational Reading Models | - Morpho-syntax <br /> - NLP <br /> - LLMs | - Neural Operators <br /> - Interpretability <br /> - Explainable AI |
