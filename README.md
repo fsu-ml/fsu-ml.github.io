@@ -32,9 +32,12 @@ Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 
 ## Current members and their ML interests
 
-|            |            |            |            |
+|            |            |            |            | 
 |------------|------------|------------|------------|
-| <img src="member_jpgs/gerlebacher.jpg" alt="gerlebacher.jpg" width="400"> <br /> [**Gordon Erlebacher**](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) <br /> FSU <br /> Neuronal Populations <br /> Evolving Topologies <br /> LLMs | <img src="member_jpgs/ncrock.jpg" alt="ncrock.jpg" width="400"> <br /> [**Nathan Crock**](https://www.sc.fsu.edu/people?uid=ndc08) <br /> FSU - Interdisciplinary Data Science <br /> LLMs <br /> Retrieval Augmented Generation <br /> Computational Reading Models | <img src="member_jpgs/tjuzek2.jpg" alt="tjuzek.jpg" width="400"> <br /> [**Tom Juzek**](https://modlang.fsu.edu/person/tom-juzek) <br /> FSU <br /> Morpho-syntax <br /> NLP <br /> LLMs | <img src="member_jpgs/ndexter.jpg" alt="ndexter.jpg" width="400"> <br /> [**Nick Dexter**](https://sites.google.com/view/ndexter) <br /> FSU Scientific Comp. <br /> Neural Operators <br /> Interpretability <br /> Explainable AI |
+| <img src="member_jpgs/gerlebacher.jpg" alt="gerlebacher.jpg" width=150px max-width:150px> | <img src="member_jpgs/ncrock.jpg" alt="ncrock.jpg" width=150px max-width:150px> | <img src="member_jpgs/tjuzek2.jpg" alt="tjuzek.jpg" width=150px max-width:150px> | <img src="member_jpgs/ndexter.jpg" alt="ndexter.jpg" width=150px max-width:150px> |
+| [**Gordon Erlebacher**](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | [**Nathan Crock**](https://www.sc.fsu.edu/people?uid=ndc08) | [**Tom Juzek**](https://modlang.fsu.edu/person/tom-juzek) | [**Nick Dexter**](https://sites.google.com/view/ndexter) |
+| @FSU | @FSU | @FSU |   @FSU Scientific Computing |
+| - Neuronal Populations <br /> - Evolving Topologies <br /> - LLMs | - Interdisciplinary Data Science <br /> - LLMs <br /> - Retrieval Augmented Generation <br /> - Computational Reading Models | - Morpho-syntax <br /> - NLP <br /> - LLMs | - Neural Operators <br /> - Interpretability <br /> - Explainable AI |
 
 Send your details to [**Tom**](https://modlang.fsu.edu/person/tom-juzek) if you want to be added to the table. 
 
