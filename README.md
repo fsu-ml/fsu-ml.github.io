@@ -26,8 +26,8 @@ Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 | 2023-11-10 | No meeting: Veterans Day | - | - |
 | 2023-11-17 | Retentive Architecture | [Gordon Erlebacher](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | [slides](materials/gordon_erlebacher/retentive_networks_2023-11-17.pdf), [video](https://www.youtube.com/watch?v=XXRoJoX7rNs&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=1) |
 | 2023-11-24 | No meeting: Happy Thanksgiving ~ | - | - |
-| 2023-12-01 | Reinforcement Learning (possibly RLHF) | [Tyler Foster](https://www.linkedin.com/in/tyler-foster-04a796b5) | tbd |
-| 2023-12-08 | Formal Measures of Fairness: Beyond the Impossibility Theorem | [Zina Ward](https://philosophy.fsu.edu/person/zina-ward) | tbd |
+| 2023-12-01 | What is new in AI this week | [Gordon Erlebacher](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | [video](https://fsu.zoom.us/recording/detail?meeting_id=Z0IlRztqSay13jqMXKDB3Q%3D%3D) |
+| 2023-12-08 | Formal Measures of Fairness: Beyond the Impossibility Theorem | [Zina Ward](https://philosophy.fsu.edu/person/zina-ward) | [slides](materials/zina_ward/Fairness_ML_Group.pdf), [video](https://fsu.zoom.us/rec/share/YbcvFAXNzNxtUgjSWkwH6_zi8e-tXR_MQtv6u8vhx6RCXMsZauu8EIZLyzpfxbRM.2saV8GgWw7xc4tie?startTime=1702057790000) |
 
 
 ## Current members and their ML interests
