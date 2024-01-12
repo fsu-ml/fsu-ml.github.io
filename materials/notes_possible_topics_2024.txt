@@ -11,6 +11,7 @@
 - The latest in Scientific Machine Learning 
 - Quantum Machine Learning
 - Advanced RAG
+- Mamba architecture
 
 
 - 1 slot: where people give dry runs of upcoming conference talks
