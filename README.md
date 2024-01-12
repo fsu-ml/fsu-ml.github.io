@@ -13,21 +13,23 @@ We are a group of people located in and around Tallahassee, all sharing an inter
 Fridays, 1:00 p.m. ET, [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6). <br />
 Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 
+Proposed topics to discuss: 
+
 | Date       | Topic        | Person | Materials/Links | 
 |------------|--------------|--------|-----------------|
-| 2023-09-15 | The Transformer Architecture | [Olmo Zavala Romero](https://www.sc.fsu.edu/people?uid=osz09) | [slides](materials/olmo_zavala/wk3_OZR_transformer.pdf), [video](https://www.youtube.com/watch?v=qqC3qCfrRx4&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=3&pp=iAQB) |
-| 2023-09-22 | Open Forum (new) | misc. | [video](https://www.youtube.com/watch?v=qoZg7Ihp-0g&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=2&pp=iAQB) |
-| 2023-09-29 | Vector databases (moved) | Tyler Foster | [slides+code+refs](materials/tyler_foster), [video](https://www.youtube.com/watch?v=bJbbYm4ixKk&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=4&pp=iAQB) |
-| 2023-10-06 | LLM Training Lifecycle | [Nathan Crock](https://www.sc.fsu.edu/people?uid=ndc08) | [slides+code](materials/nathan_crock),  [video](https://www.youtube.com/watch?v=1bO0jGnoCOA&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=1&pp=iAQB) |
-| 2023-10-13 | Neural Operators | [Nick Dexter](https://www.sc.fsu.edu/people?uid=nd22f) | [slides+code](materials/nick_dexter/), [video](https://www.youtube.com/watch?v=94IGMBhdEYQ&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=5&pp=iAQB) |
-| 2023-10-20 | Emergent Properties | [Tom Juzek](https://modlang.fsu.edu/person/tom-juzek) | [slides](materials/tom_juzek/2023-10-20_SCML_Emergent_properties.pdf), [video](https://www.youtube.com/watch?v=OGov6-FeAW8&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=4) |
-| 2023-10-27 | Non-emergent (Linguistic) Properties | [Tom Juzek](https://modlang.fsu.edu/person/tom-juzek) | [slides](materials/tom_juzek/2023-10-27_SCML_Non-emergent_properties.pdf), [video](https://www.youtube.com/watch?v=5brerSm4Aik&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=3) |
-| 2023-11-03 | Langchain | [Jose Miranda](https://www.sc.fsu.edu/people?uid=jrm22n) & <br /> [Pankaj Chouhan](https://www.sc.fsu.edu/people?uid=pc19d) | [notebook](materials/pankaj_chouhan_jose_miranda/), [video](https://www.youtube.com/watch?v=upoGkywOpwY&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=2)   |
-| 2023-11-10 | No meeting: Veterans Day | - | - |
-| 2023-11-17 | Retentive Architecture | [Gordon Erlebacher](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | [slides](materials/gordon_erlebacher/retentive_networks_2023-11-17.pdf), [video](https://www.youtube.com/watch?v=XXRoJoX7rNs&list=PL9tqMq5NvS1Nugw1sii6IKsB_8RJ9GqYj&index=1) |
-| 2023-11-24 | No meeting: Happy Thanksgiving ~ | - | - |
-| 2023-12-01 | What is new in AI this week | [Gordon Erlebacher](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | [video](https://fsu.zoom.us/recording/detail?meeting_id=Z0IlRztqSay13jqMXKDB3Q%3D%3D) |
-| 2023-12-08 | Formal Measures of Fairness: Beyond the Impossibility Theorem | [Zina Ward](https://philosophy.fsu.edu/person/zina-ward) | [slides](materials/zina_ward/Fairness_ML_Group.pdf), [video](https://fsu.zoom.us/rec/share/YbcvFAXNzNxtUgjSWkwH6_zi8e-tXR_MQtv6u8vhx6RCXMsZauu8EIZLyzpfxbRM.2saV8GgWw7xc4tie?startTime=1702057790000) |
+| | The Mamba Architecture | | | 
+| | Multi-modal architecture | | | 
+| | Planning agents | | | 
+| | Emotions and voice| | | 
+| | Architectures for Video| | | 
+| | Stable Diffusion architectures for images| | | 
+| | Quantization | | | 
+| | Beyond Transformers | | | 
+| | Latest Optimization Techniques | - | - |
+| | How to measure memory and operation count for transformers| | | 
+| |  Interpretability | | | 
+| |  Quantum Machine Learning | | | 
+| |  Advanced RAG | | | 
 
 
 ## Current members and their ML interests
