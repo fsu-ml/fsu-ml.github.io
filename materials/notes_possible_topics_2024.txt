@@ -1,3 +1,19 @@
+- Multi-model transformers
+- Planning agents
+- Emotions and Voice
+- Video
+- Stable Diffusion
+- Quantization 
+- Beyond Transformers
+- Advances in Optimization Techniques
+- Interpretability
+- How to define AGI
+- The latest in Scientific Machine Learning 
+- Quantum Machine Learning
+- Advanced RAG
+- Mamba architecture
+
+
 - 1 slot: where people give dry runs of upcoming conference talks
 - next semester Members' current research lines
 
