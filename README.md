@@ -8,7 +8,7 @@ We are a group of people located in and around Tallahassee, all sharing an inter
 <img src="member_jpgs/columbian_trichotomy.jpg" alt="columbian_trichotomy.jpg" width="900" height="380">
 </div>
 
-## Schedule for Fall 23
+## Schedule for Spring 2024
 
 Fridays, 1:00 p.m. ET, [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6). <br />
 Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
@@ -17,19 +17,20 @@ Proposed topics to discuss:
 
 | Date       | Topic        | Person | Materials/Links | 
 |------------|--------------|--------|-----------------|
-| | The Mamba Architecture | | | 
-| | Multi-modal architecture | | | 
-| | Planning agents | | | 
-| | Emotions and voice| | | 
-| | Architectures for Video| | | 
-| | Stable Diffusion architectures for images| | | 
-| | Quantization | | | 
-| | Beyond Transformers | | | 
-| | Latest Optimization Techniques | - | - |
-| | How to measure memory and operation count for transformers| | | 
-| |  Interpretability | | | 
-| |  Quantum Machine Learning | | | 
-| |  Advanced RAG | | | 
+| 2024-01-26 | Agents | Nathan Crock |  - | 
+| 2024-00-02 | AI Vulnerabilities  | Jose Miranda /Kunal Kanawade | - | 
+| 2024-02-09| Brain <-> ML relationships | Outside speaker | - |
+| 2024-02-16 | Interpretability | Olmo Zavala | - | 
+| 2024-02-23 | AI for Science | Christo Chipilski | - | 
+| 2024-03-01 | Diffusion Models | Kavindu Wellalage| - | 
+| 2024-03-08 | Emotions and Voice | Luke van Poppering | - | 
+| 2024-03-15 | Scientific Machine Learning | Nick Dexter | - |
+| 2024-03-22 | Spring Break | - | - |
+| 2024-03-29 | AGI taxonomy | Tom Juzek | - | 
+| 2024-04-05 | The Ethics of Copyright | Outside speaker | - | 
+| 2024-04-12 | Beyond Transformers (State-space models)| Kevin Mueller | - |
+| 2024-04-19 | Multi-modal Models | Gordon Erlebacher | - | 
+| 2024-04-26 | - | - | - |
 
 
 ## Current members and their ML interests
