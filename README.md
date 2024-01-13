@@ -21,7 +21,7 @@ Proposed topics to discuss:
 | 2024-00-02 | AI Vulnerabilities  | Jose Miranda /Kunal Kanawade | - | 
 | 2024-02-09| Brain <-> ML relationships | Outside speaker | - |
 | 2024-02-16 | Interpretability | Olmo Zavala | - | 
-| 2024-02-23 | AI for Science | Christo Chipilski | - | 
+| 2024-02-23 | AI for Science | Hristo Chipilski | - | 
 | 2024-03-01 | Diffusion Models | Kavindu Wellalage| - | 
 | 2024-03-08 | Emotions and Voice | Luke van Poppering | - | 
 | 2024-03-15 | Spring Break | - | - |
