@@ -24,8 +24,8 @@ Proposed topics to discuss:
 | 2024-02-23 | AI for Science | Christo Chipilski | - | 
 | 2024-03-01 | Diffusion Models | Kavindu Wellalage| - | 
 | 2024-03-08 | Emotions and Voice | Luke van Poppering | - | 
-| 2024-03-15 | Scientific Machine Learning | Nick Dexter | - |
-| 2024-03-22 | Spring Break | - | - |
+| 2024-03-15 | Spring Break | - | - |
+| 2024-03-22 | Scientific Machine Learning | Nick Dexter | - |
 | 2024-03-29 | AGI taxonomy | Tom Juzek | - | 
 | 2024-04-05 | The Ethics of Copyright | Outside speaker | - | 
 | 2024-04-12 | Beyond Transformers (State-space models)| Kevin Mueller | - |
