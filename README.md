@@ -17,6 +17,8 @@ Proposed topics to discuss:
 
 | Date       | Topic        | Person | Materials/Links | 
 |------------|--------------|--------|-----------------|
+| 2024-01-19 | Welcome session, outlook Spring 24 | misc. |  - |
+| 2024-01-19 | Open forum | misc. |  - | 
 | 2024-01-26 | Agents | Nathan Crock |  - | 
 | 2024-00-02 | AI Vulnerabilities  | Jose Miranda /Kunal Kanawade | - | 
 | 2024-02-09| Brain <-> ML relationships | Outside speaker | - |
@@ -30,7 +32,7 @@ Proposed topics to discuss:
 | 2024-04-05 | The Ethics of Copyright | Outside speaker | - | 
 | 2024-04-12 | Beyond Transformers (State-space models)| Kevin Mueller | - |
 | 2024-04-19 | Multi-modal Models | Gordon Erlebacher | - | 
-| 2024-04-26 | - | - | - |
+| 2024-04-26 | tbd | tbd | - |
 
 
 ## Current members and their ML interests
