@@ -23,9 +23,9 @@ Proposed topics to discuss:
 | 2024-02-02 | AI Vulnerabilities  | Jose Miranda /Kunal Kanawade | - |
 | 2024-02-09 | Emotions and Voice | Luke van Poppering | - |
 | 2024-02-16 | Scientific Machine Learning | Nick Dexter | - |
-| 2024-02-23 | Interpretability | Olmo Zavala | - |
+| 2024-02-23 | AGI taxonomy | Tom Juzek | - |
 | 2024-03-01 | Diffusion Models | Kavindu Wellalage| - |
-| 2024-03-08 | AGI taxonomy | Tom Juzek | - |
+| 2024-03-08 | Interpretability | Olmo Zavala | - |
 | 2024-03-15 | Spring Break | - | - |
 | 2024-03-22 | AI for Science | Hristo Chipilski | - |
 | 2024-03-29 | The Ethics of Copyright | Outside speaker | - |
