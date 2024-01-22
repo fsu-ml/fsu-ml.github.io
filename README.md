@@ -21,7 +21,7 @@ Proposed topics to discuss:
 | 2024-01-19 | Open forum | misc. | - |
 | 2024-01-26 | Agents | Nathan Crock | - |
 | 2024-02-02 | AI Vulnerabilities  | Jose Miranda /Kunal Kanawade | - |
-| 2024-02-09 | Emotions and Voice | Luke van Poppering | - |
+| 2024-02-09 | tbd | tbd | - |
 | 2024-02-16 | Scientific Machine Learning | Nick Dexter | - |
 | 2024-02-23 | AGI taxonomy | Tom Juzek | - |
 | 2024-03-01 | Diffusion Models | Kavindu Wellalage| - |
