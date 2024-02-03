@@ -20,7 +20,7 @@ Proposed topics to discuss:
 | 2024-01-12 | Welcome session, outlook Spring 24 | misc. | - |
 | 2024-01-19 | Open forum | misc. | - |
 | 2024-01-26 | Agents | Nathan Crock | - |
-| 2024-02-02 | AI Vulnerabilities  | Jose Miranda /Kunal Kanawade | - |
+| 2024-02-02 | AI Vulnerabilities  | Jose Miranda /Kunal Kanawade | [**slides**]([https://www.sc.fsu.edu/people/faculty?uid=gerlebacher](https://docs.google.com/presentation/d/1DOu2ZjFDmCcOAt-86faqYORNHn0GhYichOnmRgw4pgg/edit?usp=sharing) |
 | 2024-02-09 | tbd | tbd | - |
 | 2024-02-16 | Scientific Machine Learning | Nick Dexter | - |
 | 2024-02-23 | AGI taxonomy | Tom Juzek | - |
