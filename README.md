@@ -21,9 +21,9 @@ Proposed topics to discuss:
 | 2024-01-19 | Open forum | misc. | - |
 | 2024-01-26 | Agents | Nathan Crock | - |
 | 2024-02-02 | AI Vulnerabilities  | Jose Miranda /Kunal Kanawade | [**slides**](https://docs.google.com/presentation/d/1DOu2ZjFDmCcOAt-86faqYORNHn0GhYichOnmRgw4pgg/edit?usp=sharing) |
-| 2024-02-09 | ☕ taking a break ☕ | - | - |
+| 2024-02-09 | ☕ taking a break ☕ | ☕ | - |
 | 2024-02-16 | Scientific Machine Learning | Nick Dexter | - |
-| 2024-02-23 | Machine Learning Expo, check Tom's email from 7 Feb | - | - |
+| 2024-02-23 | Machine Learning Expo, check Tom's email from 7 Feb | 🤖 | - |
 | 2024-03-01 | Diffusion Models | Kavindu Wellalage| - |
 | 2024-03-08 | Interpretability | Olmo Zavala | - |
 | 2024-03-15 | Spring Break | - | - |
