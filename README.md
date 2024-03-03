@@ -24,7 +24,7 @@ Proposed topics to discuss:
 | 2024-02-09 | ☕ taking a break ☕ | ☕ | - |
 | 2024-02-16 | ☕ taking a break ☕ | ☕ | - |
 | 2024-02-23 | Machine Learning Expo, check Tom's email from 7 Feb | 🤖 | - |
-| 2024-03-01 | Diffusion Models | Kavindu Wellalage| - |
+| 2024-03-01 | Diffusion Models | Kavindu Wellalage| [**slides**](materials/kavindu_wellalage/2024-03-01_diffusion_models.pdf) |
 | 2024-03-08 | Interpretability | Olmo Zavala | - |
 | 2024-03-15 | Spring Break | - | - |
 | 2024-03-22 | AI for Science | Hristo Chipilski | - |
