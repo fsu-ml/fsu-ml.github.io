@@ -26,7 +26,7 @@ Proposed topics to discuss:
 | 2024-02-23 | Machine Learning Expo, check Tom's email from 7 Feb | 🤖 | - |
 | 2024-03-01 | Diffusion Models | Kavindu Wellalage| [**slides**](materials/kavindu_wellalage/2024-03-01_diffusion_models.pdf) |
 | 2024-03-08 | Interpretability | Olmo Zavala | [**slides**](https://docs.google.com/presentation/d/1DfQF2mx8i00E7ObJk397xd4HSKC5s64x8KB5VNytsnc/edit), [**code**](https://github.com/deepfindr/xai-series) |
-| 2024-03-15 | Spring Break | - | - |
+| 2024-03-15 | Spring Break | ☕ | - |
 | 2024-03-22 | AI for Science | Hristo Chipilski | - |
 | 2024-03-29 | Scientific Machine Learning | Nick Dexter | - |
 | 2024-04-05 | Multi-modal Models | Gordon Erlebacher | - |
