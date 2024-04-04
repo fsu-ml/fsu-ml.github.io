@@ -28,7 +28,7 @@ Proposed topics to discuss:
 | 2024-03-08 | Interpretability | Olmo Zavala | [**slides**](https://docs.google.com/presentation/d/1DfQF2mx8i00E7ObJk397xd4HSKC5s64x8KB5VNytsnc/edit), [**code**](https://github.com/deepfindr/xai-series) |
 | 2024-03-15 | Spring Break | ☕ | - |
 | 2024-03-22 | AI for Science | Hristo Chipilski | [**slides**](materials/hristo_chipilski/Hristo_Chipilski-2024_03_22.pdf) |
-| 2024-03-29 | Scientific Machine Learning | Nick Dexter | - |
+| 2024-03-29 | Scientific Machine Learning | Nick Dexter | - | [**slides**](materials/nick_dexter/presentation_nick_dexter_march29_2024.pdf) |
 | 2024-04-05 | Multi-modal Models | Gordon Erlebacher | - |
 | 2024-04-12 | Beyond Transformers (State-space models)| Kevin Mueller | - |
 | 2024-04-19 | Integration of Phylogenies in ML/NN | Tara Khodaei | - |
