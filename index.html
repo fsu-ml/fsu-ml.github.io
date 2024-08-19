@@ -60,12 +60,14 @@
         width: 100%;
         border-collapse: collapse;
         margin: 20px 0;
+        table-layout: fixed; /* Ensures equal cell sizes */
     }
 
     th, td {
         padding: 12px;
         text-align: center;
         border: 1px solid #ddd;
+        vertical-align: top; /* Aligns text to the top */
     }
 
     th {
@@ -74,7 +76,7 @@
 
     .member-img {
         width: 200px; /* Fixed width for larger screens */
-        height: auto; /* Maintain aspect ratio */
+        height: auto;
         object-fit: cover; /* Ensures the image covers the area without distortion */
         display: block;
         margin: 0 auto;
@@ -107,8 +109,11 @@
         }
 
         .member-img {
-            width: 100%; /* Full width of the container on smaller screens */
-            height: auto; /* Maintain aspect ratio */
+            width: 150px; /* Smaller fixed width for smaller screens */
+            height: 150px; /* Fixed height to ensure uniform image size */
+            object-fit: cover; /* Ensures the image covers the area without distortion */
+            display: block;
+            margin: 0 auto;
         }
     }
 
@@ -129,8 +134,15 @@
         .trichotomy-img {
             width: 100%; /* Ensures responsive behavior on smaller screens */
         }
+
+        .member-img {
+            width: 100px; /* Smaller fixed width for very small screens */
+            height: 100px; /* Fixed height to ensure uniform image size */
+            object-fit: cover; /* Ensures the image covers the area without distortion */
+        }
     }
 </style>
+
 
 </head>
 <body>
