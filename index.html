@@ -5,141 +5,133 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FSU SC Artificial Intelligence Seminar</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
 
+    h1, h2, h3 {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .banner {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .center {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    p {
+        margin: 15px 0;
+        text-align: justify;
+    }
+
+    a {
+        color: #007BFF;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    ul {
+        list-style-type: disc;
+        margin-left: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f4f4f4;
+    }
+
+    .member-img {
+        width: 200px; /* Fixed width for larger screens */
+        height: 200px; /* Fixed height */
+        object-fit: cover; /* Ensures the image covers the area without distortion */
+        display: block;
+        margin: 0 auto;
+    }
+
+    .trichotomy-img {
+        width: 400px; /* Quadrupled width */
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
         h1, h2, h3 {
-            text-align: center;
-            margin: 20px 0;
+            font-size: 1.5rem;
         }
 
         .banner {
-            width: 100%;
             max-width: 100%;
             height: auto;
-            display: block;
-            margin: 0 auto;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .center {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        p {
-            margin: 15px 0;
-            text-align: justify;
-        }
-
-        a {
-            color: #007BFF;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
+        table, th, td {
+            font-size: 14px;
+            padding: 8px;
         }
 
         ul {
-            list-style-type: disc;
-            margin-left: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f4f4f4;
+            padding-left: 15px;
         }
 
         .member-img {
-            width: 200px; /* Doubled width */
-            height: auto;
-            display: block;
-            margin: 0 auto;
+            width: 100%; /* Full width of the container on smaller screens */
+            height: auto; /* Maintain aspect ratio */
+        }
+    }
+
+    @media (max-width: 480px) {
+        h1, h2, h3 {
+            font-size: 1.2rem;
+        }
+
+        .container {
+            padding: 10px;
+        }
+
+        table, th, td {
+            font-size: 12px;
+            padding: 6px;
         }
 
         .trichotomy-img {
-            width: 400px; /* Quadrupled width */
-            height: auto;
-            display: block;
-            margin: 0 auto;
+            width: 100%; /* Ensures responsive behavior on smaller screens */
         }
+    }
+</style>
 
-        @media (max-width: 768px) {
-            h1, h2, h3 {
-                font-size: 1.5rem;
-            }
-
-            .banner {
-                max-width: 100%;
-                height: auto;
-            }
-
-            table, th, td {
-                font-size: 14px;
-                padding: 8px;
-            }
-
-            ul {
-                padding-left: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1, h2, h3 {
-                font-size: 1.2rem;
-            }
-
-            .container {
-                padding: 10px;
-            }
-
-            table, th, td {
-                font-size: 12px;
-                padding: 6px;
-            }
-
-            .member-img {
-                width: 200px; /* Fixed width for larger screens */
-                height: 200px; /* Fixed height */
-                object-fit: cover; /* Ensures the image covers the area without distortion */
-                display: block;
-                margin: 0 auto;
-            }
-            
-            @media (max-width: 800px) {
-                .member-img {
-                    width: 100%; /* Full width of the container on smaller screens */
-                    height: auto; /* Maintain aspect ratio */
-                }
-            }
-
-            .trichotomy-img {
-                width: 100%; /* Ensures responsive behavior on smaller screens */
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -170,48 +162,70 @@
             <li>Sandy (All Sandy)</li>
             <li>Post transformer architecture</li>
             <li>Tutorials (classroom machines)</li>
+            <li>Minimum working examples</li>
+            <li>Education + ML</li>
+            <li>Deep Fake</li>
+            <li>Disinformation</li>
+            <li>Optimization</li>
+            <li>Training methods</li>
+            <li>Spiking NN</li>
+            <li>Automation of language evaluation</li>
+            <li>State of open LLM.</li>
+            <li>Language Frameworks</li>
+            <li>Agents: Deep Dive</li>
+            <li>Robotics</li>
+            <li>Copyright (Law school)</li>
+            <li>Quantum Computing ML</li>
+            <li>Emotion</li>
+            <li>Compression Techniques</li>
+            <li>Health + ML</li>
+            <li>inpainting</li>
+            <li>Biases?</li>
+            <li>Advanced RAG Retrievalo Augmented Generation</li>
+            <li>Follow up Scientific Machine Learning</li>
+            <li>Intro AGI</li>
         </ul>
         
     <h2>Current members and their ML interests</h2>
         
-    <table>
-        <tr>
-            <td><img src="member_jpgs/gerlebacher.jpg" alt="Gordon Erlebacher" class="member-img"></td>
-            <td><img src="member_jpgs/ncrock.jpg" alt="Nathan Crock" class="member-img"></td>
-            <td><img src="member_jpgs/tjuzek2.jpg" alt="Tom Juzek" class="member-img"></td>
-            <td><img src="member_jpgs/ndexter.jpg" alt="Nick Dexter" class="member-img"></td>
-        </tr>
-        <tr>
-            <td><a href="https://www.sc.fsu.edu/people/faculty?uid=gerlebacher"><strong>Gordon Erlebacher</strong></a></td>
-            <td><a href="https://www.sc.fsu.edu/people?uid=ndc08"><strong>Nathan Crock</strong></a></td>
-            <td><a href="https://modlang.fsu.edu/person/tom-juzek"><strong>Tom Juzek</strong></a></td>
-            <td><a href="https://sites.google.com/view/ndexter"><strong>Nick Dexter</strong></a></td>
-        </tr>
-        <tr>
-            <td>@FSU <br /> - Neuronal Populations <br /> - Evolving Topologies <br /> - LLMs</td>
-            <td>@FSU <br /> - Interdisciplinary Data Science <br /> - LLMs <br /> - Retrieval Augmented Generation <br /> - Computational Reading Models</td>
-            <td>@FSU <br /> - Morpho-syntax <br /> - NLP <br /> - LLMs</td>
-            <td>@FSU Scientific Computing <br /> - Neural Operators <br /> - Interpretability <br /> - Explainable AI</td>
-        </tr>
-        <tr>
-            <td><img src="member_jpgs/olmoz.jpg" alt="Olmo Zavala Romero" class="member-img"></td>
-            <td><img src="member_jpgs/jmiranda.jpg" alt="Jose Miranda" class="member-img"></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><a href="https://olmozavala.com/"><strong>Olmo Zavala Romero</strong></a></td>
-            <td><a href="https://olmozavala.com/"><strong>Jose Miranda</strong></a></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>@FSU SC <br /> - Scientific Machine Learning <br /> - Oceanography <br /> - Medical Imaging</td>
-            <td>@FSU <br /> - ML appl. in Oceanography <br /> - Machine Vision <br /> - LLMs</td>
-            <td></td>
-            <td></td>
-        </tr>
-    </table>
+<table>
+    <tr>
+        <td><img src="member_jpgs/ncrock.jpg" alt="Nathan Crock" class="member-img"></td>
+        <td><img src="member_jpgs/ndexter.jpg" alt="Nick Dexter" class="member-img"></td>
+        <td><img src="member_jpgs/gerlebacher.jpg" alt="Gordon Erlebacher" class="member-img"></td>
+        <td><img src="member_jpgs/tjuzek2.jpg" alt="Tom Juzek" class="member-img"></td>
+    </tr>
+    <tr>
+        <td><a href="https://www.sc.fsu.edu/people?uid=ndc08"><strong>Nathan Crock</strong></a></td>
+        <td><a href="https://sites.google.com/view/ndexter"><strong>Nick Dexter</strong></a></td>
+        <td><a href="https://www.sc.fsu.edu/people/faculty?uid=gerlebacher"><strong>Gordon Erlebacher</strong></a></td>
+        <td><a href="https://modlang.fsu.edu/person/tom-juzek"><strong>Tom Juzek</strong></a></td>
+    </tr>
+    <tr>
+        <td>@FSU <br /> - Interdisciplinary Data Science <br /> - LLMs <br /> - Retrieval Augmented Generation <br /> - Computational Reading Models</td>
+        <td>@FSU Scientific Computing <br /> - Neural Operators <br /> - Interpretability <br /> - Explainable AI</td>
+        <td>@FSU <br /> - Neuronal Populations <br /> - Evolving Topologies <br /> - LLMs</td>
+        <td>@FSU <br /> - Morpho-syntax <br /> - NLP <br /> - LLMs</td>
+    </tr>
+    <tr>
+        <td><img src="member_jpgs/jmiranda.jpg" alt="Jose Miranda" class="member-img"></td>
+        <td><img src="member_jpgs/olmoz.jpg" alt="Olmo Zavala Romero" class="member-img"></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td><a href="https://olmozavala.com/"><strong>Jose Miranda</strong></a></td>
+        <td><a href="https://olmozavala.com/"><strong>Olmo Zavala Romero</strong></a></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>@FSU <br /> - ML appl. in Oceanography <br /> - Machine Vision <br /> - LLMs</td>
+        <td>@FSU SC <br /> - Scientific Machine Learning <br /> - Oceanography <br /> - Medical Imaging</td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>
 
         <p>Send your details to <a href="https://modlang.fsu.edu/person/tom-juzek"><strong>Tom</strong></a> if you want to be added to the table.</p>
     </div>
