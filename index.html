@@ -121,7 +121,18 @@
             }
 
             .member-img {
-                width: 100%; /* Ensures responsive behavior on smaller screens */
+                width: 200px; /* Fixed width for larger screens */
+                height: 200px; /* Fixed height */
+                object-fit: cover; /* Ensures the image covers the area without distortion */
+                display: block;
+                margin: 0 auto;
+            }
+            
+            @media (max-width: 800px) {
+                .member-img {
+                    width: 100%; /* Full width of the container on smaller screens */
+                    height: auto; /* Maintain aspect ratio */
+                }
             }
 
             .trichotomy-img {
