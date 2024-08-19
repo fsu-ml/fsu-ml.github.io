@@ -7,33 +7,115 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
         }
-        h1 {
+
+        h1, h2, h3 {
             text-align: center;
+            margin: 20px 0;
         }
+
         .banner {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
             display: block;
             margin: 0 auto;
-            width: 100%;
-            max-width: 900px;
         }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
         .center {
             text-align: center;
+            margin: 20px 0;
         }
+
+        p {
+            margin: 15px 0;
+            text-align: justify;
+        }
+
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin: 20px 0;
         }
-        table, th, td {
-            border: 1px solid black;
-        }
+
         th, td {
-            padding: 10px;
+            padding: 12px;
             text-align: center;
+            border: 1px solid #ddd;
         }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
         .member-img {
-            width: 200px;
+            width: 100%;
+            max-width: 150px;
             height: auto;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1, h2, h3 {
+                font-size: 1.5rem;
+            }
+
+            .banner {
+                max-width: 100%;
+                height: auto;
+            }
+
+            table, th, td {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            ul {
+                padding-left: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1, h2, h3 {
+                font-size: 1.2rem;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            table, th, td {
+                font-size: 12px;
+                padding: 6px;
+            }
+
+            .member-img {
+                max-width: 100px;
+            }
         }
     </style>
 </head>
@@ -41,205 +123,57 @@
 
     <img src="inspiring_banner2.jpg" alt="Inspiring banner" class="banner">
 
-    <h1>FSU SC Machine Learning Seminar</h1>
+    <div class="container">
+        <h1>FSU SC Machine Learning Seminar</h1>
 
-    <p>We are a group of people located in and around Tallahassee, all sharing an interest in machine learning. Our primary objective is the exchange of knowledge and ideas. The seminar is hosted by the Department of Scientific Computing at the Florida State University (thus FSU SC). If you are interested in getting to know us and possibly joining, we convene every Friday at 1:00 pm ET at <a href="https://goo.gl/maps/BJLxE3Q7H1MTBqMu6">SC-499</a> - you can also <a href="https://fsu.zoom.us/j/9038137210">join via zoom</a>. To become a part of our mailing list, please email <a href="https://www.sc.fsu.edu/people?uid=ndc08"><strong>Nathan Crock</strong></a>. We are a diverse crowd, so presenting takes some thought. Our approach is best expressed by the NASA Trichotomy of Presenting, illustrated by Nathan:</p>
+        <p>We are a group of people located in and around Tallahassee, all sharing an interest in machine learning. Our primary objective is the exchange of knowledge and ideas. The seminar is hosted by the Department of Scientific Computing at the Florida State University (thus FSU SC). If you are interested in getting to know us and possibly joining, we convene every Friday at 1:00 pm ET at <a href="https://goo.gl/maps/BJLxE3Q7H1MTBqMu6">SC-499</a> - you can also <a href="https://fsu.zoom.us/j/9038137210">join via zoom</a>. To become a part of our mailing list, please email <a href="https://www.sc.fsu.edu/people?uid=ndc08"><strong>Nathan Crock</strong></a>. We are a diverse crowd, so presenting takes some thought. Our approach is best expressed by the NASA Trichotomy of Presenting, illustrated by Nathan:</p>
 
-    <div class="center">
-        <img src="member_jpgs/columbian_trichotomy.jpg" alt="Columbian Trichotomy" width="900" height="380">
+        <div class="center">
+            <img src="member_jpgs/columbian_trichotomy.jpg" alt="Columbian Trichotomy" class="member-img">
+        </div>
+
+        <h2>Schedule for Spring 2024</h2>
+
+        <p>Fridays, 12:00 p.m. ET, <a href="https://goo.gl/maps/BJLxE3Q7H1MTBqMu6">SC-499</a>. <br />
+        Attend via Zoom: <a href="https://fsu.zoom.us/j/9038137210">Zoom Link</a>.</p>
+
+        <h3>Proposed topics to discuss:</h3>
+        <ul>
+            <li>Phylogeny</li>
+            <li>Multimodal</li>
+            <li>Inductive Biases</li>
+            <li>Embeddings</li>
+            <li>State Models</li>
+            <li>AI + data assimilation</li>
+            <li>Sandy (All Sandy)</li>
+            <li>Post transformer architecture</li>
+            <li>Tutorials (classroom machines)</li>
+            <li>Minimum working examples</li>
+            <li>Education + ML</li>
+            <li>Deep Fake</li>
+            <li>Disinformation</li>
+            <li>Optimization</li>
+            <li>Training methods</li>
+            <li>Spiking NN</li>
+            <li>Automation of language evaluation</li>
+            <li>State of open LLM</li>
+            <li>Language Frameworks</li>
+            <li>Agents: Deep Dive</li>
+            <li>Robotics</li>
+            <li>Copyright (Law school)</li>
+            <li>Quantum Computing ML</li>
+            <li>Emotion</li>
+            <li>Compression Techniques</li>
+            <li>Health + ML</li>
+            <li>Inpainting</li>
+            <li>Biases?</li>
+            <li>Advanced RAG Retrieval Augmented Generation</li>
+            <li>Follow up Scientific Machine Learning</li>
+            <li>Intro AGI</li>
+        </ul>
+
+        <p>Send your details to <a href="https://modlang.fsu.edu/person/tom-juzek"><strong>Tom</strong></a> if you want to be added to the table. Also, there is a $20 reward if 1) you know how to make the images come out in the same size, 2) even when the strings in the affiliation and interests rows change, 3) and we can do this in the current readme.md. Message Tom if you have a solution.</p>
     </div>
-
-    <h2>Schedule for Spring 2024</h2>
-
-    <p>Fridays, 12:00 p.m. ET, <a href="https://goo.gl/maps/BJLxE3Q7H1MTBqMu6">SC-499</a>. <br />
-    Attend via Zoom: <a href="https://fsu.zoom.us/j/9038137210">Zoom Link</a>.</p>
-
-    <h3>Proposed topics to discuss:</h3>
-    <ul>
-        <li>Phylogeny</li>
-        <li>Multimodal</li>
-        <li>Inductive Biases</li>
-        <li>Embeddings</li>
-        <li>State Models</li>
-        <li>AI + data assimilation</li>
-        <li>Sandy (All Sandy)</li>
-        <li>Post transformer architecture</li>
-        <li>Tutorials (classroom machines)</li>
-        <li>Minimum working examples</li>
-        <li>Education + ML</li>
-        <li>Deep Fake</li>
-        <li>Disinformation</li>
-        <li>Optimization</li>
-        <li>Training methods</li>
-        <li>Spiking NN</li>
-        <li>Automation of language evaluation</li>
-        <li>State of open LLM</li>
-        <li>Language Frameworks</li>
-        <li>Agents: Deep Dive</li>
-        <li>Robotics</li>
-        <li>Copyright (Law school)</li>
-        <li>Quantum Computing ML</li>
-        <li>Emotion</li>
-        <li>Compression Techniques</li>
-        <li>Health + ML</li>
-        <li>Inpainting</li>
-        <li>Biases?</li>
-        <li>Advanced RAG Retrieval Augmented Generation</li>
-        <li>Follow up Scientific Machine Learning</li>
-        <li>Intro AGI</li>
-    </ul>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Topic</th>
-                <th>Person</th>
-                <th>Materials/Links</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>2024-08-30</td>
-                <td>Welcome session, outlook Spring 24</td>
-                <td>misc.</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-09-06</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-09-13</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-09-20</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-09-27</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-10-04</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-10-11</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-10-18</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-10-25</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-11-01</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-11-08</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-11-15</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-11-22</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-11-29</td>
-                <td>Thanksgiving</td>
-                <td>☕︎☕︎☕︎</td>
-                <td>☕︎☕︎☕︎</td>
-            </tr>
-            <tr>
-                <td>2024-12-06</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>2024-12-13</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <h2>Current members and their ML interests</h2>
-
-    <table>
-        <tr>
-            <td><img src="member_jpgs/gerlebacher.jpg" alt="Gordon Erlebacher" class="member-img"></td>
-            <td><img src="member_jpgs/ncrock.jpg" alt="Nathan Crock" class="member-img"></td>
-            <td><img src="member_jpgs/tjuzek2.jpg" alt="Tom Juzek" class="member-img"></td>
-            <td><img src="member_jpgs/ndexter.jpg" alt="Nick Dexter" class="member-img"></td>
-        </tr>
-        <tr>
-            <td><a href="https://www.sc.fsu.edu/people/faculty?uid=gerlebacher"><strong>Gordon Erlebacher</strong></a></td>
-            <td><a href="https://www.sc.fsu.edu/people?uid=ndc08"><strong>Nathan Crock</strong></a></td>
-            <td><a href="https://modlang.fsu.edu/person/tom-juzek"><strong>Tom Juzek</strong></a></td>
-            <td><a href="https://sites.google.com/view/ndexter"><strong>Nick Dexter</strong></a></td>
-        </tr>
-        <tr>
-            <td>@FSU <br /> - Neuronal Populations <br /> - Evolving Topologies <br /> - LLMs</td>
-            <td>@FSU <br /> - Interdisciplinary Data Science <br /> - LLMs <br /> - Retrieval Augmented Generation <br /> - Computational Reading Models</td>
-            <td>@FSU <br /> - Morpho-syntax <br /> - NLP <br /> - LLMs</td>
-            <td>@FSU Scientific Computing <br /> - Neural Operators <br /> - Interpretability <br /> - Explainable AI</td>
-        </tr>
-        <tr>
-            <td><img src="member_jpgs/olmoz.jpg" alt="Olmo Zavala Romero" class="member-img"></td>
-            <td><img src="member_jpgs/jmiranda.jpg" alt="Jose Miranda" class="member-img"></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><a href="https://olmozavala.com/"><strong>Olmo Zavala Romero</strong></a></td>
-            <td><a href="https://olmozavala.com/"><strong>Jose Miranda</strong></a></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>@FSU SC <br /> - Scientific Machine Learning <br /> - Oceanography <br /> - Medical Imaging</td>
-            <td>@FSU <br /> - ML appl. in Oceanography <br /> - Machine Vision <br /> - LLMs</td>
-            <td></td>
-            <td></td>
-        </tr>
-    </table>
-
-    <p>Send your details to <a href="https://modlang.fsu.edu/person/tom-juzek"><strong>Tom</strong></a> if you want to be added to the table. Also, there is a $20 reward if 1) you know how to make the images come out in the same size, 2) even when the strings in the affiliation and interests rows change, 3) and we can do this in the current readme.md. Message Tom if you have a solution.</p>
 
 </body>
 </html>
