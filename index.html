@@ -25,14 +25,13 @@
 
     .banner {
         width: 100%;
-        max-width: 100%;
         height: auto;
         display: block;
         margin: 0 auto;
     }
 
     .container {
-        max-width: 1200px;
+        max-width: 100%;
         margin: 0 auto;
         padding: 20px;
     }
@@ -59,20 +58,19 @@
     ul {
         list-style-type: disc;
         margin-left: 20px;
+        padding-left: 20px;
     }
 
     table {
         width: 100%;
         border-collapse: collapse;
         margin: 20px 0;
-        table-layout: fixed; /* Ensures equal cell sizes */
     }
 
     th, td {
         padding: 12px;
         text-align: center;
         border: 1px solid #ddd;
-        vertical-align: top; /* Aligns text to the top */
     }
 
     th {
@@ -80,7 +78,7 @@
     }
 
     .member-img {
-        width: 200px; /* Fixed width for larger screens */
+        width: 100%; /* Full width of the table cell */
         height: auto;
         object-fit: cover; /* Ensures the image covers the area without distortion */
         display: block;
@@ -88,7 +86,7 @@
     }
 
     .trichotomy-img {
-        width: 800px; /* Quadrupled width */
+        width: 100%;
         height: auto;
         display: block;
         margin: 0 auto;
@@ -97,11 +95,6 @@
     @media (max-width: 768px) {
         h1, h2, h3 {
             font-size: 1.5rem;
-        }
-
-        .banner {
-            max-width: 100%;
-            height: auto;
         }
 
         table, th, td {
@@ -114,11 +107,9 @@
         }
 
         .member-img {
-            width: 150px; /* Smaller fixed width for smaller screens */
-            height: 150px; /* Fixed height to ensure uniform image size */
-            object-fit: cover; /* Ensures the image covers the area without distortion */
-            display: block;
-            margin: 0 auto;
+            width: 80%; /* Slightly smaller for medium screens */
+            height: auto;
+            object-fit: cover;
         }
     }
 
@@ -136,19 +127,13 @@
             padding: 6px;
         }
 
-        .trichotomy-img {
-            width: 100%; /* Ensures responsive behavior on smaller screens */
-        }
-
         .member-img {
             width: 100px; /* Smaller fixed width for very small screens */
             height: 100px; /* Fixed height to ensure uniform image size */
-            object-fit: cover; /* Ensures the image covers the area without distortion */
+            object-fit: cover;
         }
     }
 </style>
-
-
 </head>
 <body>
 
@@ -166,7 +151,7 @@
 
         <h2>Schedule for Fall 2024</h2>
 
-        <p><strong>We will meet Friday 30 Aug at noon to finalise the topics for Fall 2024.</strong></p>
+        <p><strong>We will meet Friday 30 Aug at noon to finalize the topics for Fall 2024.</strong></p>
 
         <p>Fridays, 12:00 p.m. ET, <a href="https://goo.gl/maps/BJLxE3Q7H1MTBqMu6">SC-499</a>. <br />
         Attend via Zoom: <a href="https://fsu.zoom.us/j/9038137210">Zoom Link</a>.</p>
@@ -201,7 +186,7 @@
             <li>Health + ML</li>
             <li>inpainting</li>
             <li>Biases?</li>
-            <li>Advanced RAG Retrievalo Augmented Generation</li>
+            <li>Advanced RAG Retrieval Augmented Generation</li>
             <li>Follow up Scientific Machine Learning</li>
             <li>Intro AGI</li>
         </ul>
@@ -265,6 +250,5 @@
 }
 </script>
 
-    
 </body>
 </html>
