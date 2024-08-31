@@ -1,0 +1,29 @@
+            <li>Multimodal</li>
+            <li>Inductive Biases</li>
+            <li>Embeddings</li>
+            <li>State Models</li>
+            <li>AI + data assimilation</li>
+            <li>Sandy (All Sandy)</li>
+            <li>Post transformer architecture</li>
+            <li>Tutorials (classroom machines)</li>
+            <li>Minimum working examples</li>
+            <li>Education + ML</li>
+            <li>Deep Fake</li>
+            <li>Disinformation</li>
+            <li>Optimization</li>
+            <li>Training methods</li>
+            <li>Automation of language evaluation</li>
+            <li>State of open LLM.</li>
+            <li>Language Frameworks</li>
+            <li>Agents: Deep Dive</li>
+            <li>Robotics</li>
+            <li>Copyright (Law school)</li>
+            <li>Quantum Computing ML</li>
+            <li>Emotion</li>
+            <li>Compression Techniques</li>
+            <li>Health + ML</li>
+            <li>inpainting</li>
+            <li>Biases?</li>
+            <li>Advanced RAG Retrievalo Augmented Generation</li>
+            <li>Follow up Scientific Machine Learning</li>
+            <li>Intro AGI</li>
