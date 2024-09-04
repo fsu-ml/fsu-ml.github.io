@@ -1,5 +1,9 @@
 ![Inspiring_banner](inspiring_banner2.jpg)
 
+<!-- This document is legacy, please edit the index.html to change the actual website -->
+<!-- This document is legacy, please edit the index.html to change the actual website -->
+<!-- This document is legacy, please edit the index.html to change the actual website -->
+
 # FSU SC Machine Learning Seminar
 
 We are a group of people located in and around Tallahassee, all sharing an interest in machine learning. Our primary objective is the exchange of knowledge and ideas. The seminar is hosted by the Department of Scientific Computing at the Florida State University (thus FSU SC). As part of the [College of Arts and Sciences](https://artsandsciences.fsu.edu/), the seminar brings together individuals from the College's diverse departments. If you are interested in getting to know us and possibly joining, we convene every Friday at 12:00 pm ET at [DSC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6) - you can also [join via zoom](https://fsu.zoom.us/j/9038137210). To become a part of our mailing list, please email [**Nathan Crock**](https://www.sc.fsu.edu/people?uid=ndc08). We are a diverse crowd, so presenting takes some thought. Our approach is best expressed by the NASA Trichotomy of Presenting, illustrated by Nathan: 
