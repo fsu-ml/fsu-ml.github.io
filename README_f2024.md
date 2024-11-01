@@ -75,10 +75,10 @@ Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 | [**Gordon Erlebacher**](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | [**Nathan Crock**](https://www.sc.fsu.edu/people?uid=ndc08) | [**Tom Juzek**](https://modlang.fsu.edu/person/tom-juzek) | [**Nick Dexter**](https://sites.google.com/view/ndexter) |
 | @FSU | @FSU | @FSU |   @FSU Scientific Computing |
 | - Neuronal Populations <br /> - Evolving Topologies <br /> - LLMs | - Interdisciplinary Data Science <br /> - LLMs <br /> - Retrieval Augmented Generation <br /> - Computational Reading Models | - Morpho-syntax <br /> - NLP <br /> - LLMs | - Neural Operators <br /> - Interpretability <br /> - Explainable AI |
-| <img src="member_jpgs/olmoz.jpg" alt="olmoz.jpg" width=200px> | <img src="member_jpgs/jmiranda.jpg" alt="jmiranda.jpg" width=200px> |  | |
-| [**Olmo Zavala Romero**](https://olmozavala.com/) | [**Jose Miranda**](https://olmozavala.com/)  |  |
-| @FSU SC | @FSU |  |    |
-| - Scientific Machine Learning <br /> - Oceanography <br /> - Medical Imaging | - ML appl. in Oceanography <br /> - Machine Vision <br /> - LLMs |  |  |
+| <img src="member_jpgs/olmoz.jpg" alt="olmoz.jpg" width=200px> | <img src="member_jpgs/jmiranda.jpg" alt="jmiranda.jpg" width=200px> | <img src="member_jpgs/pmiron.jpg" alt="pmiron.jpg" width=200px> | |
+| [**Olmo Zavala Romero**](https://olmozavala.com/) | [**Jose Miranda**](https://olmozavala.com/)  | [**Philippe Miron**](https://philippemiron.github.io/) |
+| @FSU SC | @FSU | @FSU COAPS |    |
+| - Scientific Machine Learning <br /> - Oceanography <br /> - Medical Imaging | - ML appl. in Oceanography <br /> - Machine Vision <br /> - LLMs | - ML appl. to Earth science <br /> - AI automation <br /> - Retrieval-Augmented Generation |  |
 
 
 
