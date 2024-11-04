@@ -43,12 +43,4 @@ Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 | @FSU SC | @FSU |  |    |
 | - Scientific Machine Learning <br /> - Oceanography <br /> - Medical Imaging | - ML appl. in Oceanography <br /> - Machine Vision <br /> - LLMs |  |  |
 
-
-
-
-
-
-
 Send your details to [**Tom**](https://modlang.fsu.edu/person/tom-juzek) if you want to be added to the table. 
-
-

@@ -1,0 +1,18 @@
+[project]
+name = "scai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "ipykernel>=6.29.5",
+    "ipython>=8.29.0",
+    "llama-index>=0.11.20",
+    "llama-index-embeddings-huggingface>=0.3.1",
+    "google-generativeai>=0.8.3",
+    "matplotlib>=3.9.2",
+]
+
+[tool.ruff.lint]
+select = ["D", "E", "F", "I"]
+ignore = ["FA102", "D203", "D213"]
