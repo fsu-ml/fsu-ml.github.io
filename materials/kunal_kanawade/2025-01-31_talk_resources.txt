@@ -1,0 +1,11 @@
+https://www.youtube.com/watch?v=wjZofJX0v4M&t=59s
+https://jalammar.github.io/visualizing-neural-machine-translation-mechanics-of-seq2seq-models-with-attention/
+https://jalammar.github.io/illustrated-transformer/
+https://towardsdatascience.com/illustrated-guide-to-transformers-step-by-step-explanation-f74876522bc0
+https://colab.research.google.com/github/tensorflow/tensor2tensor/blob/master/tensor2tensor/notebooks/hello_t2t.ipynb#scrollTo=OJKU36QAfqOC
+
+https://arxiv.org/abs/1706.03762
+https://medium.com/@kirudang/language-model-history-before-and-after-transformer-the-ai-revolution-bedc7948a130
+https://arxiv.org/pdf/1301.3781
+https://arxiv.org/pdf/1409.0473
+https://arxiv.org/pdf/1409.0473
