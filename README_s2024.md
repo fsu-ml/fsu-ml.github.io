@@ -10,61 +10,29 @@ We are a group of people located in and around Tallahassee, all sharing an inter
 
 ## Schedule for Spring 2024
 
-Fridays, 12:00 p.m. ET, [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6). <br />
+Fridays, 1:00 p.m. ET, [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6). <br />
 Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 
-**Proposed topics to discuss**: 
-
-- Phylogeny
-- Multimodal
-- Inductive Biases
-- Embeddings
-- State Models
-- AI + data assimilation
-- Sandy (All Sandy)
-- Post transformer architecture
-- Tutorials (classroom machines)
-- Minimum working examples
-- Education + ML
-- Deep Fake
-- Disinformation
-- Optimization
-- Training methods
-- Spiking NN
-- Automation of language evaluation
-- State of open LLM.
-- Language Frameworks
-- Agents: Deep Dive
-- Robotics
-- Copyright (Law school)
-- Quantum Computing ML
-- Emotion
-- Compression Techniques
-- Health + ML
-- inpainting
-- Biases?
-- Advanced RAG Retrievalo Augmented Generation
-- Follow up Scientific Machine Learning
-- Intro AGI
+Proposed topics to discuss: 
 
 | Date       | Topic        | Person | Materials/Links | 
 |------------|--------------|--------|-----------------|
-| 2024-08-30 | Welcome session, outlook Spring 24 | misc. | - |
-| 2024-09-06 |  - | - | - |
-| 2024-09-13 |  - | - | - |
-| 2024-09-20 |  - | - | - |
-| 2024-09-27 |  - | - | - |
-| 2024-10-04 |  - | - | - |
-| 2024-10-11 |  - | - | - |
-| 2024-10-18 |  - | - | - |
-| 2024-10-25 |  - | - | - |
-| 2024-11-01 |  - | - | - |
-| 2024-11-08 |  - | - | - |
-| 2024-11-15 |  - | - | - |
-| 2024-11-22 |  - | - | - |
-| 2024-11-29 | - | - | - |
-| 2024-12-06 | - | - | - |
-| 2024-12-13 | - | - | - |
+| 2024-01-12 | Welcome session, outlook Spring 24 | misc. | - |
+| 2024-01-19 | Open forum | misc. | - |
+| 2024-01-26 | Agents | Nathan Crock | - |
+| 2024-02-02 | AI Vulnerabilities  | Jose Miranda /Kunal Kanawade | [**slides**](https://docs.google.com/presentation/d/1DOu2ZjFDmCcOAt-86faqYORNHn0GhYichOnmRgw4pgg/edit?usp=sharing) |
+| 2024-02-09 | ☕ taking a break ☕ | ☕ | - |
+| 2024-02-16 | ☕ taking a break ☕ | ☕ | - |
+| 2024-02-23 | Machine Learning Expo, check Tom's email from 7 Feb | 🤖 | - |
+| 2024-03-01 | Diffusion Models | Kavindu Wellalage| [**slides**](materials/kavindu_wellalage/2024-03-01_diffusion_models.pdf) |
+| 2024-03-08 | Interpretability | Olmo Zavala | [**slides**](https://docs.google.com/presentation/d/1DfQF2mx8i00E7ObJk397xd4HSKC5s64x8KB5VNytsnc/edit), [**code**](https://github.com/deepfindr/xai-series) |
+| 2024-03-15 | Spring Break | ☕ | - |
+| 2024-03-22 | AI for Science | Hristo Chipilski | [**slides**](materials/hristo_chipilski/Hristo_Chipilski-2024_03_22.pdf) |
+| 2024-03-29 | Scientific Machine Learning | Nick Dexter | [**slides**](materials/nick_dexter/presentation_nick_dexter_march29_2024.pdf) | 
+| 2024-04-05 | Multi-modal Models | Gordon Erlebacher | - |
+| 2024-04-12 | Beyond Transformers (State-space models)| Kevin Mueller | - |
+| 2024-04-19 | Integration of Phylogenies in ML/NN | Tara Khodaei | - |
+| 2024-04-26 | Planning Fall 24 | misc. |  - | 
 
 
 ## Current members and their ML interests
@@ -75,9 +43,16 @@ Attend via Zoom: [Zoom Link](https://fsu.zoom.us/j/9038137210). <br />
 | [**Gordon Erlebacher**](https://www.sc.fsu.edu/people/faculty?uid=gerlebacher) | [**Nathan Crock**](https://www.sc.fsu.edu/people?uid=ndc08) | [**Tom Juzek**](https://modlang.fsu.edu/person/tom-juzek) | [**Nick Dexter**](https://sites.google.com/view/ndexter) |
 | @FSU | @FSU | @FSU |   @FSU Scientific Computing |
 | - Neuronal Populations <br /> - Evolving Topologies <br /> - LLMs | - Interdisciplinary Data Science <br /> - LLMs <br /> - Retrieval Augmented Generation <br /> - Computational Reading Models | - Morpho-syntax <br /> - NLP <br /> - LLMs | - Neural Operators <br /> - Interpretability <br /> - Explainable AI |
-| <img src="member_jpgs/olmoz.jpg" alt="olmoz.jpg" width=200px> | <img src="member_jpgs/jmiranda.jpg" alt="jmiranda.jpg" width=200px> | <img src="member_jpgs/pmiron.jpg" alt="pmiron.jpg" width=200px> | |
-| [**Olmo Zavala Romero**](https://olmozavala.com/) | [**Jose Miranda**](https://olmozavala.com/)  | [**Philippe Miron**](https://philippemiron.github.io/) |
-| @FSU SC | @FSU | @FSU COAPS |    |
-| - Scientific Machine Learning <br /> - Oceanography <br /> - Medical Imaging | - ML appl. in Oceanography <br /> - Machine Vision <br /> - LLMs | - ML appl. to Earth science <br /> - AI automation <br /> - Retrieval-Augmented Generation |  |
+| <img src="member_jpgs/olmoz.jpg" alt="olmoz.jpg" width=200px> | <img src="member_jpgs/jmiranda.jpg" alt="jmiranda.jpg" width=200px> |  | |
+| [**Olmo Zavala Romero**](https://olmozavala.com/) | [**Jose Miranda**](https://olmozavala.com/)  |  |
+| @FSU SC | @FSU |  |    |
+| - Scientific Machine Learning <br /> - Oceanography <br /> - Medical Imaging | - ML appl. in Oceanography <br /> - Machine Vision <br /> - LLMs |  |  |
 
-Send your details to [**Tom**](https://modlang.fsu.edu/person/tom-juzek) if you want to be added to the table. If you find any errors on this page, also email Tom.</p>
+
+
+
+
+
+
+Send your details to [**Tom**](https://modlang.fsu.edu/person/tom-juzek) if you want to be added to the table. Also, there is a $20 reward if 1) you know how to make the images come out in the same size, 2) even when the strings in the affiliation and interests rows change, 3) and we can do this in the current readme.md. Message Tom if you have a solution. 
+
