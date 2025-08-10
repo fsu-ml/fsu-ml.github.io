@@ -1,3 +1,7 @@
+            <li>Bryce?: AI Fluff in Spoken Language</li>
+            <li>Xiaoming?: Ablation study on LHF</li>
+            <li>Tommie: Subliminal Learning / or more on LHF</li>
+
             <li>Multimodal</li>
             <li>Inductive Biases</li>
             <li>Embeddings</li>
