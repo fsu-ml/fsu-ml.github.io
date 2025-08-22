@@ -1,3 +1,5 @@
+            <li>Zina: towards the end of the semester: LLMs and creativity, homogen.</li>
+            <li>Anthony: towards the end of the semester: ethics surrounding AI workers</li>
             <li>Bryce?: AI Fluff in Spoken Language</li>
             <li>Xiaoming?: Ablation study on LHF</li>
             <li>Tommie: Subliminal Learning / or more on LHF</li>
