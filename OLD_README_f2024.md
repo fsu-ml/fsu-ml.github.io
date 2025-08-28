@@ -2,6 +2,8 @@
 
 # FSU SC Machine Learning Seminar
 
+See 2024f.html for the Fall 2024 Semester here: <a href="https://sc-ai.net/2024f.html">2024 Fall Schedule</a>. 
+
 We are a group of people located in and around Tallahassee, all sharing an interest in machine learning. Our primary objective is the exchange of knowledge and ideas. The seminar is hosted by the Department of Scientific Computing at the Florida State University (thus FSU SC). If you are interested in getting to know us and possibly joining, we convene every Friday at 1:00 pm ET at [SC-499](https://goo.gl/maps/BJLxE3Q7H1MTBqMu6) - you can also [join via zoom](https://fsu.zoom.us/j/9038137210). To become a part of our mailing list, please email [**Nathan Crock**](https://www.sc.fsu.edu/people?uid=ndc08). We are a diverse crowd, so presenting takes some thought. Our approach is best expressed by the NASA Trichotomy of Presenting, illustrated by Nathan: 
 
 <div align="center">
