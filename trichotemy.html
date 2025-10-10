@@ -63,9 +63,20 @@
       text-align:center;
       margin:4px 0 2px;
     }
+
+    /* Bigger subtitle (hero) */
     .hero{
-      text-align:center;margin:8px auto 8px; color:var(--ink-soft);
+      text-align:center;
+      margin:8px auto 8px;
+      color:var(--ink-soft);
+      font-size:1.25rem;   /* increased */
+      font-weight:600;     /* semi-bold */
+      letter-spacing:0.2px;
     }
+    @media (min-width: 900px){
+      .hero{ font-size:1.35rem; }  /* a touch larger on big screens */
+    }
+
     .trichotomy-img{
       width:520px; max-width:100%; height:auto; display:block; margin:14px auto;
     }
