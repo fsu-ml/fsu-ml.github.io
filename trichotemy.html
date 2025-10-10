@@ -41,6 +41,12 @@
       display:block;
       margin:0 auto;
     }
+    /* Subsite visual cue: slight darken/contrast */
+    .banner.subsite{
+      filter: brightness(0.78) contrast(1.02);
+    }
+    .banner-link{ display:block; line-height:0; }
+
     .container{
       max-width:1100px;
       margin:0 auto;
@@ -52,13 +58,13 @@
     h1{font-size:2rem}
     h2{font-size:1.5rem;color:var(--brand)}
     p{margin:14px 0;text-align:justify}
-    .topbar{
-      display:flex;justify-content:space-between;align-items:center;
-      gap:12px;flex-wrap:wrap;margin:8px 0 4px;
+
+    .backlink{
+      text-align:center;
+      margin:4px 0 2px;
     }
-    .crumbs a{font-weight:bold}
     .hero{
-      text-align:center;margin:10px auto 8px; color:var(--ink-soft);
+      text-align:center;margin:8px auto 8px; color:var(--ink-soft);
     }
     .trichotomy-img{
       width:520px; max-width:100%; height:auto; display:block; margin:14px auto;
@@ -101,15 +107,19 @@
 </head>
 
 <body>
-  <a href="#content" class="visually-hidden">Skip to content</a>
-  <img src="inspiring_banner_3.jpg" alt="FSU Artificial Intelligence Seminar banner" class="banner" />
+  <!-- Clickable banner goes back to index -->
+  <a href="index.html" class="banner-link" aria-label="Back to main page">
+    <img src="inspiring_banner_3.jpg" alt="FSU Artificial Intelligence Seminar banner" class="banner subsite" />
+  </a>
 
   <div class="container" id="content">
-    <div class="topbar">
-      <div class="crumbs"><a href="index.html">← Back to main page</a></div>
+    <h1>FSU SC Artificial Intelligence Seminar in Tallahassee</h1>
+
+    <!-- Back link moved between main title and subtitle -->
+    <div class="backlink">
+      <a href="index.html">← Back to main page</a>
     </div>
 
-    <h1>FSU SC Artificial Intelligence Seminar in Tallahassee</h1>
     <div class="hero"><strong>NASA Trichotomy of Presenting</strong> — a compact guide for our diverse audience</div>
 
     <p>
