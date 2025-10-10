@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="FSU SC Artificial Intelligence Seminar — NASA Trichotomy of Presenting: a concise guide for speakers plus a copy-and-paste LLM prompt to test your slides." />
+  <meta name="keywords" content="FSU AI Seminar, NASA Trichotomy, presentation guide, Tallahassee AI, Florida State University" />
+
+  <meta property="og:title" content="FSU SC Artificial Intelligence Seminar — NASA Trichotomy of Presenting" />
+  <meta property="og:description" content="A quick guide to the NASA Trichotomy (Basics · Details · Deep Dive) with an LLM prompt for self-review." />
+  <meta property="og:image" content="https://sc-ai.net/inspiring_banner_3.jpg" />
+  <meta property="og:url" content="https://sc-ai.net/trichotemy.html" />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <title>FSU SC Artificial Intelligence Seminar in Tallahassee — NASA Trichotomy</title>
+
+  <style>
+    :root{
+      --brand:#5a47b8;
+      --ink:#333;
+      --ink-soft:#555;
+      --card:#f7f7fb;
+      --line:#e5e5ef;
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      line-height:1.6;
+      margin:0;
+      color:var(--ink);
+      background:#fff;
+    }
+    .banner{
+      width:100vw;
+      height:33vh;
+      object-fit:cover;
+      display:block;
+      margin:0 auto;
+    }
+    .container{
+      max-width:1100px;
+      margin:0 auto;
+      padding:24px 20px 60px;
+    }
+    a{color:#007BFF;text-decoration:none}
+    a:hover{text-decoration:underline}
+    h1,h2,h3{margin:10px 0 12px;text-align:center}
+    h1{font-size:2rem}
+    h2{font-size:1.5rem;color:var(--brand)}
+    p{margin:14px 0;text-align:justify}
+    .topbar{
+      display:flex;justify-content:space-between;align-items:center;
+      gap:12px;flex-wrap:wrap;margin:8px 0 4px;
+    }
+    .crumbs a{font-weight:bold}
+    .hero{
+      text-align:center;margin:10px auto 8px; color:var(--ink-soft);
+    }
+    .trichotomy-img{
+      width:520px; max-width:100%; height:auto; display:block; margin:14px auto;
+    }
+    .guide{
+      display:grid; gap:14px; margin:18px 0;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+    .card{
+      background:var(--card); border:1px solid var(--line);
+      border-radius:12px; padding:16px 14px; height:100%;
+    }
+    .card h3{margin:4px 0 8px; text-align:left; color:var(--brand)}
+    .card ul{margin:0 0 0 18px}
+    hr{width:50%; height:2px; background-color:black; border:none; margin:26px auto}
+    .prompt-wrap{
+      background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px;
+    }
+    .prompt-actions{
+      display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
+      margin:6px 0 8px;
+    }
+    .btn{
+      display:inline-block; border:1px solid var(--brand); color:#fff; background:var(--brand);
+      padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:bold;
+    }
+    .btn:active{transform:translateY(1px)}
+    .muted{color:var(--ink-soft); font-size:0.95rem}
+    textarea{
+      width:100%; min-height:240px; border:1px solid var(--line); border-radius:8px;
+      padding:12px; font-size:0.95rem; line-height:1.45; resize:vertical;
+      background:#fff;
+    }
+    .note{font-size:0.9rem; color:var(--ink-soft); margin-top:6px}
+    .footnav{margin-top:28px; text-align:center}
+    @media (max-width:900px){
+      .guide{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+  <a href="#content" class="visually-hidden">Skip to content</a>
+  <img src="inspiring_banner_3.jpg" alt="FSU Artificial Intelligence Seminar banner" class="banner" />
+
+  <div class="container" id="content">
+    <div class="topbar">
+      <div class="crumbs"><a href="index.html">← Back to main page</a></div>
+    </div>
+
+    <h1>FSU SC Artificial Intelligence Seminar in Tallahassee</h1>
+    <div class="hero"><strong>NASA Trichotomy of Presenting</strong> — a compact guide for our diverse audience</div>
+
+    <p>
+      Our seminar brings together researchers with varied backgrounds. The <em>NASA Trichotomy</em> is a simple checklist to
+      keep talks accessible and useful: cover <strong>The Basics</strong> so everyone can follow, provide <strong>The Details</strong> for
+      substance, and include <strong>The Deep Dive</strong> so specialists can learn something extra without derailing the flow.
+    </p>
+
+    <img src="columbian_trichotomy_2.png" alt="Illustration of the NASA Trichotomy: The Basics, The Details, The Deep Dive" class="trichotomy-img" />
+
+    <div class="guide">
+      <div class="card">
+        <h3>1) The Basics</h3>
+        <ul>
+          <li>Clear topic &amp; why it matters</li>
+          <li>Plain English; minimal jargon</li>
+          <li>One-sentence takeaway</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2) The Details</h3>
+        <ul>
+          <li><em>Research</em>: methods, data, key figures, limits</li>
+          <li><em>Surveys</em>: scope, representative sources, contrasts, caveats</li>
+          <li>Be specific; cite essentials</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>3) The Deep Dive</h3>
+        <ul>
+          <li>One rigorous optional element</li>
+          <li>Backup slide / worked example / suggested reading</li>
+          <li>Doesn’t derail the main story</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr />
+
+    <h2>Test your slides with an LLM</h2>
+    <p>
+      Paste your notes or draft slides into your preferred LLM and use the prompt below. It’s tuned for
+      constructive, no-fluff feedback against the trichotomy. (Avoid sharing confidential data.)
+    </p>
+
+    <div class="prompt-wrap">
+      <div class="prompt-actions">
+        <strong>Copy-and-paste prompt</strong>
+        <button class="btn" id="copyBtn" aria-label="Copy prompt to clipboard">Copy prompt</button>
+      </div>
+      <textarea id="llmPrompt" readonly>
+You are a generous no-fluff reviewer. Be direct—no compliments. Flag only gaps that completely jeopardise minimum adequacy.
+
+Use the NASA trichotomy with generous thresholds. For survey/discussion talks, judge 'Details' by coverage (representative sources, contrasts, caveats), not new experiments.
+
+Basics: clear topic and why it matters; plain English; jargon minimal enough for comprehension.
+Details: research → methods/data/figures/limits; surveys → scope, key references, comparisons, limits.
+Deep Dive: at least one optional rigorous element (backup slide, worked example, or suggested reading) that will not derail the flow.
+
+Assume Adequate if an element is present, even briefly. Mark Thin only if seriously under-developed; Missing only if completely absent. Do not nit-pick style.
+
+Context: mixed AI audience, some technical background.
+Goal: attendees learn something concrete.
+Time: 45-minute talk + 15-minute Q&A.
+
+For the attached notes/slides, output (≤40 words total): For 1–3, label Adequate / Thin / Missing. Provide one fix only for each Missing item.
+      </textarea>
+      <div class="note">Tip: If your talk is a survey/discussion, weight “Details” by coverage (breadth, contrasts, caveats) rather than new experiments.</div>
+    </div>
+
+    <div class="footnav">
+      <p><a href="index.html">← Return to index.html</a></p>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('copyBtn');
+    const ta  = document.getElementById('llmPrompt');
+
+    btn.addEventListener('click', async () => {
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      try{
+        await navigator.clipboard.writeText(ta.value);
+        const old = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(()=>{ btn.textContent = old; }, 1400);
+      }catch(e){
+        // Fallback for older browsers
+        document.execCommand('copy');
+        const old = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(()=>{ btn.textContent = old; }, 1400);
+      }
+    });
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Organization",
+    "name":"FSU SC Artificial Intelligence Seminar",
+    "url":"https://sc-ai.net",
+    "logo":"https://sc-ai.net/inspiring_banner_3.jpg",
+    "contactPoint":{
+      "@type":"ContactPoint",
+      "telephone":"+1-850-644-3727",
+      "contactType":"Seminar inquiries"
+    }
+  }
+  </script>
+</body>
+</html>
