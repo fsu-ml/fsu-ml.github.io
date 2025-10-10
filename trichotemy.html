@@ -74,7 +74,7 @@
       letter-spacing:0.2px;
     }
     @media (min-width: 900px){
-      .hero{ font-size:1.35rem; }  /* a touch larger on big screens */
+      .hero{ font-size:1.35rem; }
     }
 
     .trichotomy-img{
@@ -110,6 +110,18 @@
       background:#fff;
     }
     .note{font-size:0.9rem; color:var(--ink-soft); margin-top:6px}
+
+    /* New disclaimer style */
+    .disclaimer{
+      margin-top:10px;
+      padding:10px 12px;
+      background:#fff;
+      border:1px dashed var(--line);
+      border-radius:10px;
+      color:var(--ink-soft);
+      font-size:0.95rem;
+    }
+
     .footnav{margin-top:28px; text-align:center}
     @media (max-width:900px){
       .guide{grid-template-columns:1fr}
@@ -173,7 +185,7 @@
     <h2>Test your slides with an LLM</h2>
     <p>
       Paste your notes or draft slides into your preferred LLM and use the prompt below. It’s tuned for
-      constructive, no-fluff feedback against the trichotomy. (Avoid sharing confidential data.)
+      constructive, no-fluff feedback against the trichotomy. (Avoid sharing confidential data.) See the disclaimer below.
     </p>
 
     <div class="prompt-wrap">
@@ -199,6 +211,12 @@ Time: 45-minute talk + 15-minute Q&A.
 For the attached notes/slides, output (≤40 words total): For 1–3, label Adequate / Thin / Missing. Provide one fix only for each Missing item.
       </textarea>
       <div class="note">Tip: If your talk is a survey/discussion, weight “Details” by coverage (breadth, contrasts, caveats) rather than new experiments.</div>
+
+      <!-- New disclaimer -->
+      <div class="disclaimer">
+        <strong>Disclaimer:</strong> Automated reviews can be blunt or overly strict. Treat them as heuristics and
+        sanity checks—not final judgements. Use your judgement and, if in doubt, ask a seminar organiser for a quick look.
+      </div>
     </div>
 
     <div class="footnav">
