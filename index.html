@@ -4,336 +4,409 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- SEO Meta Tags -->
-  <meta name="description" content="Join the FSU SC Artificial Intelligence Seminar in Tallahassee. Connect with experts in AI, Machine Learning, and Scientific Computing. Participate in weekly seminars and discussions at Florida State University." />
-  <meta name="keywords" content="AI, FSU AI, FSU Machine Learning, FSU Artificial Intelligence, Tallahassee AI, Tallahassee Artificial Intelligence, FSU SC, Florida State University, AI Seminar, Machine Learning, Artificial Intelligence, FSU" />
+  <title>FSU SC Artificial Intelligence Seminar | Spring 2026 Schedule</title>
+  <meta name="description" content="Join the FSU SC Artificial Intelligence Seminar in Tallahassee. Weekly discussions on AI, Machine Learning, and Scientific Computing at Florida State University." />
+  <meta name="keywords" content="AI, FSU AI, Machine Learning, Scientific Computing, Tallahassee, Artificial Intelligence Seminar, Florida State University" />
+  <link rel="canonical" href="https://sc-ai.net/" />
 
-  <meta property="og:title" content="FSU SC Artificial Intelligence Seminar | AI & Machine Learning in Tallahassee" />
-  <meta property="og:description" content="Join the FSU SC Artificial Intelligence Seminar in Tallahassee. Connect with experts in AI, Machine Learning, and Scientific Computing. Participate in weekly seminars and discussions at Florida State University." />
+  <meta property="og:title" content="FSU SC Artificial Intelligence Seminar" />
+  <meta property="og:description" content="Connect with experts in AI, Machine Learning, and Scientific Computing at FSU. Weekly seminars every Friday." />
   <meta property="og:image" content="https://sc-ai.net/inspiring_banner_3.jpg" />
   <meta property="og:url" content="https://sc-ai.net/" />
   <meta property="og:type" content="website" />
 
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-  <title>FSU SC Artificial Intelligence Seminar | AI & Machine Learning in Tallahassee</title>
 
   <style>
-    :root{
-      --brand:#5a47b8;
-      --ink:#333;
-      --ink-soft:#555;
-      --card:#f7f7fb;
-      --line:#e5e5ef;
-      --link:#007BFF;
+    :root {
+      --brand: #5a47b8;
+      --brand-hover: #463691;
+      --ink: #333;
+      --ink-soft: #555;
+      --card-bg: #f7f7fb;
+      --border: #e5e5ef;
+      --link: #007BFF;
+      --bg-white: #ffffff;
     }
-    *{box-sizing:border-box}
-    body{
+
+    /* Reset & Base */
+    * { box-sizing: border-box; }
+    body {
       font-family: Arial, Helvetica, sans-serif;
-      line-height:1.6;
-      margin:0;
-      color:var(--ink);
-      background:#fff;
-    }
-
-    /* Banner */
-    .banner{
-      width:100vw;            /* full width */
-      height:33vh;            /* one-third viewport height */
-      object-fit:cover;
-      display:block;
-      margin:0 auto;
-    }
-
-    /* Layout */
-    .container{
-      max-width:1100px;
-      margin:0 auto;
-      padding:24px 20px 60px;
+      line-height: 1.6;
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg-white);
     }
 
     /* Typography */
-    h1,h2,h3{margin:10px 0 12px; text-align:center}
-    h1{font-size:2rem}
-    h2{font-size:1.5rem; color:var(--brand)}
-    p{margin:14px 0; text-align:justify}
+    h1, h2, h3 { margin: 10px 0 12px; text-align: center; }
+    h1 { font-size: clamp(1.5rem, 4vw, 2.2rem); margin-bottom: 0.5rem; }
+    h2 { font-size: 1.6rem; color: var(--brand); margin-top: 2rem; }
+    p { margin: 14px 0; text-align: justify; }
+    a { color: var(--link); text-decoration: none; transition: color 0.2s; }
+    a:hover { text-decoration: underline; color: var(--brand-hover); }
+    strong { color: var(--ink); }
 
-    /* Link styling */
-    a{color:var(--link); text-decoration:none}
-    a:hover{text-decoration:underline}
-
-    /* Hero subtitle to match subsite look */
-    .hero{
-      text-align:center;
-      margin:6px auto 14px;
-      color:var(--ink-soft);
-      font-size:1.1rem;
-      letter-spacing:.2px;
+    /* Layout Utilities */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 20px 60px;
     }
-    @media (min-width:900px){
-      .hero{font-size:1.2rem}
+    .center { text-align: center; }
+    .hero-sub {
+      text-align: center;
+      margin: 0 auto 24px;
+      color: var(--ink-soft);
+      font-size: 1.2rem;
     }
-
-    /* Section card wrappers for subtle polish */
-    .section-card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:16px 14px;
-      margin:18px 0;
+    hr {
+      width: 50%;
+      height: 2px;
+      background-color: var(--ink);
+      border: none;
+      margin: 40px auto;
+      opacity: 0.2;
     }
 
-    /* Table styling */
-    table{
-      width:100%;
-      border-collapse:collapse;
-      table-layout:fixed;
-      margin:8px 0 0;
+    /* Banner */
+    .banner {
+      width: 100%;
+      height: 33vh;
+      object-fit: cover;
+      display: block;
     }
-    th, td{
-      padding:12px;
-      text-align:center;
-      border:1px solid #ddd;
-      vertical-align:top;
-    }
-    th{background-color:#f4f4f4}
-    tbody tr:nth-child(even){background:#fafafa}
 
     /* Images */
-    .trichotomy-img{
-      width:520px; max-width:100%; height:auto; display:block; margin:14px auto;
-    }
-    .member-img{
-      width:clamp(120px, 18vw, 200px);
-      height:auto;            /* do not fix height (keeps proportions) */
-      object-fit:cover;
-      display:block;
-      margin:0 auto;
-      border-radius:8px;
+    .trichotomy-img {
+      width: 100%;
+      max-width: 520px;
+      height: auto;
+      display: block;
+      margin: 20px auto;
     }
 
-    /* Utilities */
-    .center{text-align:center; margin:20px 0}
-    hr{
-      width:50%; height:2px; background-color:black; border:none; margin:26px auto;
+    /* --- COMPONENT: Schedule Table --- */
+    .table-wrapper {
+      overflow-x: auto; /* Allows table to scroll on mobile without breaking layout */
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px; /* Forces scroll on small screens */
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      vertical-align: top;
+    }
+    th {
+      background-color: #eee;
+      font-weight: bold;
+      color: var(--ink);
+    }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background-color: rgba(90, 71, 184, 0.05); }
+
+    /* --- COMPONENT: Member Grid (Replaces old table) --- */
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .member-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .member-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .member-img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%; /* Circle looks more modern, remove if you prefer square */
+      margin-bottom: 12px;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .member-card h3 {
+      font-size: 1.1rem;
+      margin: 8px 0;
+    }
+    .member-card p {
+      font-size: 0.9rem;
+      text-align: center; /* Override justify for bio cards */
+      margin: 0;
+      color: var(--ink-soft);
+      line-height: 1.4;
+    }
+    .member-dept {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--brand);
+      margin-bottom: 8px;
+      display: block;
     }
 
-    /* Responsive tweaks */
-    @media (max-width:768px){
-      h1,h2,h3{font-size:1.5rem}
-      table, th, td{font-size:14px; padding:8px}
-      ul{padding-left:15px}
-    }
-    @media (max-width:480px){
-      h1,h2,h3{font-size:1.2rem}
-      .container{padding:10px}
-      table, th, td{font-size:12px; padding:6px}
+    /* Responsive Tweaks */
+    @media (max-width: 768px) {
+      .container { padding: 15px; }
+      h1 { font-size: 1.6rem; }
+      .table-wrapper { padding: 0; border: none; background: transparent; }
+      table { border: 1px solid #ddd; background: #fff; }
     }
   </style>
 </head>
 
 <body>
 
-  <img src="inspiring_banner_3.jpg" alt="FSU Artificial Intelligence Seminar Banner" class="banner">
+  <header>
+    <img src="inspiring_banner_3.jpg" alt="FSU Artificial Intelligence Seminar Banner" class="banner">
+  </header>
 
-  <div class="container">
-    <h1>FSU SC Artificial Intelligence Seminar in Tallahassee</h1>
-    <div class="hero">Explore AI and Machine Learning at Florida State University</div>
+  <main class="container">
+    <section>
+      <h1>FSU SC Artificial Intelligence Seminar</h1>
+      <div class="hero-sub">Tallahassee, Florida</div>
 
-    <p>
-      We are a group of people located in and around Tallahassee, all sharing an interest in artificial intelligence (AI) and machine learning. Our primary objective is the exchange of knowledge and ideas. The seminar is hosted by the
-      <a href="https://www.sc.fsu.edu/">Department of Scientific Computing</a> at
-      <a href="https://www.fsu.edu/">Florida State University</a> (thus FSU SC). As part of the
-      <a href="https://artsandsciences.fsu.edu/">College of Arts and Sciences</a>, the seminar brings together individuals from the College's diverse departments. If you are interested in getting to know us and possibly joining, we convene every Friday at 12:00 pm ET at
-      <a href="https://goo.gl/maps/BJLxE3Q7H1MTBqMu6">DSL/SC-499</a> — you can also <a href="https://fsu.zoom.us/j/9038137210">join via Zoom</a>. We have a
-      <a href="https://discord.gg/raTxTXmM5B">Discord</a>; and to become a part of our mailing list, please email
-      <a href="https://www.sc.fsu.edu/people?uid=gerlebacher"><strong>Gordon Erlebacher</strong></a>.
-      We also have a sister seminar in the <a href="https://www.math.fsu.edu/">Department of Mathematics</a>, the
-      <a href="https://sites.google.com/view/fsu-data-science-seminar/home">Data Science and Machine Learning Seminar</a>, with which we hold joint sessions twice each semester.
-      We are a diverse crowd, so presenting takes some thought. Our approach is best expressed by the <a href="trichotemy.html" title="Read our NASA Trichotomy guide">NASA Trichotomy of Presenting</a>, illustrated by <a href="https://www.sc.fsu.edu/people?uid=ndc08">Nathan</a>:
-    </p>
+      <p>
+        We are a group of people located in and around Tallahassee, all sharing an interest in artificial intelligence (AI) and machine learning. Our primary objective is the exchange of knowledge and ideas. The seminar is hosted by the
+        <a href="https://www.sc.fsu.edu/">Department of Scientific Computing</a> at
+        <a href="https://www.fsu.edu/">Florida State University</a> (thus FSU SC). As part of the
+        <a href="https://artsandsciences.fsu.edu/">College of Arts and Sciences</a>, the seminar brings together individuals from the College's diverse departments.
+      </p>
+      
+      <p>
+        If you are interested in getting to know us and possibly joining, we convene every Friday at <strong>12:00 pm ET</strong> at
+        <a href="https://goo.gl/maps/BJLxE3Q7H1MTBqMu6">DSL/SC-499</a> — you can also <a href="https://fsu.zoom.us/j/9038137210">join via Zoom</a>. We have a
+        <a href="https://discord.gg/raTxTXmM5B">Discord</a>; and to become a part of our mailing list, please email
+        <a href="https://www.sc.fsu.edu/people?uid=gerlebacher"><strong>Gordon Erlebacher</strong></a>.
+        We also have a sister seminar in the <a href="https://www.math.fsu.edu/">Department of Mathematics</a>, the
+        <a href="https://sites.google.com/view/fsu-data-science-seminar/home">Data Science and Machine Learning Seminar</a>, with which we hold joint sessions twice each semester.
+      </p>
+      
+      <p>
+        We are a diverse crowd, so presenting takes some thought. Our approach is best expressed by the <a href="trichotemy.html" title="Read our NASA Trichotomy guide">NASA Trichotomy of Presenting</a>, illustrated by <a href="https://www.sc.fsu.edu/people?uid=ndc08">Nathan</a>:
+      </p>
 
-    <div class="center">
-      <img src="columbian_trichotomy_2.png" alt="Columbian Trichotomy AI Presentation at FSU" class="trichotomy-img">
-    </div>
+      <div class="center">
+        <img src="columbian_trichotomy_2.png" alt="Columbian Trichotomy AI Presentation at FSU" class="trichotomy-img">
+      </div>
+    </section>
 
     <hr>
 
-    <h2>Schedule for Spring 2026</h2>
-    <div class="section-card">
-      <p class="center" style="margin-top:0">
-        Fridays, 12:00 p.m. ET,
-        <a href="https://goo.gl/maps/BJLxE3Q7H1MTBqMu6">DSL/SC-499</a>.
+    <section id="schedule">
+      <h2>Schedule for Spring 2026</h2>
+      <p class="center" style="margin-bottom: 20px;">
+        Fridays, 12:00 p.m. ET, <a href="https://goo.gl/maps/BJLxE3Q7H1MTBqMu6">DSL/SC-499</a>.<br>
         Attend via Zoom: <a href="https://fsu.zoom.us/j/9038137210">Zoom Link</a>.
-        You can find the <a href="https://sc-ai.net/2025f.html">2025 Fall Schedule here</a>.
+        <br><small>Archive: <a href="https://sc-ai.net/2025f.html">Fall 2025 Schedule</a></small>
       </p>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Topic</th>
-            <th>Person</th>
-            <th>Materials</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>09 Jan</td>
-            <td>Organisational Meeting</td>
-            <td>All welcome!</td>
-            <td>the present website ☺️</td>
-          </tr>
-          <tr>
-            <td>16 Jan</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>23 Jan</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>30 Jan</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>06 Feb</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>13 Feb</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>20 Feb</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>27 Feb</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>06 Mar</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>13 Mar</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>20 Mar</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>27 Mar</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>03 Apr</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>10 Apr</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>17 Apr</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>24 Apr</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>01 May</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Topic</th>
+              <th>Person</th>
+              <th>Materials</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>09 Jan</td>
+              <td>Organisational Meeting</td>
+              <td>All welcome!</td>
+              <td>the present website ☺️</td>
+            </tr>
+            <tr>
+              <td>16 Jan</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>23 Jan</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>30 Jan</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>06 Feb</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>13 Feb</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>20 Feb</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>27 Feb</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>06 Mar</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>13 Mar</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>20 Mar</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>27 Mar</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>03 Apr</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>10 Apr</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>17 Apr</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>24 Apr</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>01 May</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
     <hr>
 
-    <h2>Current members and their AI interests</h2>
-    <div class="section-card">
-      <table>
-        <tbody>
-          <tr>
-            <td><img src="member_jpgs/jadams.jpg" alt="Jonathan Adams" class="member-img"></td>
-            <td><img src="member_jpgs/ncrock.jpg" alt="Nathan Crock" class="member-img"></td>
-            <td><img src="member_jpgs/ndexter.jpg" alt="Nick Dexter" class="member-img"></td>
-            <td><img src="member_jpgs/gerlebacher.jpg" alt="Gordon Erlebacher" class="member-img"></td>
-          </tr>
-          <tr>
-            <td><a href="https://directory.cci.fsu.edu/jonathan-adams"><strong>Jonathan Adams</strong></a></td>
-            <td><a href="https://www.sc.fsu.edu/people?uid=ndc08"><strong>Nathan Crock</strong></a></td>
-            <td><a href="https://sites.google.com/view/ndexter"><strong>Nick Dexter</strong></a></td>
-            <td><a href="https://www.sc.fsu.edu/people?uid=gerlebacher"><strong>Gordon Erlebacher</strong></a></td>
-          </tr>
-          <tr>
-            <td>@FSU Information <br /> – AI Use in Higher Education <br /> – Syn-data for computer vision <br /> – RAG for research</td>
-            <td>@FSU Data Science<br /> – LLMs <br /> – Retrieval Augmented Generation <br /> – Computational Reading Models</td>
-            <td>@FSU Scientific Computing <br /> – Neural Operators <br /> – Interpretability <br /> – Explainable AI</td>
-            <td>@FSU <br /> – Neuronal Populations <br /> – Evolving Topologies <br /> – LLMs</td>
-          </tr>
-          <tr>
-            <td><img src="member_jpgs/tom-juzek-3.jpg" alt="Tommie Juzek (c) M Harris" class="member-img"></td>
-            <td><img src="member_jpgs/jmiranda.jpg" alt="Jose Miranda" class="member-img"></td>
-            <td><img src="member_jpgs/pmiron.jpg" alt="Philippe Miron" class="member-img"></td>
-            <td><img src="member_jpgs/olmoz.jpg" alt="Olmo Zavala Romero" class="member-img"></td>
-          </tr>
-          <tr>
-            <td><a href="https://mll.fsu.edu/person/tom-juzek"><strong>Tommie Juzek</strong></a></td>
-            <td><a href="https://www.sc.fsu.edu/people?uid=jrm22n"><strong>Jose Miranda</strong></a></td>
-            <td><a href="https://philippemiron.github.io/"><strong>Philippe Miron</strong></a></td>
-            <td><a href="https://www.sc.fsu.edu/people?uid=osz09"><strong>Olmo Zavala Romero</strong></a></td>
-          </tr>
-          <tr>
-            <td>@FSU <br /> – Morpho-syntax <br /> – NLP <br /> – LLMs</td>
-            <td>@FSU <br /> – ML appl. in Oceanography <br /> – Machine Vision <br /> – LLMs</td>
-            <td>@FSU COAPS <br /> – ML appl. to Earth science <br /> – AI automation <br /> – Retrieval-Augmented Generation</td>
-            <td>@FSU SC <br /> – Scientific Machine Learning <br /> – Oceanography <br /> – Medical Imaging</td>
-          </tr>
-        </tbody>
-      </table>
+    <section id="members">
+      <h2>Current Members and Interests</h2>
+      
+      <div class="members-grid">
+        
+        <article class="member-card">
+          <img src="member_jpgs/jadams.jpg" alt="Jonathan Adams" class="member-img">
+          <h3><a href="https://directory.cci.fsu.edu/jonathan-adams">Jonathan Adams</a></h3>
+          <span class="member-dept">@FSU Information</span>
+          <p>AI Use in Higher Education<br>Syn-data for computer vision<br>RAG for research</p>
+        </article>
 
-      <p style="margin-top:16px">
-        Send your details to <a href="https://mll.fsu.edu/person/tom-juzek"><strong>Tommie</strong></a> if you want to be added to the table. If you find any errors on this page, also email Tommie.
+        <article class="member-card">
+          <img src="member_jpgs/ncrock.jpg" alt="Nathan Crock" class="member-img">
+          <h3><a href="https://www.sc.fsu.edu/people?uid=ndc08">Nathan Crock</a></h3>
+          <span class="member-dept">@FSU Data Science</span>
+          <p>LLMs<br>Retrieval Augmented Generation<br>Computational Reading Models</p>
+        </article>
+
+        <article class="member-card">
+          <img src="member_jpgs/ndexter.jpg" alt="Nick Dexter" class="member-img">
+          <h3><a href="https://sites.google.com/view/ndexter">Nick Dexter</a></h3>
+          <span class="member-dept">@FSU Scientific Computing</span>
+          <p>Neural Operators<br>Interpretability<br>Explainable AI</p>
+        </article>
+
+        <article class="member-card">
+          <img src="member_jpgs/gerlebacher.jpg" alt="Gordon Erlebacher" class="member-img">
+          <h3><a href="https://www.sc.fsu.edu/people?uid=gerlebacher">Gordon Erlebacher</a></h3>
+          <span class="member-dept">@FSU</span>
+          <p>Neuronal Populations<br>Evolving Topologies<br>LLMs</p>
+        </article>
+
+        <article class="member-card">
+          <img src="member_jpgs/tom-juzek-3.jpg" alt="Tommie Juzek" class="member-img">
+          <h3><a href="https://mll.fsu.edu/person/tom-juzek">Tommie Juzek</a></h3>
+          <span class="member-dept">@FSU</span>
+          <p>Morpho-syntax<br>NLP<br>LLMs</p>
+        </article>
+
+        <article class="member-card">
+          <img src="member_jpgs/jmiranda.jpg" alt="Jose Miranda" class="member-img">
+          <h3><a href="https://www.sc.fsu.edu/people?uid=jrm22n">Jose Miranda</a></h3>
+          <span class="member-dept">@FSU</span>
+          <p>ML appl. in Oceanography<br>Machine Vision<br>LLMs</p>
+        </article>
+
+        <article class="member-card">
+          <img src="member_jpgs/pmiron.jpg" alt="Philippe Miron" class="member-img">
+          <h3><a href="https://philippemiron.github.io/">Philippe Miron</a></h3>
+          <span class="member-dept">@FSU COAPS</span>
+          <p>ML appl. to Earth science<br>AI automation<br>RAG</p>
+        </article>
+
+        <article class="member-card">
+          <img src="member_jpgs/olmoz.jpg" alt="Olmo Zavala Romero" class="member-img">
+          <h3><a href="https://www.sc.fsu.edu/people?uid=osz09">Olmo Zavala Romero</a></h3>
+          <span class="member-dept">@FSU SC</span>
+          <p>Scientific Machine Learning<br>Oceanography<br>Medical Imaging</p>
+        </article>
+
+      </div>
+
+      <p class="center" style="margin-top: 32px; color: var(--ink-soft); font-size: 0.9rem;">
+        Send your details to <a href="https://mll.fsu.edu/person/tom-juzek"><strong>Tommie</strong></a> if you want to be added to this list.
       </p>
-    </div>
-  </div>
+    </section>
+  </main>
 
   <script type="application/ld+json">
   {
@@ -346,6 +419,14 @@
       "@type": "ContactPoint",
       "telephone": "+1-850-644-3727",
       "contactType": "Seminar inquiries"
+    },
+    "department": {
+      "@type": "EducationalOrganization",
+      "name": "Department of Scientific Computing",
+      "parentOrganization": {
+        "@type": "CollegeOrUniversity",
+        "name": "Florida State University"
+      }
     }
   }
   </script>
