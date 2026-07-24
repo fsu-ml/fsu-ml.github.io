@@ -418,6 +418,21 @@ export const renderOverview = (templates) => {
   const section = findSection("why-attend");
   qs("[data-overview-intro]").textContent = section.intro;
 
+  const sister = qs("[data-sister-seminar]");
+  if (sister && section.sisterSeminar) {
+    const info = section.sisterSeminar;
+    sister.innerHTML = `
+      <span class="sister-seminar-icon">${icon("presentation")}</span>
+      <div class="sister-seminar-copy">
+        <p class="sister-seminar-kicker">${escapeHtml(info.kicker)}</p>
+        <p class="sister-seminar-text">${escapeHtml(info.text)}</p>
+      </div>
+      <a class="sister-seminar-link" href="${escapeHtml(info.link.href)}" target="_blank" rel="noopener">${escapeHtml(
+        info.link.label
+      )} &rarr;</a>
+    `;
+  }
+
   const guideLink = qs("[data-overview-link]");
   if (guideLink && section.guideLink) {
     guideLink.innerHTML = `<a href="${escapeHtml(section.guideLink.href)}">${escapeHtml(

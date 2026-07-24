@@ -41,6 +41,14 @@ export const pageData = {
     {
       id: "why-attend",
       intro: "A welcoming forum for students, researchers, and faculty to learn, share ideas, and build collaborations across disciplines.",
+      sisterSeminar: {
+        kicker: "Sister Seminar",
+        text: "We run this series alongside the FSU Data Science Seminar, hosted by the Department of Mathematics.",
+        link: {
+          label: "Visit the Seminar",
+          href: "https://sites.google.com/view/fsu-data-science-seminar/home"
+        }
+      },
       guideLink: {
         label: "Presenting at the seminar? Read our NASA Trichotomy guide",
         href: "/trichotemy.html"
