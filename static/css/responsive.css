@@ -1,0 +1,277 @@
+﻿@media (max-width: 1080px) {
+  .nav-shell {
+    justify-content: space-between;
+  }
+
+  .brand {
+    justify-content: flex-start;
+  }
+
+  .nav-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 76px;
+    right: 0;
+    left: 0;
+    display: none;
+    padding: 18px 24px 28px;
+    flex-direction: column;
+    align-items: stretch;
+    background: rgba(31, 4, 12, 0.98);
+    border-bottom: 1px solid rgba(206, 184, 136, 0.22);
+  }
+
+  body.nav-open .nav-links {
+    display: flex;
+  }
+
+  .nav-link {
+    padding: 13px 0;
+  }
+
+  .nav-link.is-active::after {
+    right: auto;
+    left: 0;
+    width: 42px;
+  }
+
+  .hero-inner,
+  .split-layout,
+  .dashboard-layout,
+  .footer-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-inner {
+    gap: 34px;
+    padding-top: 130px;
+    align-items: start;
+  }
+
+  .section-copy {
+    position: static;
+  }
+
+  .speaker-grid,
+  .community-grid,
+  .talk-showcase-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .speaker-directory-grid,
+  .speaker-roster-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-panel-talks,
+  .dashboard-panel-roster,
+  .dashboard-panel-community {
+    grid-column: auto;
+  }
+
+  .schedule-item {
+    grid-template-columns: 72px 1fr;
+  }
+
+  .schedule-item .tag {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 620px) {
+  .brand-name {
+    max-width: calc(100vw - 96px);
+    font-size: 1rem;
+    white-space: normal;
+  }
+
+  .hero {
+    min-height: auto;
+  }
+
+  .hero-inner {
+    min-height: auto;
+    padding-bottom: 56px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.35rem, 11vw, 3.55rem);
+  }
+
+  .hero-copy h1 span:first-child {
+    white-space: normal;
+  }
+
+  .hero-logo {
+    max-width: 340px;
+    max-height: 88px;
+    margin-bottom: 20px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .button-link {
+    width: 100%;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .speaker-directory-grid,
+  .speaker-roster-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .schedule-table,
+  .schedule-table tbody,
+  .schedule-table-row,
+  .schedule-table tbody td,
+  .schedule-table tbody th {
+    display: block;
+    width: auto;
+  }
+
+  .schedule-table-row {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(20, 32, 51, 0.09);
+  }
+
+  .schedule-table-row:last-child {
+    border-bottom: 0;
+  }
+
+  .schedule-table tbody td,
+  .schedule-table tbody th {
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .schedule-table-date {
+    margin-bottom: 8px;
+  }
+
+  .schedule-table-description {
+    margin-top: 6px;
+  }
+
+  .schedule-table-speaker {
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  .section {
+    padding: 64px 0;
+  }
+
+  .next-seminar {
+    border-radius: 12px;
+  }
+
+  .seminar-card-body {
+    padding: 22px;
+  }
+
+  .seminar-title {
+    font-size: 1.35rem;
+  }
+
+  .meta-row {
+    font-size: 0.98rem;
+  }
+
+  .seminar-speaker-row {
+    grid-template-columns: 64px auto;
+    gap: 12px;
+  }
+
+  .seminar-speaker-photo {
+    width: 64px;
+    height: 64px;
+    font-size: 1rem;
+  }
+
+  .section-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .schedule-item {
+    grid-template-columns: 54px 1fr;
+    align-items: start;
+  }
+
+  .schedule-item .tag {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .panel-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .panel-actions {
+    justify-content: flex-start;
+  }
+
+  .talk-card-header {
+    align-items: flex-start;
+    grid-template-columns: 1fr;
+  }
+
+  .talk-speaker-row {
+    grid-template-columns: 64px auto;
+    width: fit-content;
+    max-width: 100%;
+    justify-self: center;
+  }
+
+  .dashboard-panel-talks .talk-speaker-row,
+  .page-content-section:has([data-full-schedule-list]) .talk-showcase-grid .talk-speaker-row {
+    grid-template-columns: 64px auto;
+  }
+
+  .subpage-main .talk-speaker-row {
+    grid-template-columns: 1fr;
+    width: auto;
+    justify-self: stretch;
+  }
+
+  .community-action {
+    justify-self: center;
+  }
+
+  .archive-talk {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .archive-talk-date {
+    width: fit-content;
+    grid-template-columns: auto auto;
+    grid-auto-flow: column;
+    gap: 6px;
+    padding: 6px 12px;
+  }
+
+  .archive-semester:nth-child(odd) {
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+}

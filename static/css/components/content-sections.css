@@ -1,0 +1,944 @@
+.section {
+  padding: 44px 0;
+  background: var(--white);
+}
+
+.section-overview {
+  position: relative;
+  margin-top: 0;
+  background: linear-gradient(180deg, #ffffff, #faf6ef);
+  border-bottom: 1px solid var(--line);
+}
+
+.section-dashboard {
+  padding-top: 26px;
+  background: linear-gradient(180deg, #fffdf9, #f7f1e8);
+}
+
+.section-inner {
+  width: min(100% - 32px, 1360px);
+  margin: 0 auto;
+}
+
+.split-layout {
+  display: grid;
+  gap: 26px;
+  align-items: stretch;
+}
+
+.section-overview .split-layout {
+  grid-template-columns: 1fr;
+}
+
+.section-copy {
+  position: static;
+  padding-top: 2px;
+}
+
+.section-overview .section-copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px 18px;
+  max-width: 780px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.section h2,
+.page-panel-heading h1,
+.dashboard-panel h2 {
+  margin: 0;
+  color: var(--fsu-garnet-deep);
+  font-size: clamp(1.35rem, 2vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.section-copy p:not(.section-kicker) {
+  margin: 14px 0 0;
+  color: #1f2530;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.section-overview .section-copy p:not(.section-kicker) {
+  width: 100%;
+  margin-top: 0;
+}
+
+.section-overview .section-kicker {
+  margin: 0;
+}
+
+.overview-guide-link {
+  margin: 20px 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.overview-guide-link:empty {
+  display: none;
+}
+
+.overview-guide-link a {
+  color: var(--fsu-garnet);
+  font-weight: 600;
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+.overview-guide-link a:hover,
+.overview-guide-link a:focus-visible {
+  text-decoration: underline;
+}
+
+.feature-grid,
+.speaker-grid,
+.community-grid,
+.schedule-list {
+  display: grid;
+}
+
+.feature-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.feature-card {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  align-items: start;
+  min-height: 178px;
+  padding: 22px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+
+.card-icon {
+  display: inline-grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--fsu-garnet);
+  background: rgba(206, 184, 136, 0.24);
+  border: 1px solid rgba(206, 184, 136, 0.4);
+}
+
+.card-icon svg,
+.card-icon .inline-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.feature-card h3,
+.community-card h3,
+.speaker-card h3 {
+  margin: 0 0 6px;
+  color: var(--fsu-garnet-deep);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.feature-card p,
+.community-card p,
+.speaker-card p {
+  margin: 0;
+  color: #3d4655;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+
+.dashboard-panel {
+  min-width: 0;
+}
+
+.dashboard-panel-talks,
+.dashboard-panel-roster,
+.dashboard-panel-community {
+  grid-column: 1 / -1;
+}
+
+#community,
+#speakers {
+  scroll-margin-top: 90px;
+}
+
+.dashboard-panel-community .panel-heading,
+.dashboard-panel-roster .panel-heading,
+.dashboard-panel-talks .panel-heading,
+.page-content-section:has([data-full-schedule-list]) .panel-heading {
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+}
+
+.dashboard-panel-talks .panel-actions,
+.dashboard-panel-roster .panel-actions,
+.page-content-section:has([data-full-schedule-list]) .panel-actions {
+  justify-content: center;
+  width: 100%;
+}
+
+.dashboard-panel-talks .talk-showcase-grid,
+.page-content-section:has([data-full-schedule-list]) .talk-showcase-grid {
+  text-align: center;
+}
+
+.dashboard-panel-talks .talk-showcase-grid > .schedule-break-message,
+.page-content-section:has([data-full-schedule-list]) .talk-showcase-grid > .schedule-break-message {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: 40rem;
+  justify-self: center;
+}
+
+.dashboard-panel-talks .talk-card-header,
+.page-content-section:has([data-full-schedule-list]) .talk-showcase-grid .talk-card-header {
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
+
+.dashboard-panel-talks .talk-speaker-row,
+.page-content-section:has([data-full-schedule-list]) .talk-showcase-grid .talk-speaker-row {
+  grid-template-columns: 76px auto;
+  width: fit-content;
+  max-width: 100%;
+  justify-self: center;
+  align-items: center;
+  text-align: left;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(120, 47, 64, 0.16);
+}
+
+.text-link {
+  color: var(--fsu-garnet);
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.panel-button,
+.community-action {
+  min-height: 40px;
+  padding: 0 16px;
+  font-size: 0.84rem;
+}
+
+.schedule-list {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+.schedule-item {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(20, 32, 51, 0.08);
+}
+
+.schedule-item:last-child {
+  border-bottom: 0;
+}
+
+.date-badge {
+  display: inline-flex;
+  min-width: 62px;
+  min-height: 30px;
+  padding: 6px 9px;
+  align-items: baseline;
+  justify-content: center;
+  gap: 5px;
+  border-radius: 6px;
+  border: 1px solid rgba(120, 47, 64, 0.2);
+  background: #fdfbf7;
+  color: var(--ink);
+}
+
+.date-month {
+  color: var(--fsu-garnet);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.date-day {
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.schedule-content h3 {
+  margin: 0 0 4px;
+  color: var(--fsu-garnet-deep);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.schedule-content p {
+  margin: 0;
+  color: #4b5565;
+  font-size: 0.84rem;
+}
+
+.tag {
+  min-width: 92px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.tag-garnet {
+  background: rgba(120, 47, 64, 0.1);
+  border: 1px solid rgba(120, 47, 64, 0.22);
+  color: var(--fsu-garnet);
+}
+
+.tag-gold {
+  background: rgba(206, 184, 136, 0.24);
+  border: 1px solid rgba(193, 145, 62, 0.35);
+  color: #6d4a12;
+}
+
+.tag-blue {
+  background: rgba(28, 49, 87, 0.08);
+  border: 1px solid rgba(28, 49, 87, 0.22);
+  color: #1c3157;
+}
+
+.talk-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.talk-card {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 12px;
+  min-width: 0;
+  min-height: 260px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
+}
+
+.talk-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(120, 47, 64, 0.24);
+  box-shadow: 0 2px 4px rgba(7, 17, 31, 0.05), 0 18px 36px -18px rgba(7, 17, 31, 0.26);
+}
+
+.talk-card-spacer {
+  align-self: stretch;
+  width: 100%;
+  min-height: 12px;
+  margin-top: 2px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(120, 47, 64, 0.16);
+}
+
+.talk-card-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.talk-card h3 {
+  margin: 0;
+  color: var(--fsu-garnet-deep);
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.22;
+}
+
+.talk-speaker-row {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.talk-speaker-copy {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.talk-speaker-copy strong {
+  color: var(--fsu-garnet-deep);
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.speaker-name-link,
+.seminar-speaker-name-link {
+  color: inherit;
+  text-decoration: none;
+  text-decoration-color: rgba(120, 47, 64, 0.35);
+  text-underline-offset: 3px;
+}
+
+.speaker-name-link:hover,
+.speaker-name-link:focus-visible,
+.seminar-speaker-name-link:hover,
+.seminar-speaker-name-link:focus-visible {
+  text-decoration: underline;
+}
+
+.talk-speaker-copy strong span {
+  color: inherit;
+  font: inherit;
+}
+
+.talk-speaker-copy span,
+.talk-card p {
+  color: #4b5565;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.talk-card h3,
+.talk-speaker-copy strong,
+.talk-speaker-copy span,
+.speaker-topic {
+  overflow-wrap: anywhere;
+}
+
+.talk-specialties,
+.talk-speaker-copy .talk-specialties {
+  color: var(--fsu-garnet);
+  font-weight: 600;
+}
+
+.talk-card p,
+.talk-description {
+  margin: 0;
+}
+
+.talk-description {
+  margin-top: -4px;
+}
+
+.schedule-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  text-align: left;
+}
+
+.schedule-table thead th:nth-child(1) {
+  width: 108px;
+}
+
+.schedule-table thead th:nth-child(2) {
+  width: 24%;
+}
+
+.schedule-table thead th:nth-child(4) {
+  width: 17%;
+}
+
+.schedule-table thead th {
+  padding: 13px 18px;
+  border-bottom: 2px solid rgba(120, 47, 64, 0.28);
+  background: #faf6ef;
+  color: var(--fsu-garnet-deep);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.schedule-table tbody td,
+.schedule-table tbody th {
+  padding: 13px 16px;
+  border-bottom: 1px solid rgba(20, 32, 51, 0.08);
+  vertical-align: top;
+}
+
+.schedule-table-description {
+  color: #4b5565;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.schedule-table-row.is-break .schedule-table-description {
+  color: rgba(20, 32, 51, 0.35);
+}
+
+.schedule-table-row:last-child td,
+.schedule-table-row:last-child th {
+  border-bottom: 0;
+}
+
+.schedule-table-row:nth-child(even) {
+  background: rgba(120, 47, 64, 0.025);
+}
+
+.schedule-table-row.is-past .schedule-table-title {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.schedule-table-row.is-past .schedule-table-date-badge {
+  border-color: rgba(20, 32, 51, 0.14);
+  background: #f4f2ee;
+  color: #6b7280;
+}
+
+.schedule-table-row.is-past .schedule-table-date-badge .date-month {
+  color: #6b7280;
+}
+
+.schedule-table-row.is-break .schedule-table-title {
+  color: #4b5565;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.schedule-table-row.is-break .schedule-table-date-badge {
+  border-color: rgba(193, 145, 62, 0.4);
+  background: rgba(206, 184, 136, 0.18);
+  color: #6d4a12;
+}
+
+.schedule-table-row.is-break .schedule-table-date-badge .date-month {
+  color: #6d4a12;
+}
+
+.schedule-table-row.is-next {
+  background: rgba(206, 184, 136, 0.14);
+  box-shadow: inset 3px 0 0 var(--fsu-garnet);
+}
+
+.schedule-table-row.is-next .schedule-table-date-badge {
+  border-color: rgba(120, 47, 64, 0.35);
+  background: var(--fsu-garnet);
+  color: var(--white);
+}
+
+.schedule-table-row.is-next .schedule-table-date-badge .date-month {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.schedule-table-date {
+  white-space: nowrap;
+}
+
+.schedule-table-date-badge {
+  display: inline-flex;
+  min-width: 66px;
+  padding: 6px 10px;
+  align-items: baseline;
+  justify-content: center;
+  gap: 5px;
+  border-radius: 6px;
+  border: 1px solid rgba(120, 47, 64, 0.2);
+  background: #fdfbf7;
+  color: var(--ink);
+}
+
+.schedule-table-title {
+  color: var(--fsu-garnet-deep);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.schedule-table-next-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--fsu-garnet);
+  color: var(--white);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.schedule-table-speaker {
+  color: #293241;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.schedule-table-speaker-link {
+  color: var(--fsu-garnet);
+  font-weight: 600;
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+.schedule-table-speaker-link:hover,
+.schedule-table-speaker-link:focus-visible {
+  text-decoration: underline;
+}
+
+.schedule-table-speaker-tba {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.schedule-table-speaker-none {
+  color: rgba(20, 32, 51, 0.35);
+}
+
+.speaker-roster-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.speaker-roster-empty {
+  grid-column: 1 / -1;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  color: #4b5565;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.schedule-break-message {
+  color: var(--fsu-garnet-deep);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0;
+  padding: 1.5rem 1rem;
+  text-align: center;
+}
+
+.speaker-grid {
+  gap: 12px;
+}
+
+.speaker-card {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  min-width: 0;
+  min-height: 116px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+.speaker-media {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--fsu-garnet);
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  overflow: hidden;
+  border: 2px solid rgba(206, 184, 136, 0.6);
+  box-shadow: 0 4px 12px rgba(7, 17, 31, 0.12);
+}
+
+.speaker-media img {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.speaker-media span {
+  position: relative;
+  z-index: 3;
+}
+
+.speaker-body {
+  min-width: 0;
+}
+
+.speaker-body p:nth-of-type(2) {
+  display: none;
+}
+
+.speaker-topic {
+  display: inline-block;
+  max-width: 100%;
+  margin-top: 8px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  border: 1px solid rgba(120, 47, 64, 0.18);
+  background: rgba(120, 47, 64, 0.07);
+  color: var(--fsu-garnet);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.community-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.community-card {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 12px;
+  align-items: center;
+  min-height: 176px;
+  padding: 22px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+
+.community-card .card-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+}
+
+.community-card .card-icon svg,
+.community-card .card-icon .inline-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.community-copy {
+  min-width: 0;
+}
+
+.community-action {
+  justify-self: center;
+}
+
+.subpage-main {
+  padding-top: 74px;
+}
+
+.page-content-section {
+  min-height: calc(100vh - 74px);
+  padding-top: 54px;
+}
+
+.page-panel-heading {
+  margin-bottom: 20px;
+}
+
+.speaker-directory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.speaker-directory-card {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  min-height: 320px;
+  padding: 28px 20px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+  transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
+}
+
+.speaker-directory-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(120, 47, 64, 0.24);
+  box-shadow: 0 2px 4px rgba(7, 17, 31, 0.05), 0 18px 36px -18px rgba(7, 17, 31, 0.26);
+}
+
+.speaker-directory-photo {
+  position: relative;
+  width: 118px;
+  height: 118px;
+  border-radius: 50%;
+  background: var(--fsu-garnet);
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.55rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  overflow: hidden;
+  border: 2px solid rgba(206, 184, 136, 0.6);
+  box-shadow: 0 6px 16px rgba(7, 17, 31, 0.14);
+}
+
+.speaker-directory-photo img {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.speaker-directory-initials {
+  position: relative;
+  z-index: 3;
+}
+
+.speaker-directory-body {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+}
+
+.speaker-directory-name {
+  margin: 0;
+  color: var(--fsu-garnet-deep);
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.speaker-directory-role {
+  margin: 0;
+  color: #4b5565;
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.speaker-directory-affiliation {
+  margin: 0;
+  color: var(--fsu-garnet);
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.speaker-directory-talk-count:empty,
+.speaker-directory-role:empty,
+.speaker-directory-affiliation:empty {
+  display: none;
+}
+
+.speaker-directory-talk-count {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.speaker-directory-topics {
+  display: grid;
+  gap: 4px;
+  margin: 4px 0 0;
+  padding: 10px 0 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+
+.speaker-directory-topics li {
+  color: #293241;
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.speaker-directory-topic-title {
+  display: block;
+  font-weight: 600;
+  color: var(--fsu-garnet-deep);
+}
+
+.speaker-directory-topic-date {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.render-error {
+  position: fixed;
+  z-index: 40;
+  right: 16px;
+  bottom: 16px;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: var(--fsu-garnet-deep);
+  color: var(--white);
+  box-shadow: var(--shadow);
+}

@@ -1,0 +1,39 @@
+import { pageData } from "./js/data/page-data.js";
+import { loadTemplates } from "./js/data/templates.js";
+import { qs } from "./js/utils/dom.js";
+import {
+  renderCommunity,
+  renderFooter,
+  renderHero,
+  renderNavigation,
+  renderOverview,
+  renderSchedule,
+  renderSpeakers
+} from "./js/render/sections.js";
+import { bindNavigation } from "./js/ui/navigation.js";
+import { bindHashScroll, scrollToHashAfterPaint } from "./js/ui/scroll-to-hash.js";
+
+const init = async () => {
+  document.title = pageData.page.title;
+  qs('meta[name="description"]').setAttribute("content", pageData.page.description);
+
+  const templates = await loadTemplates();
+  renderNavigation("home");
+  await renderHero(templates);
+  renderOverview(templates);
+  await renderSchedule(templates);
+  await renderSpeakers(templates);
+  renderCommunity(templates);
+  renderFooter();
+  bindNavigation();
+  bindHashScroll();
+  scrollToHashAfterPaint();
+};
+
+init().catch((error) => {
+  console.error(error);
+  document.body.insertAdjacentHTML(
+    "afterbegin",
+    '<div class="render-error">The page could not load its templates. Please serve this folder with a local web server.</div>'
+  );
+});

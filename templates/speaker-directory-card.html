@@ -1,0 +1,13 @@
+<article class="speaker-directory-card">
+  <a class="speaker-directory-photo" href="{{ website }}" aria-label="{{ name }}">
+    {{ imageMarkup }}
+    <span class="speaker-directory-initials" {{ initialsHidden }}>{{ initials }}</span>
+  </a>
+  <div class="speaker-directory-body">
+    <h3 class="speaker-directory-name">{{ name }}</h3>
+    <p class="speaker-directory-role">{{ roleLine }}</p>
+    <p class="speaker-directory-affiliation">{{ affiliationLine }}</p>
+    <p class="speaker-directory-talk-count">{{ talkCountLabel }}</p>
+    <ul class="speaker-directory-topics">{{ topicsMarkup }}</ul>
+  </div>
+</article>

@@ -1,0 +1,102 @@
+.button-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 20px;
+  gap: 9px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease,
+    transform 160ms ease;
+  box-shadow: 0 1px 2px rgba(7, 17, 31, 0.12);
+}
+
+.button-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(7, 17, 31, 0.1), 0 10px 20px -10px rgba(7, 17, 31, 0.3);
+}
+
+.button-link:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(7, 17, 31, 0.12);
+}
+
+.button-link:focus-visible {
+  outline: 2px solid var(--fsu-gold);
+  outline-offset: 2px;
+}
+
+.button-link svg,
+.button-link .inline-icon,
+.card-icon svg,
+.card-icon .inline-icon,
+.meta-icon svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.button-link svg.brand-icon,
+.button-link svg.brand-icon path,
+.card-icon svg.brand-icon,
+.card-icon svg.brand-icon path {
+  fill: currentColor;
+  stroke: none;
+}
+
+.button-link .inline-icon,
+.card-icon .inline-icon {
+  object-fit: contain;
+}
+
+.button-primary {
+  background: var(--fsu-garnet);
+  color: var(--white);
+  border-color: rgba(42, 7, 18, 0.35);
+}
+
+.button-primary:hover {
+  background: #6a2938;
+}
+
+.button-discord {
+  background: #5865f2;
+  color: var(--white);
+  border-color: rgba(30, 36, 105, 0.45);
+}
+
+.button-discord:hover {
+  background: #4752c4;
+}
+
+.button-secondary-dark {
+  background: rgba(7, 22, 43, 0.92);
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.button-secondary-dark:hover {
+  background: rgba(11, 32, 60, 0.96);
+}
+
+.button-outline-gold {
+  background: rgba(7, 17, 31, 0.55);
+  color: var(--fsu-gold);
+  border-color: rgba(206, 184, 136, 0.65);
+}
+
+.button-outline-gold:hover {
+  background: rgba(7, 17, 31, 0.72);
+  border-color: rgba(206, 184, 136, 0.9);
+}

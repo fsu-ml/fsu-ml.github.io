@@ -1,0 +1,145 @@
+.trichotomy-inner {
+  display: grid;
+  gap: 26px;
+  max-width: 980px;
+}
+
+.trichotomy-header {
+  text-align: center;
+}
+
+.trichotomy-header h1 {
+  margin: 0;
+  color: var(--fsu-garnet-deep);
+  font-size: clamp(1.75rem, 3vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.12;
+}
+
+.trichotomy-intro {
+  max-width: 46rem;
+  margin: 14px auto 0;
+  color: #3d4655;
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.trichotomy-illustration {
+  width: min(560px, 100%);
+  margin: 0 auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+.trichotomy-guide {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.trichotomy-card {
+  padding: 20px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+.trichotomy-card h3 {
+  margin: 0 0 10px;
+  color: var(--fsu-garnet);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.trichotomy-card ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.trichotomy-card li {
+  color: #3d4655;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.trichotomy-llm {
+  text-align: center;
+}
+
+.trichotomy-llm h2 {
+  margin: 0;
+}
+
+.trichotomy-prompt {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  text-align: left;
+}
+
+.trichotomy-prompt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.trichotomy-prompt-actions strong {
+  color: var(--fsu-garnet-deep);
+}
+
+.trichotomy-copy {
+  min-height: 40px;
+  padding: 0 16px;
+  font-size: 0.84rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.trichotomy-prompt textarea {
+  width: 100%;
+  min-height: 240px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fdfbf7;
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.trichotomy-note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.trichotomy-disclaimer {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px dashed rgba(120, 47, 64, 0.3);
+  border-radius: 6px;
+  background: rgba(120, 47, 64, 0.04);
+  color: #4b5565;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .trichotomy-guide {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,27 @@
+import { pageData } from "./js/data/page-data.js";
+import { loadTemplates } from "./js/data/templates.js";
+import { qs } from "./js/utils/dom.js";
+import { renderFooter, renderFullSchedule, renderNavigation } from "./js/render/sections.js";
+import { bindNavigation } from "./js/ui/navigation.js";
+
+const init = async () => {
+  document.title = `Schedule | ${pageData.page.title}`;
+  qs('meta[name="description"]').setAttribute(
+    "content",
+    "Upcoming FSU SC Artificial Intelligence Seminar talks, dates, speakers, and topics."
+  );
+
+  await loadTemplates();
+  renderNavigation("schedule");
+  await renderFullSchedule();
+  renderFooter();
+  bindNavigation();
+};
+
+init().catch((error) => {
+  console.error(error);
+  document.body.insertAdjacentHTML(
+    "afterbegin",
+    '<div class="render-error">The schedule could not load. Please serve this folder with a local web server.</div>'
+  );
+});

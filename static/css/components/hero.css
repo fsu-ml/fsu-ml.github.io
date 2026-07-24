@@ -1,0 +1,109 @@
+﻿.hero {
+  position: relative;
+  min-height: 760px;
+  overflow: hidden;
+  background: var(--deep-navy);
+  color: var(--white);
+}
+
+.hero-media,
+.footer-media {
+  position: absolute;
+  inset: 0;
+  background-image: url("../../../images/banner-wide-half-dark.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-media {
+  opacity: 0.94;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(3, 8, 16, 0.96) 0%, rgba(8, 16, 30, 0.78) 40%, rgba(70, 8, 23, 0.46) 72%, rgba(8, 6, 13, 0.66) 100%),
+    radial-gradient(circle at 74% 42%, rgba(162, 14, 53, 0.42), transparent 32%),
+    radial-gradient(circle at 56% 44%, rgba(77, 163, 255, 0.2), transparent 24%);
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 32px, 1440px);
+  min-height: 760px;
+  margin: 0 auto;
+  padding: 118px 0 42px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(430px, 540px);
+  align-items: center;
+  gap: 64px;
+}
+
+.hero-copy h1,
+.section h2 {
+  margin: 0;
+  letter-spacing: 0;
+}
+
+.hero-copy,
+.next-seminar {
+  min-width: 0;
+}
+
+.hero-copy h1 {
+  max-width: none;
+  color: var(--white);
+  font-size: clamp(3rem, 4.2vw, 4.8rem);
+  line-height: 0.96;
+  text-shadow: 0 8px 34px rgba(0, 0, 0, 0.46);
+}
+
+.hero-copy h1 span {
+  display: block;
+}
+
+.hero-copy h1 span:first-child {
+  color: var(--fsu-gold);
+  white-space: nowrap;
+}
+
+.hero-logo {
+  width: 100%;
+  max-width: 560px;
+  max-height: 112px;
+  margin: 0 0 24px;
+  object-fit: contain;
+  object-position: left center;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5));
+}
+
+.hero-subtitle {
+  max-width: 650px;
+  margin: 24px 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(1.12rem, 2vw, 1.4rem);
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.42);
+}
+
+.section-kicker {
+  margin: 0 0 12px;
+  color: var(--fsu-garnet);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.hero .section-kicker,
+.next-seminar .section-kicker {
+  color: var(--fsu-gold);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 34px;
+}

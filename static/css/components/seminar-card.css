@@ -1,0 +1,199 @@
+﻿.next-seminar {
+  border-radius: 16px;
+  background:
+    linear-gradient(42deg, rgba(4, 17, 38, 0.82) 0%, rgba(22, 13, 32, 0.82) 42%, rgba(128, 14, 48, 0.76) 100%);
+  color: var(--white);
+  border: 1px solid rgba(246, 201, 107, 0.44);
+  box-shadow: 0 30px 72px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.13);
+  backdrop-filter: blur(18px) saturate(1.25);
+  overflow: hidden;
+}
+
+.seminar-label {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  gap: 10px;
+  margin: 0 0 18px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: var(--fsu-gold);
+  color: #2b0d15;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.seminar-label svg,
+.seminar-label .inline-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  color: #4b1020;
+  object-fit: contain;
+}
+
+.seminar-label svg {
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.seminar-title {
+  margin: 0;
+  color: var(--white);
+  font-size: clamp(1.55rem, 2.4vw, 2rem);
+  line-height: 1.16;
+  text-shadow: 0 3px 16px rgba(0, 0, 0, 0.35);
+}
+
+.seminar-card-body {
+  padding: 26px;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto auto auto;
+  gap: 18px;
+}
+
+.seminar-card-spacer {
+  align-self: stretch;
+  width: 100%;
+  min-height: 12px;
+  margin-top: 2px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(246, 201, 107, 0.35);
+}
+
+.seminar-meta {
+  display: grid;
+  gap: 12px;
+}
+
+.seminar-meta-secondary {
+  gap: 14px;
+}
+
+.seminar-divider {
+  height: 1px;
+  margin: 2px 0 0;
+  background: rgba(246, 201, 107, 0.3);
+}
+
+.meta-row {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 10px;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.94);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.meta-row a {
+  color: inherit;
+  text-decoration-color: rgba(246, 201, 107, 0.48);
+  text-underline-offset: 4px;
+}
+
+.meta-icon {
+  color: var(--fsu-gold);
+}
+
+.seminar-affiliation {
+  margin: 3px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.seminar-speaker-row {
+  display: grid;
+  grid-template-columns: 78px auto;
+  gap: 16px;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: 0;
+  justify-self: start;
+}
+
+.seminar-speaker-photo {
+  position: relative;
+  display: grid;
+  width: 78px;
+  height: 78px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--fsu-garnet);
+  border: 2px solid rgba(246, 201, 107, 0.6);
+  color: var(--white);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.seminar-speaker-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.seminar-speaker-photo span {
+  position: relative;
+  z-index: 1;
+}
+
+.seminar-speaker-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  text-align: left;
+}
+
+.seminar-speaker-name {
+  margin: 0;
+  color: var(--white);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.seminar-speaker-name span {
+  color: #f6d991;
+}
+
+.seminar-specialties {
+  width: fit-content;
+  margin: 4px 0 0;
+  padding: 5px 8px;
+  border: 1px solid rgba(246, 201, 107, 0.34);
+  border-radius: 6px;
+  background: rgba(246, 201, 107, 0.12);
+  color: #f6d991;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.seminar-description {
+  margin: -6px 0 0;
+  padding-left: 14px;
+  border-left: 3px solid rgba(246, 201, 107, 0.68);
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.next-seminar .schedule-break-message {
+  color: var(--white);
+  padding: 0 0 0 14px;
+  text-align: left;
+  text-shadow: 0 3px 16px rgba(0, 0, 0, 0.35);
+}
+

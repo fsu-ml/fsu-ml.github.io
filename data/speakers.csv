@@ -1,0 +1,71 @@
+season,name,talk_title,talk_date,description,materials
+2024-Fall,Gordon Erlebacher,Architectural structure of leading foundation large language models,2024-09-06,,https://www.youtube.com/watch?v=Jzgrkt8Tp-I
+2024-Fall,Tommie Juzek,The Biophysics Adequacy Hypothesis / Neuromorphic Hypothesis,2024-09-13,,https://www.youtube.com/watch?v=qRDKYWKMZig
+2024-Fall,Pankaj Chouhan,Torch Optimization,2024-09-20,,https://www.youtube.com/watch?v=88ErnGupDKc
+2024-Fall,Kevin Mueller,Torch Optimization,2024-09-20,,https://www.youtube.com/watch?v=88ErnGupDKc
+2024-Fall,Zina Ward,Why 'delve'? On Lexical Over-representation in Large Language Models,2024-10-04,,https://www.youtube.com/watch?v=7vFOpguZ-2c
+2024-Fall,Jose Miranda,KAN: Kolmogorov–Arnold Networks,2024-10-11,,https://www.youtube.com/watch?v=3S1Oi81pgEk; materials/jose_miranda/2024-10-11_KAN_presentation_MLGroup.pptx
+2024-Fall,Ben Adcock,Too good to believe? Two stories on hallucinations and instabilities in AI,2024-10-18,,https://www.youtube.com/watch?v=xasG2fIKemU
+2024-Fall,Jonathan Adams,Still No Plan (AI in Education),2024-10-25,,https://www.youtube.com/watch?v=4tHel6mQpqE
+2024-Fall,Philippe Miron,RAG: Retrieval-Augmented Generation,2024-11-01,,https://www.youtube.com/watch?v=BjgGaHBVB30; materials/philippe_miron/20241101-rag/; https://github.com/philippemiron/alice-rag-llm
+2024-Fall,Olmo Zavala Romero,GenCast,2024-11-08,,https://www.youtube.com/watch?v=4Il9kwhX85M; https://docs.google.com/presentation/d/1t8lq_Q-IVHigHJwlCjqV1HHWAa-lxvAONgsBFN3OcUw/edit?usp=sharing
+2024-Fall,Kunal Kanawade,Graph Neural Network,2024-11-15,,https://www.youtube.com/watch?v=uUNTWgJmYqU
+2024-Fall,Nathan Crock,AI Agents,2024-11-22,,https://www.youtube.com/watch?v=KdrjLmEv79c; materials/nathan_crock/FSU_DSC_AI_Seminar_Presentation.pptx
+2025-Spring,Tommie Juzek,Revisiting Learning from Human Feedback,2025-01-17,,https://youtu.be/MbWA0IX--7c; https://docs.google.com/presentation/d/1diHXRL6gEhbxnlFM9gWODaYVkTPSsfULJ4h3pZD10hM/edit?usp=sharing; materials/tom_juzek/COLING.pdf
+2025-Spring,Paul Marty,Informal Session: Custom AI in the Classroom,2025-01-24,,https://youtu.be/s3A8RwFYrOk
+2025-Spring,Kunal Kanawade,Transformers Review,2025-01-31,,https://youtu.be/KSGk7U-A-Mg; materials/kunal_kanawade/transformers_for_everyone.pptx; materials/kunal_kanawade/word2vec.ipynb; materials/kunal_kanawade/2025-01-31_talk_resources.txt
+2025-Spring,Gordon Erlebacher,Beyond transformers,2025-02-07,,https://youtu.be/vc2k4FS07y4
+2025-Spring,Jose Miranda,"Recent developments related to video, audio, hardware",2025-02-14,,https://youtu.be/hVvxwd4LG6U
+2025-Spring,Brian Bartoldson,AI Safety at Scale,2025-02-21,,https://youtu.be/Y52OIhl5m48
+2025-Spring,Olmo Zavala Romero,Advances in Fine-Tuning Methods: From Full Fine-Tuning to Parameter-Efficient Approaches,2025-03-07,,https://youtu.be/FuURCiukTQQ
+2025-Spring,Nathan Crock,Deep dive agents,2025-04-04,,
+2025-Spring,Kathryn,Non-Gaussian ensemble data assimilation,2025-04-11,,
+2025-Spring,Hristo Chipilski,Non-Gaussian ensemble data assimilation,2025-04-11,,
+2025-Spring,Pankaj Chouhan,Tokenization,2025-04-18,,
+2025-Spring,Yuri Bizzoni,Computational Criticism: Quantitative Models of Great Literature,2025-04-25,,
+2025-Fall,Delaney La Rosa,AI for Industry,2025-09-05,,
+2025-Fall,Anthony Nguyen,Panel: Impact of AI on Education,2025-09-12,,https://calendar.fsu.edu/event/artificial-intelligence-and-its-impact-on-higher-education; https://youtu.be/MbvXqpt2ZaU
+2025-Fall,Rocío Díaz Martín,The Barycentric Coding Model in Optimal Transport,2025-09-19,,
+2025-Fall,Olmo Zavala Romero,Transformer: The Basics,2025-09-26,,
+2025-Fall,Jose Miranda,Post AGI Economy,2025-10-03,,materials/jose_miranda/2025-10-03_jm_Post_Labour_Economics.pdf
+2025-Fall,Kunal Kanawade,Diffusion Models for PDE Learning,2025-10-10,,
+2025-Fall,Conny Knieling,The Moral Exploitation of Data Workers,2025-10-17,,
+2025-Fall,Anthony Nguyen,The Moral Exploitation of Data Workers,2025-10-17,,
+2025-Fall,Gordon Erlebacher,"Latest Architectures, Hierarchical Reasoning Model",2025-10-24,,
+2025-Fall,Zina Ward,Platonic Representation Hypothesis,2025-10-31,,
+2025-Fall,Tommie Juzek,Before Ablation: Groundwork for Lexical Alignment Tests,2025-11-07,,https://docs.google.com/presentation/d/190-hpUXQLcgwJmObsua_tJuqecyo5WXNqyiKfiK9le0/edit?usp=sharing
+2025-Fall,Xiaoyang Ming,Before Ablation: Groundwork for Lexical Alignment Tests,2025-11-07,,https://docs.google.com/presentation/d/190-hpUXQLcgwJmObsua_tJuqecyo5WXNqyiKfiK9le0/edit?usp=sharing
+2025-Fall,Nick Dexter,Optimization,2025-11-14,,
+2025-Fall,Gordon Erlebacher,Parallel Computing,2025-11-21,,materials/gordon_erlebacher/gpt5_presentation.pdf
+2025-Fall,Peter Beerli,Computational Biology,2025-12-05,,
+2026-Spring,misc,Constitutive Session,2026-01-09,,
+2026-Spring,misc,Open Technology Forum,2026-01-16,,
+2026-Spring,Jose Miranda,"Agentic AI, Autonomous Systems, and Applications",2026-01-23,,
+2026-Spring,,Session moved to 20 Feb,2026-01-30,,
+2026-Spring,Kunal Kanawade,Diffusion models,2026-02-06,,materials/kunal_kanawade/Diffusion_Models_for_Everyone.pdf; materials/nick_dexter/diffusers_example.ipynb
+2026-Spring,Ryan Murray,A variational approach to studying dimension reduction algorithms,2026-02-13,,
+2026-Spring,Zina Ward,AI and Human Creativity: Empirical Evidence for Homogenization,2026-02-20,,
+2026-Spring,-,AIMLx 2026,2026-02-27,,https://datascience.fsu.edu/event/aimlx26-artificial-intelligence-and-machine-learning-expo-florida-state-university
+2026-Spring,Brendon Gutierrez,AI/ML for health,2026-03-06,,
+2026-Spring,Seul Lee,Panel on AI and education,2026-03-13,,
+2026-Spring,☀️🍹☀️,Spring Break,2026-03-20,,
+2026-Spring,Olmo Zavala Romero,Scientific machine learning,2026-03-27,,
+2026-Spring,Eesha Mukherjee,AI for Scientific Discovery,2026-04-03,,
+2026-Spring,Nick Dexter,Low Rank Adaptation PEFT,2026-04-10,,
+2026-Spring,Tommie Juzek;Lan Li,Reinforcement Learning from Verifiable Rewards,2026-04-17,,
+2026-Spring,Gordon Erlebacher,The Quantum Transformer,2026-04-24,,
+2026-Fall,Speaker TBA,Status of AI in Robotics,2026-08-28,"A survey of where robotics stands today: embodied learning, manipulation, and the gap between lab demos and deployed systems.",
+2026-Fall,Speaker TBA,AI Weather Forecasting and Earth-System Modeling,2026-09-04,How data-driven forecast models are reshaping numerical weather prediction and coupled Earth-system simulation.,
+2026-Fall,Speaker TBA,AI for Scientific Discovery,2026-09-11,"Where machine learning is accelerating hypothesis generation, experiment design, and discovery across the sciences.",
+2026-Fall,Speaker TBA,"Kimi 3 (Transformers, MoE, and Beyond)",2026-09-18,A look at the Kimi 3 architecture and what mixture-of-experts designs mean for the next generation of transformers.,
+2026-Fall,Speaker TBA,SciML (PINNs and/or Neural Operators),2026-09-25,"Physics-informed neural networks and neural operators for solving, and learning from, differential equations.",
+2026-Fall,Speaker TBA,Cyber Security,2026-10-02,"Adversarial machine learning, model security, and how AI is being used on both sides of the security landscape.",
+2026-Fall,Speaker TBA,Agentic Systems,2026-10-09,"Planning, tool use, and memory in autonomous LLM agents, and where today's systems still break down.",
+2026-Fall,Speaker TBA,Using AI in Mathematical Research,2026-10-16,How language models and proof assistants are being used to explore conjectures and support mathematical research.,
+2026-Fall,Speaker TBA,Knowledge Graphs,2026-10-23,Structured representations of knowledge and how they pair with language models for grounded reasoning.,
+2026-Fall,Speaker TBA,Interpretability (Math Joint),2026-10-30,Mechanistic interpretability and the mathematics of understanding what a trained network actually computes.,
+2026-Fall,Gordon Erlebacher,World Models (LeCun),2026-11-06,LeCun's world-model program: joint-embedding predictive architectures and learning by prediction rather than generation.,
+2026-Fall,Brendon Gutierrez,Surgical Robotics / Deep AI for Health,2026-11-13,"Deep learning in the operating room: perception, autonomy, and safety in surgical and clinical robotics.",
+2026-Fall,🏈,Homecoming — No Classes After 12:00 p.m.,2026-11-20,,
+2026-Fall,🦃,Thanksgiving Holiday — No Classes,2026-11-27,,
+2026-Fall,Speaker TBA,Computational Biology / BioMath,2026-12-04,"Machine learning applied to biological sequence, structure, and population-scale modeling problems.",

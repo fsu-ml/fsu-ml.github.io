@@ -1,0 +1,108 @@
+﻿.site-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 20;
+  background:
+    linear-gradient(90deg, rgba(23, 3, 10, 0.86), rgba(54, 8, 20, 0.78), rgba(19, 4, 12, 0.86));
+  border-bottom: 1px solid rgba(206, 184, 136, 0.34);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(18px) saturate(1.25);
+}
+
+.nav-shell {
+  position: relative;
+  width: min(100% - 40px, 1480px);
+  min-height: 74px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.brand-mark {
+  display: inline-grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  place-items: center;
+  border: 2px solid var(--fsu-gold);
+  border-radius: 50%;
+  background: var(--fsu-garnet);
+  color: var(--fsu-gold);
+  font-size: 0.86rem;
+  letter-spacing: 0;
+}
+
+.brand-name {
+  max-width: 520px;
+  color: var(--white);
+  font-size: clamp(1.12rem, 2vw, 1.58rem);
+  line-height: 1.12;
+  text-align: left;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
+}
+
+.nav-links {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-link {
+  position: relative;
+  padding: 10px 12px;
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  font-size: 0.93rem;
+  font-weight: 600;
+  transition: color 150ms ease;
+}
+
+.nav-link:hover,
+.nav-link.is-active {
+  color: var(--fsu-gold);
+}
+
+.nav-link.is-active::after {
+  position: absolute;
+  right: 12px;
+  bottom: 4px;
+  left: 12px;
+  height: 2px;
+  content: "";
+  background: var(--fsu-gold);
+}
+
+.nav-toggle {
+  position: relative;
+  z-index: 2;
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(206, 184, 136, 0.4);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--white);
+}
+
+.nav-toggle span:not(.sr-only) {
+  display: block;
+  width: 18px;
+  height: 2px;
+  margin: 4px auto;
+  background: currentColor;
+}
