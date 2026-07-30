@@ -150,7 +150,7 @@ export const pageData = {
       ]
     },
     social: {
-      title: "Follow & Connect",
+      title: "Connect With Us",
       items: [
         { label: "Discord", href: "https://discord.com/invite/raTxTXmM5B", icon: "discord" },
         {

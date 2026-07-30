@@ -620,7 +620,7 @@
 .schedule-table tbody th {
   padding: 13px 16px;
   border-bottom: 1px solid rgba(20, 32, 51, 0.08);
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .schedule-table-description {

@@ -118,7 +118,7 @@ export const renderArchive = async () => {
 
   if (intro) {
     intro.innerHTML = `
-      <p class="section-kicker">Past Seminars</p>
+      <p class="section-kicker">Past Semesters</p>
       <h1 id="archive-title">Seminar Archive</h1>
       <p class="archive-intro-copy">Browse past Artificial Intelligence Seminar talks by semester, with speakers and materials.</p>
     `;

@@ -111,7 +111,8 @@
 .seminar-speaker-row {
   display: grid;
   grid-template-columns: 78px auto;
-  gap: 16px;
+  column-gap: 16px;
+  row-gap: 10px;
   align-items: center;
   width: fit-content;
   max-width: 100%;
@@ -169,8 +170,10 @@
 }
 
 .seminar-specialties {
+  /* Sits on its own row beneath the photo and name, spanning both columns. */
+  grid-column: 1 / -1;
   width: fit-content;
-  margin: 4px 0 0;
+  margin: 0;
   padding: 5px 8px;
   border: 1px solid rgba(246, 201, 107, 0.34);
   border-radius: 6px;

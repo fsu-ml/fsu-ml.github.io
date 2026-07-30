@@ -397,8 +397,8 @@ export const renderHero = async (templates) => {
         <div class="seminar-speaker-copy">
           <p class="seminar-speaker-name">${speakerNameMarkup}</p>
           ${speakerAffiliationMarkup}
-          ${speakerSpecialtiesMarkup}
         </div>
+        ${speakerSpecialtiesMarkup}
       </div>
       <div class="seminar-divider" aria-hidden="true"></div>
       <div class="seminar-meta seminar-meta-secondary">
