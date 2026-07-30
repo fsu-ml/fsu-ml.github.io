@@ -112,11 +112,10 @@ const nextSeminarLabel = (talkDate = "", fallbackDateTime = "") => {
   return "Next Seminar: TBA";
 };
 
-const formatDirectoryRole = (speaker = {}) => {
-  const title = speaker.title || "Speaker";
-  const department = speaker.department || "Department TBA";
-  return `${title} · ${department}`;
-};
+// Speakers whose title already carries their affiliation (lab directors, and
+// anyone without a home department) skip the department half of the line.
+const formatDirectoryRole = (speaker = {}) =>
+  [speaker.title || "Speaker", speaker.department].filter(Boolean).join(" · ");
 
 const formatDirectoryAffiliation = (speaker = {}) => speaker.affiliation || "Affiliation TBA";
 
@@ -267,8 +266,10 @@ const renderTalkCard = (speaker, details = {}) => {
       ? ` <span>&middot; ${escapeHtml(primarySpeaker.title)}</span>`
       : "";
   const affiliationMarkup = showProfileDetails
-    ? `<span>${escapeHtml(primarySpeaker.department || "Department TBA")} &middot; ${escapeHtml(
-        primarySpeaker.affiliation || "Affiliation TBA"
+    ? `<span>${escapeHtml(
+        [primarySpeaker.department, primarySpeaker.affiliation || "Affiliation TBA"]
+          .filter(Boolean)
+          .join(" · ")
       )}</span>`
     : "";
   const specialtiesMarkup =
@@ -349,7 +350,7 @@ export const renderHero = async (templates) => {
   const multiSpeaker = talkSpeakers.length > 1;
   const speakerName = speaker.name || seminar.speaker;
   const showProfileDetails = !multiSpeaker && (!useCsv || speaker.hasProfile);
-  const speakerDepartment = primarySpeaker.department || "Department TBA";
+  const speakerDepartment = primarySpeaker.department || "";
   const speakerAffiliation = primarySpeaker.affiliation || seminar.affiliation;
   const speakerSpecialties = formatSpecialties(speaker.topic || scheduleItem.tag || "");
   const talkTitle = speaker.talkTitle || seminar.talkTitle;
@@ -373,8 +374,8 @@ export const renderHero = async (templates) => {
     : `${escapeHtml(speakerName)}${speakerTitleMarkup}`;
   const speakerAffiliationMarkup =
     showProfileDetails && (speakerDepartment || speakerAffiliation)
-      ? `<p class="seminar-affiliation">${escapeHtml(speakerDepartment)} &middot; ${escapeHtml(
-          speakerAffiliation
+      ? `<p class="seminar-affiliation">${escapeHtml(
+          [speakerDepartment, speakerAffiliation].filter(Boolean).join(" · ")
         )}</p>`
       : "";
   const speakerSpecialtiesMarkup =
@@ -471,7 +472,7 @@ export const renderSchedule = async () => {
 
   if (resolved?.status === "break") {
     if (kicker) {
-      kicker.textContent = "Seminar on break";
+      kicker.textContent = "Seminar on Break";
     }
     list.innerHTML = renderBreakMarkup(resolved.breakKind);
     return;
@@ -480,7 +481,7 @@ export const renderSchedule = async () => {
   const talks = resolved?.seasonTalks?.length ? resolved.seasonTalks : pageScheduleItemsAsTalks();
 
   if (kicker) {
-    kicker.textContent = resolved ? `${formatSeasonHeading(resolved.seasonKey)} Schedule` : "Upcoming Talks";
+    kicker.textContent = resolved ? `${formatSeasonHeading(resolved.seasonKey)} Schedule` : "This Semester";
   }
 
   list.innerHTML = renderScheduleTable(talks);
@@ -632,7 +633,7 @@ export const renderFullSchedule = async () => {
 
   if (resolved?.status === "break") {
     if (kicker) {
-      kicker.textContent = "Seminar on break";
+      kicker.textContent = "Seminar on Break";
     }
     list.innerHTML = renderBreakMarkup(resolved.breakKind);
     return;
