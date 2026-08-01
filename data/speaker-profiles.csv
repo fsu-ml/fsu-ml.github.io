@@ -1,5 +1,6 @@
 name,title,department,affiliation,specialties,email,website,profile_url,image
 Anthony Nguyen,Assistant Professor,Philosophy,Florida State University,"philosophy of AI; ethics; higher education",,https://philosophy.fsu.edu/person/anthony-nguyen,https://philosophy.fsu.edu/person/anthony-nguyen,
+Astrit Tola,Postdoctoral Scholar,Department of Mathematics,Florida State University,"topological data analysis; graph representation learning; topology-aware AI",,https://astrittola.github.io/,https://astrittola.github.io/,astrit_tola.jpeg
 Ben Adcock,Professor,Mathematics,Simon Fraser University,"compressed sensing; scientific machine learning; AI stability",,https://benadcock.org/,https://benadcock.org/,
 Brendon Gutierrez,Applied AI Researcher,Department of Scientific Computing,Florida State University,"Applied AI; Scientific Discovery; Agentic AI",brendon.gutierrez@fsu.edu,https://brendondgr.com,https://brendondgr.com,brendon_gutierrez.jpg
 Brian Bartoldson,Researcher,,,"AI safety; alignment; scaling",,https://brianbartoldson.wordpress.com/,https://brianbartoldson.wordpress.com/,
@@ -7,7 +8,7 @@ Christian Hubicki,"Associate Professor, Director of the Optimal Robotics Lab",De
 Conny Knieling,Researcher,Philosophy,University of Pittsburgh,"AI ethics; data labor; moral philosophy",,https://www.philosophy.pitt.edu/people/ant-49,https://www.philosophy.pitt.edu/people/ant-49,
 Delaney La Rosa,Faculty,Nursing,Florida State University,"AI for industry; nursing informatics",,https://nursing.fsu.edu/faculty-staff/delaney-wright-la-rosa,https://nursing.fsu.edu/faculty-staff/delaney-wright-la-rosa,
 Gordon Erlebacher,Professor,Department of Scientific Computing,Florida State University,"neuronal populations; evolving topologies; large language models",gerlebacher@fsu.edu,https://www.sc.fsu.edu/people?uid=gerlebacher,https://www.sc.fsu.edu/people?uid=gerlebacher,gorden_erlebacher.jpg
-Hristo Chipilski,Researcher,Scientific Computing,Florida State University,"data assimilation; ensemble methods; geoscience",,https://www.sc.fsu.edu/people?uid=hgc23,https://www.sc.fsu.edu/people?uid=hgc23,
+Hristo Chipilski,Assistant Professor,Department of Scientific Computing,Florida State University,"data assimilation; artificial intelligence; numerical weather prediction; atmospheric dynamics",,https://www.sc.fsu.edu/people?uid=hgc23,https://www.sc.fsu.edu/people?uid=hgc23,hristo_chipilski.jpg
 Jonathan Adams,Faculty,College of Communication and Information,Florida State University,"AI in higher education; synthetic data for computer vision; RAG for research",,https://directory.cci.fsu.edu/jonathan-adams/,https://directory.cci.fsu.edu/jonathan-adams/,jonathan_adams.jpg
 Jose Miranda,Graduate Researcher,Scientific Computing,Florida State University,"machine learning in oceanography; machine vision; large language models",,https://www.sc.fsu.edu/people?uid=jrm22n,https://www.sc.fsu.edu/people?uid=jrm22n,jose_miranda.jpg
 Kathryn,Graduate Researcher,,Florida State University,"ensemble data assimilation; geoscience",,,,
