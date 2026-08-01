@@ -1,4 +1,4 @@
-season,name,talk_title,talk_date,description,materials
+season,name,talk_title,talk_date,description,materials,event_image
 2024-Fall,Gordon Erlebacher,Architectural structure of leading foundation large language models,2024-09-06,,https://www.youtube.com/watch?v=Jzgrkt8Tp-I
 2024-Fall,Tommie Juzek,The Biophysics Adequacy Hypothesis / Neuromorphic Hypothesis,2024-09-13,,https://www.youtube.com/watch?v=qRDKYWKMZig
 2024-Fall,Pankaj Chouhan,Torch Optimization,2024-09-20,,https://www.youtube.com/watch?v=88ErnGupDKc
@@ -66,6 +66,6 @@ season,name,talk_title,talk_date,description,materials
 2026-Fall,Speaker TBA,Interpretability (Math Joint),2026-10-30,Mechanistic interpretability and the mathematics of understanding what a trained network actually computes.,
 2026-Fall,Gordon Erlebacher,World Models (LeCun),2026-11-06,LeCun's world-model program: joint-embedding predictive architectures and learning by prediction rather than generation.,
 2026-Fall,Brendon Gutierrez,Surgical Robotics / Deep AI for Health,2026-11-13,"Deep learning in the operating room: perception, autonomy, and safety in surgical and clinical robotics.",
-2026-Fall,🏈,Homecoming — No Classes After 12:00 p.m.,2026-11-20,,
-2026-Fall,🦃,Thanksgiving Holiday — No Classes,2026-11-27,,
+2026-Fall,🏈,Homecoming — No Classes After 12:00 p.m.,2026-11-20,,,fsu-homecoming.png
+2026-Fall,🦃,Thanksgiving Holiday — No Classes,2026-11-27,,,thanksgiving.png
 2026-Fall,Speaker TBA,Computational Biology / BioMath,2026-12-04,"Machine learning applied to biological sequence, structure, and population-scale modeling problems.",

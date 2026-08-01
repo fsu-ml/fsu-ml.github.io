@@ -174,6 +174,9 @@ const isBreakEntry = (talk = {}) =>
 
 const scheduleRowSpeakerCell = (talk) => {
   if (isBreakEntry(talk)) {
+    if (talk.eventImage) {
+      return `<img class="schedule-table-event-image" src="${escapeHtml(talk.eventImage)}" alt="">`;
+    }
     return '<span class="schedule-table-speaker-none" aria-label="No seminar">&mdash;</span>';
   }
   const talkSpeakers = getTalkSpeakers(talk).filter((speaker) => !isTbaSpeaker(speaker.name));
@@ -250,6 +253,29 @@ const renderBreakMarkup = (breakKind) =>
 
 const renderTalkCard = (speaker, details = {}) => {
   const badge = dateBadge(speaker.talkDate);
+  const description = speaker.description || details.description || "Talk details coming soon.";
+
+  if (isBreakEntry(speaker)) {
+    const eventImageMarkup = speaker.eventImage
+      ? `<img src="${escapeHtml(speaker.eventImage)}" alt="${escapeHtml(`${speaker.talkTitle} illustration`)}">`
+      : `<span class="talk-event-fallback" aria-hidden="true">${escapeHtml(speaker.name || "")}</span>`;
+
+    return `
+      <article class="talk-card talk-card-event">
+        <div class="talk-card-header">
+          <div class="date-badge" aria-label="${escapeHtml(readableDate(speaker.talkDate))}">
+            <span class="date-month">${escapeHtml(badge.month)}</span>
+            <span class="date-day">${escapeHtml(badge.day)}</span>
+          </div>
+          <h3>${escapeHtml(speaker.talkTitle)}</h3>
+        </div>
+        ${speaker.description || details.description ? `<p class="talk-description">${escapeHtml(description)}</p>` : ""}
+        <div class="talk-card-spacer" aria-hidden="true"></div>
+        <div class="talk-event-art">${eventImageMarkup}</div>
+      </article>
+    `;
+  }
+
   const talkSpeakers = getTalkSpeakers(speaker);
   const primarySpeaker = talkSpeakers[0] || speaker;
   const multiSpeaker = talkSpeakers.length > 1;
@@ -260,7 +286,6 @@ const renderTalkCard = (speaker, details = {}) => {
     ? `<img src="${escapeHtml(primarySpeaker.image)}" alt="${escapeHtml(primarySpeaker.name || name)}" onerror="this.remove(); this.nextElementSibling.hidden = false;">`
     : "";
   const tag = details.tag || topicTag(speaker.topic);
-  const description = speaker.description || details.description || "Talk details coming soon.";
   const titleMarkup =
     showProfileDetails && primarySpeaker.title
       ? ` <span>&middot; ${escapeHtml(primarySpeaker.title)}</span>`

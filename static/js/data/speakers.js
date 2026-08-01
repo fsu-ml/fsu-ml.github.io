@@ -1,6 +1,7 @@
 import { parseCsv } from "../utils/csv.js";
 
 const speakerImagesUrl = new URL("../../../data/speaker-images/", import.meta.url);
+const eventImagesUrl = new URL("../../../data/event-images/", import.meta.url);
 const speakersCsvUrl = new URL("../../../data/speakers.csv", import.meta.url);
 const speakerProfilesCsvUrl = new URL("../../../data/speaker-profiles.csv", import.meta.url);
 
@@ -114,6 +115,7 @@ const mapSpeakerRecord = (profile, schedule = {}, { hasProfile: profileListed = 
   season: schedule.season || "",
   description: schedule.description || "",
   materials: schedule.materials || "",
+  eventImage: schedule.event_image ? new URL(schedule.event_image, eventImagesUrl).href : "",
   image: profile.image ? new URL(profile.image, speakerImagesUrl).href : "",
   hasProfile: profileListed
 });
