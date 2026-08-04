@@ -62,8 +62,8 @@ season,name,talk_title,talk_date,description,materials,event_image
 2026-Fall,Speaker TBA,Cyber Security,2026-10-02,"Adversarial machine learning, model security, and how AI is being used on both sides of the security landscape.",
 2026-Fall,Xiuwen Liu,Agentic Systems,2026-10-09,"Dr. Xiuwen Liu, Professor of Computer Science, on planning, tool use, and memory in autonomous LLM agents, and where today's systems still break down.",
 2026-Fall,Speaker TBA,Using AI in Mathematical Research,2026-10-16,How language models and proof assistants are being used to explore conjectures and support mathematical research.,
-2026-Fall,Astrit Tola,Topology-Aware Graph Representation Learning,2026-10-23,"How topological data analysis can provide expressive, interpretable representations for graph learning.",
-2026-Fall,Speaker TBA,Interpretability (Math Joint),2026-10-30,Mechanistic interpretability and the mathematics of understanding what a trained network actually computes.,
+2026-Fall,Astrit Tola,Topology-Aware Graph Representation Learning (Math Joint),2026-10-23,"How topological data analysis can provide expressive, interpretable representations for graph learning.",
+2026-Fall,Speaker TBA,Interpretability,2026-10-30,Mechanistic interpretability and the mathematics of understanding what a trained network actually computes.,
 2026-Fall,Gordon Erlebacher,World Models (LeCun),2026-11-06,LeCun's world-model program: joint-embedding predictive architectures and learning by prediction rather than generation.,
 2026-Fall,Brendon Gutierrez,Surgical Robotics / Deep AI for Health,2026-11-13,"Deep learning in the operating room: perception, autonomy, and safety in surgical and clinical robotics.",
 2026-Fall,🏈,Homecoming — No Classes After 12:00 p.m.,2026-11-20,,,fsu-homecoming.png
