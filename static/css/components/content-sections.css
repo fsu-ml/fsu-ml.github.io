@@ -629,6 +629,14 @@
   width: 17%;
 }
 
+/* Date and Speaker columns are centered; Topic and Description stay left aligned. */
+.schedule-table thead th:nth-child(1),
+.schedule-table thead th:nth-child(4),
+.schedule-table-date,
+.schedule-table-speaker {
+  text-align: center;
+}
+
 .schedule-table thead th {
   padding: 13px 18px;
   border-bottom: 2px solid rgba(120, 47, 64, 0.28);

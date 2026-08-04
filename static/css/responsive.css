@@ -162,6 +162,12 @@
     border-bottom: 0;
   }
 
+  /* Stacked rows read as a block, so the centered desktop columns go back to left. */
+  .schedule-table-date,
+  .schedule-table-speaker {
+    text-align: left;
+  }
+
   .schedule-table-date {
     margin-bottom: 8px;
   }
