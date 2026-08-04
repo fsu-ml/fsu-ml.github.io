@@ -59,7 +59,7 @@ season,name,talk_title,talk_date,description,materials,event_image
 2026-Fall,Speaker TBA,AI for Scientific Discovery,2026-09-11,"Where machine learning is accelerating hypothesis generation, experiment design, and discovery across the sciences.",
 2026-Fall,Speaker TBA,"Kimi 3 (Transformers, MoE, and Beyond)",2026-09-18,A look at the Kimi 3 architecture and what mixture-of-experts designs mean for the next generation of transformers.,
 2026-Fall,Hristo Chipilski,Exascale Generative Data Assimilation in Earth System Prediction,2026-09-25,"How generative AI and exascale computing can combine numerical models with observations for next-generation Earth system prediction.",
-2026-Fall,Brian Bartoldson,AI Safety at Scale,,2026-10-02,"TBA",
+2026-Fall,Brian Bartoldson,AI Safety at Scale,2026-10-02,"TBA",
 2026-Fall,Xiuwen Liu,Agentic Systems,2026-10-09,"Dr. Xiuwen Liu, Professor of Computer Science, on planning, tool use, and memory in autonomous LLM agents, and where today's systems still break down.",
 2026-Fall,Speaker TBA,Using AI in Mathematical Research,2026-10-16,How language models and proof assistants are being used to explore conjectures and support mathematical research.,
 2026-Fall,Astrit Tola,Topology-Aware Graph Representation Learning (Math Joint),2026-10-23,"How topological data analysis can provide expressive, interpretable representations for graph learning.",
