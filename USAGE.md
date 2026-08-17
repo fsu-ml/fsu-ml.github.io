@@ -101,7 +101,7 @@ used today):
 
 ```csv
 2026-Spring,☀️🍹☀️,Spring Break,2026-03-20,,
-2026-Fall,🦃,Thanksgiving Holiday,2026-11-26,,,thanksgiving.png
+2026-Fall,🦃,Thanksgiving Holiday,2026-11-26,,,thanksgiving.webp
 ```
 
 ---
@@ -144,11 +144,36 @@ Notes:
 | --- | --- | --- |
 | `data/speaker-images/` | Speaker headshots | `image` column of `speaker-profiles.csv` |
 | `data/event-images/` | Holiday and break artwork | `event_image` column of `speakers.csv` |
-| `images/` | General page artwork (hero and footer use `images/banner-wide-half-dark.png`) | CSS and `page-data.js` |
+| `images/` | General page artwork (hero and footer use `images/banner-wide-half-dark.webp`) | CSS and `page-data.js` |
 
-Use lowercase, underscore-separated filenames (`jane_doe.jpg`). Headshots look best
+Use lowercase, underscore-separated filenames (`jane_doe.webp`). Headshots look best
 roughly square; crop before committing rather than resizing in CSS. Reference them by
 filename only in the CSVs — the loaders build the full path.
+
+### Optimize before committing
+
+Every raster image on the site is **WebP**, sized close to how it actually renders —
+committing a 2 MB camera JPEG makes the page slow for everyone. Convert with
+ImageMagick before adding the file:
+
+```bash
+magick input.jpg -resize 400x400\> -quality 82 data/speaker-images/jane_doe.webp
+```
+
+The `\>` means "shrink only, never upscale". Target sizes:
+
+| Kind | Max longest edge | Quality | Why |
+| --- | --- | --- | --- |
+| Speaker headshot | 400 px | 82 | Renders as a 78 px circle; 400 px covers high-DPI screens |
+| Event / holiday art | 256 px | 85 | Renders at 64×52 in the schedule table |
+| Page artwork (`images/`) | Its rendered width | 82 | E.g. the hero background stays 1920 px wide |
+
+Keep headshots under roughly 40 KB and page artwork under roughly 250 KB.
+
+**One exception:** `images/banner-wide.jpg` is the social-preview card referenced by the
+`og:image` / `twitter:image` tags in every page's `<head>`. It stays a **JPEG** because
+LinkedIn, Slack, and some other link unfurlers still do not render WebP previews
+reliably. Keep it 1200 px wide.
 
 ---
 
