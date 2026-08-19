@@ -150,30 +150,93 @@ Use lowercase, underscore-separated filenames (`jane_doe.webp`). Headshots look 
 roughly square; crop before committing rather than resizing in CSS. Reference them by
 filename only in the CSVs — the loaders build the full path.
 
+### Two formats for every raster image
+
+Every raster image is committed **twice** — a `.webp` for the website and a `.jpg` of the
+same basename and the same pixel dimensions beside it:
+
+```
+data/speaker-images/olmo_zavala.webp    <- what the site loads
+data/speaker-images/olmo_zavala.jpg     <- what you paste into an email
+```
+
+The website uses WebP because it is markedly smaller. Announcement and newsletter emails
+go out as **HTML email**, and several major clients — Outlook on Windows above all — still
+will not render WebP, so anything reused in an email needs a JPEG twin. Keeping the pair
+side by side means nobody has to go hunting for a converter at send time.
+
+Three rules:
+
+- **Same basename, same dimensions, both formats.** No orphans in either direction.
+- **The site references `.webp` only.** Nothing in the markup, CSS, or CSVs should point at
+  a `.jpg` — the JPEGs exist purely for email. (One exception: `og:image`, below.)
+- **Hard ceiling of 500 KB per file**, in either format. Over that, resize or re-encode
+  before committing.
+
 ### Optimize before committing
 
-Every raster image on the site is **WebP**, sized close to how it actually renders —
-committing a 2 MB camera JPEG makes the page slow for everyone. Convert with
-ImageMagick before adding the file:
+Convert with ImageMagick, WebP first, then the JPEG twin from the same source:
 
 ```bash
 magick input.jpg -resize 400x400\> -quality 82 data/speaker-images/jane_doe.webp
+magick data/speaker-images/jane_doe.webp -background white -alpha remove -alpha off \
+       -colorspace sRGB -strip -quality 82 -interlace Plane data/speaker-images/jane_doe.jpg
 ```
 
-The `\>` means "shrink only, never upscale". Target sizes:
+The `\>` means "shrink only, never upscale". `-interlace Plane` makes the JPEG
+progressive, which renders more gracefully on a slow mail connection. Both formats use the
+same quality so the pair looks identical. Target sizes:
 
 | Kind | Max longest edge | Quality | Why |
 | --- | --- | --- | --- |
 | Speaker headshot | 400 px | 82 | Renders as a 78 px circle; 400 px covers high-DPI screens |
-| Event / holiday art | 256 px | 85 | Renders at 64×52 in the schedule table |
+| Event / holiday art | 256 px | 85 | Renders at 64x52 in the schedule table |
 | Page artwork (`images/`) | Its rendered width | 82 | E.g. the hero background stays 1920 px wide |
 
-Keep headshots under roughly 40 KB and page artwork under roughly 250 KB.
+For the WebP that the site actually serves, keep headshots under roughly 40 KB and page
+artwork under roughly 250 KB. The 500 KB ceiling above is the hard limit for any single
+file; these are the performance budgets for what visitors download.
 
-**One exception:** `images/banner-wide.jpg` is the social-preview card referenced by the
-`og:image` / `twitter:image` tags in every page's `<head>`. It stays a **JPEG** because
-LinkedIn, Slack, and some other link unfurlers still do not render WebP previews
-reliably. Keep it 1200 px wide.
+**Transparency does not survive the JPEG.** JPEG has no alpha channel, so
+`-alpha remove -alpha off` flattens it onto a background — white above, matching a typical
+email body. Four committed images carry real transparency and are therefore flattened in
+their `.jpg` form only:
+
+`images/trichotomy-illustration`, `data/speaker-images/philippe_miron`,
+`data/event-images/fsu-homecoming`, `data/event-images/thanksgiving`
+
+The WebP originals keep their alpha and the site is unaffected. If one of these goes into
+an email whose background is not white, regenerate that JPEG with a matching
+`-background '#rrggbb'` rather than using the committed copy.
+
+**SVGs are not covered by this rule.** `images/*.svg` (the FSU wordmark, Zoom, Discord and
+calendar icons, the favicon) have no raster twin. They are interface chrome rather than
+content, and a JPEG would lose their transparency. If one is ever needed in an email,
+export a **PNG** at the size required — not a JPEG.
+
+**One exception to "the site references WebP only":** `images/banner-wide.jpg` is the
+social-preview card behind the `og:image` / `twitter:image` tags in every page's `<head>`.
+Those tags must keep pointing at the **`.jpg`**, because LinkedIn, Slack, and some other
+link unfurlers still do not render WebP previews reliably. It has a `.webp` twin like
+everything else, but nothing references it. Keep it 1200 px wide.
+
+### Auditing the pairs
+
+Before committing new artwork, check nothing is orphaned, mismatched, or oversized:
+
+```bash
+for d in images data/speaker-images data/event-images; do
+  for f in "$d"/*.webp "$d"/*.jpg; do
+    b="${f%.*}"
+    [ -e "$b.webp" ] && [ -e "$b.jpg" ] || echo "UNPAIRED: $b"
+    [ "$(magick identify -format '%wx%h' "$b.webp")" = "$(magick identify -format '%wx%h' "$b.jpg")" ] \
+      || echo "DIMENSION MISMATCH: $b"
+  done
+done | sort -u
+find images data/speaker-images data/event-images -type f \( -name '*.jpg' -o -name '*.webp' \) -size +500k
+```
+
+Silence from both commands means every image is paired, matched, and within budget.
 
 ---
 
