@@ -950,12 +950,18 @@
   text-decoration: none;
   overflow: hidden;
   border: 2px solid rgba(206, 184, 136, 0.6);
-  box-shadow: 0 4px 12px rgba(7, 17, 31, 0.12);
-  transition: border-color var(--dur-slow) var(--ease-out-soft);
+  box-shadow: 0 4px 12px rgba(7, 17, 31, 0.12), 0 0 0 0 rgba(206, 184, 136, 0);
+  transition:
+    border-color var(--dur-slow) var(--ease-out-soft),
+    box-shadow 420ms var(--ease-out-soft);
 }
 
-.talk-card:hover .speaker-media {
+/* Same halo as the presenter cards - a portrait behaves identically wherever
+   it appears, even though the talk card around it still lifts. */
+.talk-card:hover .speaker-media,
+.talk-card:focus-within .speaker-media {
   border-color: var(--fsu-gold);
+  box-shadow: 0 4px 14px rgba(7, 17, 31, 0.14), 0 0 0 5px rgba(206, 184, 136, 0.3);
 }
 
 .speaker-media img {
@@ -965,11 +971,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 520ms var(--ease-out-soft);
-}
-
-.talk-card:hover .speaker-media img {
-  transform: scale(1.06);
 }
 
 .speaker-media span {
@@ -1070,7 +1071,16 @@
   gap: 20px;
 }
 
+/*
+ * Presenter cards deliberately do NOT use the lift-and-zoom that the talk cards
+ * use. A wall of faces all bouncing toward the cursor reads as restless, and
+ * scaling someone's portrait is a slightly odd thing to do to a photo of a
+ * person. Instead the card holds absolutely still and the person comes into
+ * focus: a brand rule wipes across the top edge, the ground warms, and a gold
+ * halo blooms around the portrait. Nothing translates and nothing scales.
+ */
 .speaker-directory-card {
+  position: relative;
   display: grid;
   justify-items: center;
   gap: 14px;
@@ -1081,16 +1091,37 @@
   background: var(--white);
   box-shadow: var(--shadow-card);
   text-align: center;
+  overflow: hidden;
   transition:
     box-shadow var(--dur-slow) var(--ease-out-soft),
-    transform var(--dur-slow) var(--ease-out-soft),
+    background-color var(--dur-slow) var(--ease-out-soft),
     border-color var(--dur-slow) var(--ease-out-soft);
 }
 
-.speaker-directory-card:hover {
-  transform: translateY(var(--lift));
-  border-color: rgba(120, 47, 64, 0.24);
-  box-shadow: 0 2px 4px rgba(7, 17, 31, 0.05), 0 18px 36px -18px rgba(7, 17, 31, 0.26);
+/* The signature move: a garnet-to-gold rule drawn along the top edge. */
+.speaker-directory-card::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  content: "";
+  background: linear-gradient(90deg, var(--fsu-garnet), var(--fsu-gold));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 420ms var(--ease-out-expo);
+}
+
+.speaker-directory-card:hover,
+.speaker-directory-card:focus-within {
+  border-color: rgba(120, 47, 64, 0.3);
+  background-color: #fffdf9;
+  box-shadow: 0 2px 4px rgba(7, 17, 31, 0.05), 0 14px 30px -20px rgba(7, 17, 31, 0.22);
+}
+
+.speaker-directory-card:hover::before,
+.speaker-directory-card:focus-within::before {
+  transform: scaleX(1);
 }
 
 .speaker-directory-photo {
@@ -1108,15 +1139,18 @@
   text-decoration: none;
   overflow: hidden;
   border: 2px solid rgba(206, 184, 136, 0.6);
-  box-shadow: 0 6px 16px rgba(7, 17, 31, 0.14);
+  /* The halo is declared at zero spread so it interpolates rather than
+     snapping - box-shadow only animates between lists of equal length. */
+  box-shadow: 0 6px 16px rgba(7, 17, 31, 0.14), 0 0 0 0 rgba(206, 184, 136, 0);
   transition:
     border-color var(--dur-slow) var(--ease-out-soft),
-    box-shadow var(--dur-slow) var(--ease-out-soft);
+    box-shadow 420ms var(--ease-out-soft);
 }
 
-.speaker-directory-card:hover .speaker-directory-photo {
+.speaker-directory-card:hover .speaker-directory-photo,
+.speaker-directory-card:focus-within .speaker-directory-photo {
   border-color: var(--fsu-gold);
-  box-shadow: 0 10px 24px rgba(7, 17, 31, 0.22);
+  box-shadow: 0 6px 18px rgba(7, 17, 31, 0.16), 0 0 0 7px rgba(206, 184, 136, 0.32);
 }
 
 .speaker-directory-photo img {
@@ -1126,13 +1160,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 520ms var(--ease-out-soft);
-}
-
-/* Slow, small push-in. The frame clips it, so the portrait fills rather than
-   grows - a fast or large zoom would look like a stock-photo carousel. */
-.speaker-directory-card:hover .speaker-directory-photo img {
-  transform: scale(1.06);
 }
 
 .speaker-directory-initials {

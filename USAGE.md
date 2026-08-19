@@ -262,3 +262,4 @@ Timings, easings and travel distances are tokens in `static/css/components/motio
 - Reveals animate `opacity` plus the independent `translate`/`scale` properties, never `transform`. `transform` is left free for component hover lifts. A reveal that used `transform` would silently disable the hover on every card it touched.
 - If a renderer emits a container that starts empty, give it `data-skeleton` and a `--skeleton-height` matching the filled height, so the layout does not jump when data lands.
 - Portraits added by a renderer take `data-fade` to fade in as they decode.
+- Hover vocabulary is split on purpose. Cards *about a thing* (talks, features, community, guide) lift on hover. Cards *about a person* (`.speaker-directory-card`) do not move at all — a brand rule wipes across the top edge and a gold halo blooms around the portrait. Do not give presenter cards a lift, and never scale someone's photograph.
