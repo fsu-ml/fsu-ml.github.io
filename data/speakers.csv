@@ -55,7 +55,7 @@ season,name,talk_title,talk_date,description,materials,event_image
 2026-Spring,Tommie Juzek;Lan Li,Reinforcement Learning from Verifiable Rewards,2026-04-17,,
 2026-Spring,Gordon Erlebacher,The Quantum Transformer,2026-04-24,,
 2026-Fall,Christian Hubicki,Status of AI in Robotics,2026-08-28,"Dr. Christian Hubicki, Director of the Optimal Robotics Lab, surveys where robotics stands today: embodied learning, manipulation, legged locomotion, and the gap between lab demos and deployed systems.",
-2026-Fall,Speaker TBA,SciML (PINNs and/or Neural Operators),2026-09-04,"Physics-informed neural networks and neural operators for solving, and learning from, differential equations.",
+2026-Fall,Olmo Zavala Romero,Physics-Informed Learning,2026-09-04,"How PINNs encode PDEs into neural losses, and how variants such as XPINNs, VPINNs, adaptive collocation, and physics-guided networks address scaling, conservation, and training issues.",
 2026-Fall,Speaker TBA,AI for Scientific Discovery,2026-09-11,"Where machine learning is accelerating hypothesis generation, experiment design, and discovery across the sciences.",
 2026-Fall,Speaker TBA,"Kimi 3 (Transformers, MoE, and Beyond)",2026-09-18,A look at the Kimi 3 architecture and what mixture-of-experts designs mean for the next generation of transformers.,
 2026-Fall,Hristo Chipilski,Exascale Generative Data Assimilation in Earth System Prediction,2026-09-25,"How generative AI and exascale computing can combine numerical models with observations for next-generation Earth system prediction.",
