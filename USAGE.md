@@ -9,6 +9,7 @@ file. You should not need to touch HTML for normal content changes.
 - [Adding or editing a talk](#adding-or-editing-a-talk)
 - [Adding or editing a speaker](#adding-or-editing-a-speaker)
   - [What to collect before adding a speaker](#what-to-collect-before-adding-a-speaker)
+  - [Writing a speaker bio](#writing-a-speaker-bio)
 - [Images](#images)
 - [Site text, links, and navigation](#site-text-links-and-navigation)
 - [How the schedule decides what to show](#how-the-schedule-decides-what-to-show)
@@ -116,7 +117,7 @@ reference it by `name`.
 Header row:
 
 ```csv
-name,title,department,affiliation,specialties,email,website,profile_url,image
+name,title,department,affiliation,specialties,email,website,profile_url,image,bio
 ```
 
 | Column | Meaning |
@@ -130,6 +131,7 @@ name,title,department,affiliation,specialties,email,website,profile_url,image
 | `website` | Optional personal or lab site; used first for name links. |
 | `profile_url` | Optional institutional profile; used when `website` is empty. |
 | `image` | **Filename only**, resolved as `data/speaker-images/{image}`. Leave empty for a placeholder. |
+| `bio` | Optional. One paragraph, 3–4 sentences. See [Writing a speaker bio](#writing-a-speaker-bio) — there is a length ceiling, and it matters. |
 
 Notes:
 
@@ -159,8 +161,9 @@ gives you a source to check against later.
 | 6 | Three research topics, in their own words | `specialties` | Required |
 | 7 | A public email they are happy to have published | `email` | Optional |
 | 8 | A headshot, roughly square, at least 400 px | `image` | Strongly preferred |
-| 9 | Talk title, date, and a one- or two-sentence description | `speakers.csv` | Required |
-| 10 | Slides and video links | `materials` in `speakers.csv` | After the talk |
+| 9 | **Bio material** — PhD institution, postdoc, what they run, any notable award | `bio` | Strongly preferred |
+| 10 | Talk title, date, and a one- or two-sentence description | `speakers.csv` | Required |
+| 11 | Slides and video links | `materials` in `speakers.csv` | After the talk |
 
 #### A message you can paste
 
@@ -176,7 +179,10 @@ A few details for the seminar website (https://fsu-ml.github.io), whenever you g
 5. Three research areas, in your own words
 6. A public email to list (optional — say "skip" to leave it off)
 7. A headshot, roughly square and at least 400 px (JPEG or PNG is fine)
-8. Your talk title, plus one or two sentences describing it
+8. Two or three lines for a short bio: where you did your PhD, any postdoc, anything
+   you run, and any award worth naming. We keep these to about 60 words, so no need
+   to send a full CV paragraph.
+9. Your talk title, plus one or two sentences describing it
 ```
 
 If you are handing this to an assistant or filling it in yourself, give the profile URL
@@ -211,6 +217,66 @@ Titles and affiliations go stale — people are promoted, and postdocs move on. 
 pass at the start of each semester over that semester's speakers, checking `title` and
 `affiliation` against the institutional page, and confirming that `website` and
 `profile_url` still resolve. Personal sites move more often than departmental ones.
+
+### Writing a speaker bio
+
+**Three to four sentences. Roughly 40–70 words, 300–450 characters.** That is a ceiling,
+not a target to fill.
+
+The reason is proportion. The bio is the last block of prose a reader meets, sitting
+under the talk description — and for most rows that `description` is a single line of
+103–201 characters. A six-sentence bio would run three times the length of the talk
+blurb directly above it, which inverts the whole thing: people came for the talk, not
+the CV. Until longer abstracts exist, keep bios at the short end.
+
+#### What the sentences should carry
+
+1. **Role and what they run** — "directs the Optimal Robotics Laboratory"
+2. **Training** — PhD and where, then any postdoc
+3. **Recognition** — awards, but only genuinely notable ones
+4. **A hook** — the detail someone would actually repeat afterwards
+
+Drop 3 and 4 when there is nothing real to say. **Two solid sentences beat four padded
+ones**, and a bio that reaches for filler reads worse than a short one. Several bios in
+the file are deliberately two or three sentences for exactly this reason.
+
+#### What to leave out
+
+Do not restate `title`, `department`, `affiliation`, or `specialties`. All four are
+rendered directly above the bio, so a bio opening "X is an Associate Professor of
+Scientific Computing at Florida State University working on scientific machine learning"
+says the same thing twice in adjacent lines. Start at the second sentence instead — the
+one that says something the columns cannot.
+
+#### Grounding
+
+**Every claim in a bio is about a real person, so every claim needs a source.** Take
+facts from the speaker directly, from their own site, or from their institutional page —
+and if a detail cannot be confirmed, leave it out. An empty `bio` cell is completely
+fine; eleven rows currently have one. A wrong PhD institution or an invented award is
+not a small error, and it is the kind of thing the subject notices first.
+
+Two traps worth naming:
+
+- **Search-engine summaries are not sources.** They paraphrase, and they merge people
+  with similar names. Follow the link and read the page.
+- **Inference is not confirmation.** "They were a graduate assistant at University X
+  from 2012 to 2018" does not establish that the PhD is from University X, even though
+  it usually is. Confirm it or omit it.
+
+#### Formatting in the CSV
+
+One paragraph per cell, wrapped in double quotes, since a bio will almost always contain
+a comma:
+
+```csv
+name,title,department,affiliation,specialties,email,website,profile_url,image,bio
+Ryan Murray,Associate Professor,Department of Mathematics,North Carolina State University,"calculus of variations; machine learning theory",,,,,"He earned his PhD in mathematical sciences at Carnegie Mellon University in 2016, advised by Giovanni Leoni and Bob Pego. He was then a Chowla Research Assistant Professor at Penn State, working with Alberto Bressan."
+```
+
+Keep it to a single paragraph — no blank lines inside the cell. A blank line in a quoted
+CSV field is legal but miserable to edit, and nothing currently renders multiple
+paragraphs.
 
 ---
 
