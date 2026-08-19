@@ -15,6 +15,7 @@ import {
 } from "../data/speakers.js";
 import { renderSpeakerNameLinks } from "./speaker-links.js";
 import { icon } from "../ui/icons.js";
+import { activateMotion } from "../ui/reveal.js";
 import { qs } from "../utils/dom.js";
 import { escapeHtml, renderTemplate } from "../utils/html.js";
 import { renderButton } from "./buttons.js";
@@ -346,6 +347,50 @@ export const renderNavigation = (activeId = "home") => {
     .join("");
 };
 
+// How long the placeholder takes to fade before the real card replaces it.
+// Matches the transition on .seminar-skeleton in seminar-card.css.
+const SKELETON_FADE_MS = 240;
+
+// Hands the hero card over from placeholder to content. The placeholder holds
+// the card's height while it fades, so the hero does not lurch mid-swap.
+const swapSeminarCard = (html) => {
+  const mount = qs("[data-next-seminar]");
+  if (!mount) {
+    return;
+  }
+  if (!mount.querySelector("[data-seminar-skeleton]")) {
+    mount.innerHTML = html;
+    activateMotion(mount);
+    return;
+  }
+  mount.classList.add("is-swapping");
+  window.setTimeout(() => {
+    mount.innerHTML = html;
+    mount.classList.remove("is-swapping");
+    // This write lands after init()'s activateMotion() pass has already run, so
+    // the new subtree needs its own activation - otherwise the speaker portrait
+    // never receives .is-loaded and stays fully transparent.
+    activateMotion(mount);
+  }, SKELETON_FADE_MS);
+};
+
+// Wraps each word so the title can arrive a word at a time. Each word is
+// escaped individually; splitting on whitespace after escaping would be safe
+// too, since no entity contains a space, but this keeps the intent obvious.
+// The index is capped so a long title does not animate for several seconds.
+const typedTitle = (text = "") => {
+  const words = String(text).trim().split(/\s+/).filter(Boolean);
+  if (!words.length) {
+    return escapeHtml(text);
+  }
+  return words
+    .map(
+      (word, index) =>
+        `<span class="typed-word" style="--word-index:${Math.min(index, 14)}">${escapeHtml(word)}</span>`
+    )
+    .join(" ");
+};
+
 export const renderHero = async (templates) => {
   qs("[data-hero-actions]").innerHTML = pageData.hero.content.buttons
     .map((button) => renderButton(templates.button, button))
@@ -355,12 +400,12 @@ export const renderHero = async (templates) => {
   const resolved = await loadResolvedSchedule();
 
   if (resolved?.status === "break") {
-    qs("[data-next-seminar]").innerHTML = `
-      <div class="seminar-card-body" data-reveal="fade">
+    swapSeminarCard(`
+      <div class="seminar-card-body">
         <p class="seminar-label">${icon("calendar")}<span>${escapeHtml(nextSeminarLabel())}</span></p>
         <p class="seminar-description schedule-break-message">${escapeHtml(getBreakMessage(resolved.breakKind))}</p>
       </div>
-    `;
+    `);
     return;
   }
 
@@ -408,10 +453,10 @@ export const renderHero = async (templates) => {
       ? `<p class="seminar-specialties">${escapeHtml(speakerSpecialties)}</p>`
       : "";
 
-  qs("[data-next-seminar]").innerHTML = `
-    <div class="seminar-card-body" data-reveal="fade">
+  swapSeminarCard(`
+    <div class="seminar-card-body">
       <p class="seminar-label">${icon("calendar")}<span>${escapeHtml(seminarLabel)}</span></p>
-      <h2 class="seminar-title">${escapeHtml(talkTitle)}</h2>
+      <h2 class="seminar-title">${typedTitle(talkTitle)}</h2>
       <p class="seminar-description">${escapeHtml(talkDescription)}</p>
       <div class="seminar-card-spacer" aria-hidden="true"></div>
       <div class="seminar-speaker-row">
@@ -437,7 +482,7 @@ export const renderHero = async (templates) => {
           .join(" + ")}</span></div>
       </div>
     </div>
-  `;
+  `);
 };
 
 export const renderOverview = (templates) => {

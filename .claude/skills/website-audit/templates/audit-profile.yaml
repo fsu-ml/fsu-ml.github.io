@@ -1,0 +1,121 @@
+# =============================================================================
+# audit-profile.yaml
+# =============================================================================
+# The scoping record for this site. Written once at intake, revalidated before
+# every audit run. Every routing decision in the website-audit skill keys off
+# this file — the wrong value here means the wrong references get loaded and the
+# wrong findings get reported.
+#
+# Copy to the SITE's repository (root, ./docs/, or ./.audit/) and commit it.
+#
+# Fields marked VERIFY are facts about the built site, not preferences. Detect
+# them; do not take them on trust. See references/scoping.md § Detect before you ask.
+# Any field left `unknown` must be surfaced in the report as a limitation.
+# =============================================================================
+
+site:
+  url:              https://example.com
+  staging_url:      null                    # audit this instead, if set
+  type:             web                     # web | documents | mixed
+  primary_job:      inform                  # transact | persuade | inform | demonstrate-craft | archive
+  category:         other                   # ecommerce | portfolio | lab | saas | government |
+                                            # healthcare | news | nonprofit | local-business |
+                                            # documentation | other
+  url_count:        0                       # VERIFY — sitemap or crawl
+  multilingual:     false                   # VERIFY — hreflang / lang / switcher
+  expected_life:    years                   # months | years | indefinite
+  maintainer:       null                    # who owns this after launch? null = nobody
+
+audience:
+  intent:           mixed                   # goal-directed | exploratory | mixed
+  success_metric:   ""                      # one sentence. a number if there is one.
+
+# -----------------------------------------------------------------------------
+# COMPLIANCE — ask early. This changes how every other section is audited.
+# regime != none escalates every WCAG A/AA failure to BLOCKER severity.
+# -----------------------------------------------------------------------------
+compliance:
+  regime:           none                    # title-ii | title-iii | section-508 | section-504 |
+                                            # acaa | eaa | contractual | other | none
+  target:           wcag22-aa               # wcag20-aa | wcag21-aa | wcag22-aa  (2.2 is the default;
+                                            # building to 2.2 satisfies the earlier targets)
+  deliverable:      none                    # none | vpat | statement | exception | roadmap
+  known_complaint:  false                   # demand letter or complaint received?
+
+# -----------------------------------------------------------------------------
+# CONTENT — VERIFY ALL. These gate which reference files load.
+#   scripts/audit_a11y.py <url> --inventory-documents
+#   scripts/audit_motion.py <url>
+# The has_pdfs / has_office_docs / has_latex_pdfs flags exist so the document
+# accessibility references are NOT loaded for the majority of sites that serve none.
+# -----------------------------------------------------------------------------
+content:
+  has_forms:              false
+  has_auth:               false
+  has_search:             false             # a search box is a form
+  has_video:              false
+  has_audio:              false
+  has_animation:          false
+  has_carousel:           false
+  has_images_of_text:     false
+  has_data_tables:        false
+  has_custom_widgets:     false             # anything with hand-rolled ARIA
+  has_multistep_process:  false             # checkout, application, wizard
+  has_visualizations:     false             # charts, 3D, diagrams → viz-libraries.md
+  has_animation_layer:    false             # choreographed sequences → viz-libraries.md
+  has_pdfs:               false             # → ada/documents-pdf.md
+  has_office_docs:        false             # → ada/documents-office.md
+  has_latex_pdfs:         false             # → ada/documents-latex.md
+  has_epub:               false
+  has_html_email:         false
+  volume:                 moderate          # sparse | moderate | dense
+
+# -----------------------------------------------------------------------------
+# STACK — rendering is the single most consequential VERIFY in this file.
+# A recorded value is a CLAIM. Test it: raw HTML vs rendered DOM.
+#   scripts/audit_seo.py <url> --max-pages 1
+# Never infer rendering mode from the framework name.
+# -----------------------------------------------------------------------------
+stack:
+  rendering:        unknown                 # ssg | ssr | csr | hybrid | unknown   ← VERIFY
+  cms:              null
+  hosting:          null
+  licence_policy:   any                     # any | osi-only   (osi-only rules out GSAP)
+  third_parties:    []                      # VERIFY — every non-first-party origin
+
+mobile:
+  required:         true
+  known_problem_sections: []                # tables, maps, embeds, data grids —
+                                            # these get audited individually first
+
+motion:
+  budget:           restrained              # none | restrained | expressive
+  scroll_reveals:   false                   # true ⇒ fail-open checks are BLOCKER severity
+  reduced_motion_handled: false             # VERIFY — run audit_motion.py twice and diff
+
+perf:
+  device_floor:     mid-android-4g          # mid-android-4g | modern-mobile | desktop-only
+  budget_file:      null                    # path to perf-budget.json, or null
+  hard_requirement: null                    # stated budget, SLA, competitor to beat
+
+seo:
+  priority:         basic                   # none | basic | full
+  local_business:   false                   # ← the ONLY trigger for seo/L8-local.md
+  ecommerce:        false
+  ai_visibility:    false                   # cares about AI Overviews / ChatGPT / Perplexity
+  data_access:      []                      # search-console | bing-webmaster | analytics |
+                                            # crux | server-logs | backlink-tool | none
+                                            # empty ⇒ all perf findings are lab-only. Say so.
+                                            # seo/L1-foundations.md 🔒 items resolve to
+                                            # CAN'T VERIFY without the matching instrument.
+
+engagement:
+  mode:             live-audit              # pre-launch-gate | live-audit | mid-build
+  out_of_scope:     []                      # legacy sections, third-party embeds, uneditable content
+  fix_budget:       prioritised             # top-5 | prioritised | full-backlog
+  report_path:      ./audit-report.md
+
+meta:
+  created:          2026-01-01
+  last_verified:    2026-01-01              # stale > 90 days or older than last deploy ⇒ re-detect
+  verified_by:      ""

@@ -8,6 +8,7 @@ file. You should not need to touch HTML for normal content changes.
 - [Running the site locally](#running-the-site-locally)
 - [Adding or editing a talk](#adding-or-editing-a-talk)
 - [Adding or editing a speaker](#adding-or-editing-a-speaker)
+  - [What to collect before adding a speaker](#what-to-collect-before-adding-a-speaker)
 - [Images](#images)
 - [Site text, links, and navigation](#site-text-links-and-navigation)
 - [How the schedule decides what to show](#how-the-schedule-decides-what-to-show)
@@ -22,6 +23,7 @@ file. You should not need to touch HTML for normal content changes.
 | --- | --- |
 | Add / reschedule / remove a talk | `data/speakers.csv` |
 | Add a new speaker's bio, photo, or links | `data/speaker-profiles.csv` (+ `data/speaker-images/`) |
+| Find out what to ask a new speaker for | [Intake checklist](#what-to-collect-before-adding-a-speaker) |
 | Add a holiday or break row to the schedule | `data/speakers.csv` (see [Break rows](#break-and-no-seminar-rows)) |
 | Add slides / video links to a past talk | `materials` column in `data/speakers.csv` |
 | Change the Discord, Zoom, mailing list, or room link | `static/js/data/page-data.js` |
@@ -135,6 +137,80 @@ Notes:
 - A few historical spelling variants are mapped in `static/js/data/speakers.js` (`profileAliases`). Prefer fixing the CSV over adding an alias.
 - Any name containing `TBA` is treated as a placeholder: it renders as "To be announced" and is excluded from `/speakers/`.
 - `/speakers/` lists everyone in this file, ordered by number of talks, then alphabetically.
+
+### What to collect before adding a speaker
+
+Most of the effort in adding a speaker is *finding* the facts, not typing them. Gather
+these up front — from the speaker, or from whoever invited them — and the CSV row takes
+about a minute.
+
+**Ask for a link first.** One good URL usually yields `title`, `department`,
+`affiliation`, `specialties`, and often `email` in a single pass. "Send me a link to
+your faculty page" is far more efficient than asking eight separate questions, and it
+gives you a source to check against later.
+
+| # | Ask for | Fills | Needed? |
+| --- | --- | --- | --- |
+| 1 | Name, spelled as they want it displayed | `name` | Required |
+| 2 | **A link to their profile** — faculty page, lab site, or personal site | `website`, `profile_url`, plus most rows below | **Ask for this first** |
+| 3 | Current title and rank | `title` | Required |
+| 4 | Department, school, or lab | `department` | Required |
+| 5 | University, company, or organization | `affiliation` | Required |
+| 6 | Three research topics, in their own words | `specialties` | Required |
+| 7 | A public email they are happy to have published | `email` | Optional |
+| 8 | A headshot, roughly square, at least 400 px | `image` | Strongly preferred |
+| 9 | Talk title, date, and a one- or two-sentence description | `speakers.csv` | Required |
+| 10 | Slides and video links | `materials` in `speakers.csv` | After the talk |
+
+#### A message you can paste
+
+Send this to a confirmed speaker; the numbered replies map straight onto the columns.
+
+```text
+A few details for the seminar website (https://fsu-ml.github.io), whenever you get a moment:
+
+1. Your name, spelled as you'd like it shown
+2. A link to your faculty / lab / personal page
+3. Your current title
+4. Your department and institution
+5. Three research areas, in your own words
+6. A public email to list (optional — say "skip" to leave it off)
+7. A headshot, roughly square and at least 400 px (JPEG or PNG is fine)
+8. Your talk title, plus one or two sentences describing it
+```
+
+If you are handing this to an assistant or filling it in yourself, give the profile URL
+along with the name — that alone is usually enough to complete the row.
+
+#### If you have to look it up yourself
+
+Work down this list and stop at the first source that answers the question:
+
+1. **Institutional directory page** — the most reliable source for title, department,
+   and affiliation, and the one to trust when sources disagree. FSU pages render emails
+   through JavaScript, so the address will not appear in the visible text; view source
+   and search for `@fsu.edu`.
+2. **Personal or lab site** — the best source for `specialties` in the speaker's own
+   words, and usually the most current for title changes. Many carry a `mailto:` link.
+3. **Google Scholar** — good for confirming research areas. No contact details.
+4. **LinkedIn** — last resort. It blocks automated fetching, so open it in a browser.
+
+Three rules when filling gaps from the web:
+
+- **Only publish an email that is already public** on the speaker's own page or their
+  institution's directory. Do not reconstruct one from a username pattern.
+- **Confirm it is the right person** before copying anything. Match on institution and
+  research area, not on name alone.
+- **Leave a field blank rather than guess.** Every column except `name` degrades
+  gracefully: a missing `image` renders a placeholder, and a missing `website` falls
+  back to `profile_url`. A wrong title is worse than no title.
+
+#### Keeping profiles current
+
+Titles and affiliations go stale — people are promoted, and postdocs move on. Worth a
+pass at the start of each semester over that semester's speakers, checking `title` and
+`affiliation` against the institutional page, and confirming that `website` and
+`profile_url` still resolve. Personal sites move more often than departmental ones.
 
 ---
 

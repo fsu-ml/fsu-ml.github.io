@@ -120,7 +120,34 @@
             </p>
             <div class="hero-actions" data-hero-actions></div>
           </div>
-          <aside class="next-seminar" aria-label="Next seminar" data-next-seminar data-skeleton style="--skeleton-height: 430px"></aside>
+          <aside class="next-seminar" aria-label="Next seminar" data-next-seminar>
+            <!-- Shaped placeholder, in the static markup so it paints before any
+                 script runs. renderHero swaps it for the real card. -->
+            <div class="seminar-skeleton" data-seminar-skeleton>
+              <p class="sr-only" role="status">Loading the next seminar details.</p>
+              <span class="sk sk-pill" aria-hidden="true"></span>
+              <span class="sk sk-title" aria-hidden="true"></span>
+              <span class="sk sk-title sk-narrow" aria-hidden="true"></span>
+              <span class="sk-block" aria-hidden="true">
+                <span class="sk sk-line"></span>
+                <span class="sk sk-line"></span>
+                <span class="sk sk-line"></span>
+                <span class="sk sk-line sk-narrow"></span>
+              </span>
+              <span class="sk-gap" aria-hidden="true"></span>
+              <span class="sk-speaker" aria-hidden="true">
+                <span class="sk sk-avatar"></span>
+                <span class="sk-block">
+                  <span class="sk sk-line"></span>
+                  <span class="sk sk-line sk-narrow"></span>
+                </span>
+              </span>
+              <span class="sk sk-line sk-specialty" aria-hidden="true"></span>
+              <span class="sk-rule" aria-hidden="true"></span>
+              <span class="sk sk-meta" aria-hidden="true"></span>
+              <span class="sk sk-meta sk-narrow" aria-hidden="true"></span>
+            </div>
+          </aside>
         </div>
       </section>
 

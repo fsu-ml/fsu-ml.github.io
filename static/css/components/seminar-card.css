@@ -200,3 +200,116 @@
   text-shadow: 0 3px 16px rgba(0, 0, 0, 0.35);
 }
 
+
+/* ---------------------------------------------------------------------------
+   Loading placeholder
+
+   Lives in index.html so it paints on first frame, before templates or the
+   speaker CSV have been fetched. It mirrors the real card's rhythm - pill,
+   two title lines, a description block, speaker row, meta rows - so the swap
+   is a cross-fade rather than a reflow.
+   -------------------------------------------------------------------------- */
+
+.seminar-skeleton {
+  display: grid;
+  gap: 18px;
+  padding: 26px;
+  transition: opacity 240ms var(--ease-out-soft);
+}
+
+.next-seminar.is-swapping .seminar-skeleton {
+  opacity: 0;
+}
+
+.seminar-skeleton .sk-block,
+.seminar-skeleton .sk-speaker {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+}
+
+.seminar-skeleton .sk-speaker {
+  grid-template-columns: 78px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+
+/* The shimmer sweeps across the card as one surface rather than each bar
+   running its own loop, which would look like static. */
+.seminar-skeleton .sk {
+  display: block;
+  height: 14px;
+  border-radius: 5px;
+  background:
+    linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.22) 48%,
+      rgba(255, 255, 255, 0) 66%
+    ),
+    rgba(255, 255, 255, 0.13);
+  background-size: 220% 100%, auto;
+  background-repeat: no-repeat;
+  animation: skeleton-sweep 1600ms linear infinite;
+}
+
+.seminar-skeleton .sk-narrow {
+  width: 62%;
+}
+
+.seminar-skeleton .sk-pill {
+  width: 218px;
+  height: 34px;
+  border-radius: 6px;
+}
+
+.seminar-skeleton .sk-title {
+  height: 26px;
+  border-radius: 6px;
+}
+
+.seminar-skeleton .sk-meta {
+  height: 20px;
+}
+
+.seminar-skeleton .sk-avatar {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+}
+
+.seminar-skeleton .sk-rule {
+  display: block;
+  height: 1px;
+  background: rgba(246, 201, 107, 0.3);
+}
+
+/* Stands in for .seminar-card-spacer, which is a rule with 14px of padding
+   above it rather than a hairline. */
+.seminar-skeleton .sk-gap {
+  display: block;
+  height: 15px;
+  border-top: 1px solid rgba(246, 201, 107, 0.35);
+}
+
+/* The real speaker row carries a specialties line that wraps under the
+   portrait, which is most of why the card is taller than a naive placeholder. */
+.seminar-skeleton .sk-specialty {
+  width: 78%;
+  height: 30px;
+  margin-top: -4px;
+}
+
+/* Staggering the sweep by row makes it read as one wave crossing the card. */
+.seminar-skeleton .sk-title { animation-delay: 90ms; }
+.seminar-skeleton .sk-block .sk-line:nth-child(2) { animation-delay: 60ms; }
+.seminar-skeleton .sk-block .sk-line:nth-child(3) { animation-delay: 120ms; }
+.seminar-skeleton .sk-block .sk-line:nth-child(4) { animation-delay: 180ms; }
+.seminar-skeleton .sk-speaker .sk-avatar { animation-delay: 140ms; }
+.seminar-skeleton .sk-meta { animation-delay: 200ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .seminar-skeleton .sk {
+    animation: none;
+  }
+}
