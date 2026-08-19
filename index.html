@@ -18,6 +18,7 @@
     >
     <meta property="og:url" content="https://sc-ai.net/">
     <meta property="og:image" content="https://sc-ai.net/images/banner-wide.jpg">
+    <meta property="og:image:alt" content="FSU Scientific Computing Artificial Intelligence Seminar banner">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="FSU SC Artificial Intelligence Seminar">
     <meta
@@ -61,10 +62,22 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Loaded non-render-blocking: the sheet is fetched at print priority and
+         promoted to `all` on load, so first paint is not held up by a
+         third-party round trip. `&display=swap` already covers the FOUT. The
+         <noscript> copy keeps the font for scripting-disabled clients. -->
     <link
       rel="stylesheet"
+      media="print"
+      onload="this.media='all';this.onload=null"
       href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap"
     >
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap"
+      >
+    </noscript>
     <link rel="preload" href="images/banner-wide-half-dark.webp" as="image" type="image/webp">
     <script>
       // Runs before the stylesheet so gated content never flashes: `js-motion`
@@ -87,6 +100,7 @@
     <script type="module" src="static/app.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
     <header class="site-header" data-site-header>
       <nav class="nav-shell" aria-label="Primary navigation">
         <a class="brand" href="/" aria-label="FSU SC Artificial Intelligence Seminar home">
@@ -103,7 +117,7 @@
       </nav>
     </header>
 
-    <main>
+    <main id="main" tabindex="-1">
       <section class="hero" id="home" aria-labelledby="hero-title">
         <div class="hero-media" aria-hidden="true"></div>
         <div class="hero-overlay" aria-hidden="true"></div>
@@ -111,8 +125,11 @@
           <div class="hero-copy">
             <img
               class="hero-logo"
-              src="images/FSU-Scientific-Computing.svg"
+              src="/images/FSU-Scientific-Computing.svg"
               alt="Florida State University Scientific Computing"
+              fetchpriority="high"
+              width="1364"
+              height="269"
             >
             <h1 id="hero-title"><span>Artificial Intelligence</span><span>Seminar</span></h1>
             <p class="hero-subtitle">
@@ -205,7 +222,36 @@
 
     <footer class="site-footer">
       <div class="footer-media" aria-hidden="true"></div>
-      <div class="footer-inner" data-footer></div>
+      <div class="footer-inner" data-footer>
+        <!-- Progressive-enhancement fallback. renderFooter() replaces this
+             wholesale, so it is invisible to anyone running JS. It exists so
+             that (a) /archive/ and /trichotemy.html have real inbound links in
+             raw HTML rather than being sitemap-only, and (b) a visitor whose
+             script 404s or is blocked still gets the Zoom room and a contact
+             address. Deliberately NOT wrapped in <noscript>: noscript does not
+             render when JS is enabled but the module fails to load, which is
+             the failure mode this is here to cover.
+             Keep the hrefs in sync with static/js/data/page-data.js. -->
+          <nav class="footer-block" aria-label="Site">
+            <h3>Pages</h3>
+            <ul class="footer-list">
+              <li><a class="footer-link" href="/">Home</a></li>
+              <li><a class="footer-link" href="/schedule/">Schedule</a></li>
+              <li><a class="footer-link" href="/speakers/">Speakers</a></li>
+              <li><a class="footer-link" href="/archive/">Archive</a></li>
+              <li><a class="footer-link" href="/trichotemy.html">NASA Trichotomy guide</a></li>
+            </ul>
+          </nav>
+          <div class="footer-block">
+            <h3>Join a seminar</h3>
+            <ul class="footer-list">
+              <li><a class="footer-link" href="https://fsu.zoom.us/j/9038137210">Zoom room</a></li>
+              <li><a class="footer-link" href="https://goo.gl/maps/BJLxE3Q7H1MTBqMu6">DSL/SC-499, Dirac Science Library</a></li>
+              <li><a class="footer-link" href="mailto:gerlebacher@fsu.edu">Mailing list request</a></li>
+              <li><a class="footer-link" href="https://www.sc.fsu.edu">FSU Department of Scientific Computing</a></li>
+            </ul>
+          </div>
+      </div>
     </footer>
   </body>
 </html>

@@ -264,9 +264,10 @@ const renderTalkCard = (speaker, details = {}) => {
     return `
       <article class="talk-card talk-card-event" data-reveal="up">
         <div class="talk-card-header">
-          <div class="date-badge" aria-label="${escapeHtml(readableDate(speaker.talkDate))}">
-            <span class="date-month">${escapeHtml(badge.month)}</span>
-            <span class="date-day">${escapeHtml(badge.day)}</span>
+          <div class="date-badge">
+            <span class="sr-only">${escapeHtml(readableDate(speaker.talkDate))}</span>
+            <span class="date-month" aria-hidden="true">${escapeHtml(badge.month)}</span>
+            <span class="date-day" aria-hidden="true">${escapeHtml(badge.day)}</span>
           </div>
           <h3>${escapeHtml(speaker.talkTitle)}</h3>
         </div>
@@ -313,9 +314,10 @@ const renderTalkCard = (speaker, details = {}) => {
   return `
     <article class="talk-card" data-reveal="up">
       <div class="talk-card-header">
-        <div class="date-badge" aria-label="${escapeHtml(readableDate(speaker.talkDate))}">
-          <span class="date-month">${escapeHtml(badge.month)}</span>
-          <span class="date-day">${escapeHtml(badge.day)}</span>
+        <div class="date-badge">
+          <span class="sr-only">${escapeHtml(readableDate(speaker.talkDate))}</span>
+          <span class="date-month" aria-hidden="true">${escapeHtml(badge.month)}</span>
+          <span class="date-day" aria-hidden="true">${escapeHtml(badge.day)}</span>
         </div>
         <h3>${escapeHtml(speaker.talkTitle)}</h3>
       </div>

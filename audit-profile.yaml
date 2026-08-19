@@ -78,10 +78,16 @@ stack:
 mobile:
   required:         true
   known_problem_sections:
-    - archive schedule tables (/archive/)
-    - semester schedule table (/schedule/)
+    # CORRECTED 2026-08-19: /schedule/ and /archive/ do NOT use <table> markup;
+    # they are .talk-card / .archive-talk flex+grid card lists. The homepage
+    # dashboard is the only place a real <table> is rendered.
+    - archive talk card grid (/archive/, .archive-talk)
+    - schedule talk card list (/schedule/, .talk-card)
+    - homepage dashboard schedule table (/, table.schedule-table)
     - hero split layout (.hero-inner)
     - dashboard grid (.dashboard-layout)
+    # VERIFIED CLEAN 2026-08-19 across V1-V8: no horizontal overflow, no
+    # reflow content loss, no SC 2.5.8 target-size failures on any of these.
 
 motion:
   budget:           expressive
@@ -112,8 +118,12 @@ seo:
 engagement:
   mode:             live-audit
   out_of_scope:
-    - backup/            # superseded snapshots, not served
-    - data/past-html/    # archived source data, not served as pages
+    # CORRECTED 2026-08-19 after the hygiene pass: these ARE publicly served.
+    # GitHub Pages serves every committed file with no access control, so
+    # backup/ (78 files) and data/past-html/ both return 200 on the live
+    # domain. They are out of scope for *content* review, not for hygiene.
+    - backup/            # superseded snapshots — served, stale, indexable
+    - data/past-html/    # archived source data — served, stale, indexable
     - speaker-supplied PDFs under materials/ (not authored here)
     - the motion/animation design itself (see motion.budget note above)
   fix_budget:       prioritised

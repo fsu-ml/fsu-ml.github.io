@@ -64,7 +64,7 @@
   border-color: rgba(15, 61, 39, 0.4);
 }
 
-.trichotomy-card h3 {
+.trichotomy-card h2 {
   margin: 0 0 10px;
   color: var(--fsu-garnet);
   font-size: 1rem;
@@ -132,7 +132,11 @@
   background: #fdfbf7;
   color: var(--ink);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.84rem;
+  /* Must stay at 16px. iOS Safari zooms the page when a focusable field is
+     under 16px and does not reliably zoom back out. The field is readonly but
+     still tappable (select-all to copy), so the zoom is reachable. Do not
+     "fix" that by adding user-scalable=no — that breaks pinch zoom. */
+  font-size: 1rem;
   line-height: 1.5;
   resize: vertical;
 }

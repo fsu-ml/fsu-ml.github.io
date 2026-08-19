@@ -1,0 +1,14 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Python (the website-audit skill's scripts)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Audit run artifacts — keep the written report, not the raw output
+audit-output/

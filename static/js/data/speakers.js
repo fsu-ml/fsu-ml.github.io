@@ -5,6 +5,32 @@ const eventImagesUrl = new URL("../../../data/event-images/", import.meta.url);
 const speakersCsvUrl = new URL("../../../data/speakers.csv", import.meta.url);
 const speakerProfilesCsvUrl = new URL("../../../data/speaker-profiles.csv", import.meta.url);
 
+// Both CSVs are fetched by more than one renderer per page (renderSchedule and
+// renderSpeakers on the homepage, for instance), which previously meant the same
+// two files were pulled over the network four times each on a single load. The
+// response text is cached per URL for the lifetime of the page; the parse still
+// runs per caller, so every caller keeps its own independent parsed result and
+// no shared mutable state is introduced. A failed fetch is not cached, so a
+// transient error can still be retried by the next caller.
+const csvTextCache = new Map();
+
+const fetchCsvText = (url) => {
+  const key = url.href;
+  if (!csvTextCache.has(key)) {
+    csvTextCache.set(
+      key,
+      fetch(url).then((response) => {
+        if (!response.ok) {
+          throw new Error(`Unable to load ${key}`);
+        }
+        return response.text();
+      })
+    );
+    csvTextCache.get(key).catch(() => csvTextCache.delete(key));
+  }
+  return csvTextCache.get(key);
+};
+
 export const speakerKey = (name = "") => name.replace(/^Dr\.\s+/i, "").trim().toLowerCase();
 
 export const splitSpeakerNames = (name = "") =>
@@ -66,14 +92,11 @@ const emptyProfile = (name = "") => ({
 
 export const loadSpeakerProfilesFromCsv = async () => {
   try {
-    const response = await fetch(speakerProfilesCsvUrl);
-    if (!response.ok) {
-      throw new Error(`Unable to load ${speakerProfilesCsvUrl.href}`);
-    }
+    const profilesCsvText = await fetchCsvText(speakerProfilesCsvUrl);
 
     const profilesByKey = new Map();
 
-    parseCsv(await response.text()).forEach((profile) => {
+    parseCsv(profilesCsvText).forEach((profile) => {
       const key = speakerKey(profile.name);
       if (!key) {
         return;
@@ -152,16 +175,12 @@ const buildTalkFromRow = (row, profilesByKey) => {
 
 export const loadSpeakersFromCsv = async ({ featuredOnly = true } = {}) => {
   try {
-    const [profilesByKey, scheduleResponse] = await Promise.all([
+    const [profilesByKey, scheduleCsvText] = await Promise.all([
       loadSpeakerProfilesFromCsv(),
-      fetch(speakersCsvUrl)
+      fetchCsvText(speakersCsvUrl)
     ]);
 
-    if (!scheduleResponse.ok) {
-      throw new Error(`Unable to load ${speakersCsvUrl.href}`);
-    }
-
-    return parseCsv(await scheduleResponse.text())
+    return parseCsv(scheduleCsvText)
       .filter((row) => !featuredOnly || row.featured !== "false")
       .map((row) => buildTalkFromRow(row, profilesByKey))
       .filter(Boolean)
@@ -177,11 +196,7 @@ export const loadUniqueSpeakersFromCsv = async ({ featuredOnly = true } = {}) =>
   let scheduleRows = [];
 
   try {
-    const response = await fetch(speakersCsvUrl);
-    if (!response.ok) {
-      throw new Error(`Unable to load ${speakersCsvUrl.href}`);
-    }
-    scheduleRows = parseCsv(await response.text());
+    scheduleRows = parseCsv(await fetchCsvText(speakersCsvUrl));
   } catch (error) {
     console.warn(error);
   }
