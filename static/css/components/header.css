@@ -69,15 +69,18 @@
   text-decoration: none;
   font-size: 0.93rem;
   font-weight: 600;
-  transition: color 150ms ease;
+  transition: color var(--dur-fast) var(--ease-out-soft);
 }
 
 .nav-link:hover,
+.nav-link:focus-visible,
 .nav-link.is-active {
   color: var(--fsu-gold);
 }
 
-.nav-link.is-active::after {
+/* The underline is always in the DOM and wipes in from the left, so hover and
+   the active state share one shape instead of two different treatments. */
+.nav-link::after {
   position: absolute;
   right: 12px;
   bottom: 4px;
@@ -85,6 +88,29 @@
   height: 2px;
   content: "";
   background: var(--fsu-gold);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform var(--dur-base) var(--ease-out-soft);
+}
+
+.nav-link:hover::after,
+.nav-link:focus-visible::after,
+.nav-link.is-active::after {
+  transform: scaleX(1);
+}
+
+.nav-link:focus-visible {
+  outline: 2px solid var(--fsu-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.brand {
+  transition: opacity var(--dur-base) var(--ease-out-soft);
+}
+
+.brand:hover {
+  opacity: 0.86;
 }
 
 .nav-toggle {
@@ -97,6 +123,20 @@
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.08);
   color: var(--white);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-base) var(--ease-out-soft),
+    border-color var(--dur-base) var(--ease-out-soft);
+}
+
+.nav-toggle:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(206, 184, 136, 0.7);
+}
+
+.nav-toggle:focus-visible {
+  outline: 2px solid var(--fsu-gold);
+  outline-offset: 2px;
 }
 
 .nav-toggle span:not(.sr-only) {
@@ -105,4 +145,22 @@
   height: 2px;
   margin: 4px auto;
   background: currentColor;
+  transition:
+    transform var(--dur-base) var(--ease-out-soft),
+    opacity var(--dur-fast) var(--ease-out-soft);
+}
+
+/* Bars are 2px tall with a 4px gap, so each outer bar travels 6px to meet the
+   middle before rotating into the cross. */
+body.nav-open .nav-toggle span:not(.sr-only):nth-of-type(2) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+body.nav-open .nav-toggle span:not(.sr-only):nth-of-type(3) {
+  opacity: 0;
+  transform: scaleX(0.4);
+}
+
+body.nav-open .nav-toggle span:not(.sr-only):nth-of-type(4) {
+  transform: translateY(-6px) rotate(-45deg);
 }

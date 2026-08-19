@@ -70,11 +70,23 @@
   gap: 10px;
   color: rgba(255, 255, 255, 0.84);
   text-decoration: none;
-  transition: color 160ms ease;
+  transition: color var(--dur-base) var(--ease-out-soft);
 }
 
-.footer-link:hover {
+.footer-link:hover,
+.footer-link:focus-visible {
   color: var(--white);
+}
+
+/* A small horizontal nudge gives the row a direction, which colour alone
+   cannot do against an already-light footer palette. */
+.footer-link-icon {
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+
+.footer-link:hover .footer-link-icon,
+.footer-link:focus-visible .footer-link-icon {
+  transform: translateX(3px);
 }
 
 .footer-link-icon {

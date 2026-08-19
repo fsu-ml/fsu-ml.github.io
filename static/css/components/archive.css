@@ -46,7 +46,11 @@
   font-size: 0.84rem;
   font-weight: 600;
   text-decoration: none;
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition:
+    background-color var(--dur-base) var(--ease-out-soft),
+    color var(--dur-base) var(--ease-out-soft),
+    border-color var(--dur-base) var(--ease-out-soft),
+    transform var(--dur-base) var(--ease-out-soft);
 }
 
 .archive-semester-pill:hover,
@@ -54,6 +58,7 @@
   background: var(--fsu-garnet);
   border-color: var(--fsu-garnet);
   color: var(--white);
+  transform: translateY(-2px);
 }
 
 .archive-content {
@@ -209,7 +214,10 @@
   font-size: 0.72rem;
   font-weight: 600;
   text-decoration: none;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition:
+    background-color var(--dur-base) var(--ease-out-soft),
+    border-color var(--dur-base) var(--ease-out-soft),
+    transform var(--dur-base) var(--ease-out-soft);
 }
 
 .archive-material-link:hover,

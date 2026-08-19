@@ -33,6 +33,23 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap"
     >
+    <script>
+      // Runs before the stylesheet so gated content never flashes: `js-motion`
+      // switches on the entrance states, and the timer is a failsafe that
+      // un-hides everything if a module never loads.
+      (function () {
+        var root = document.documentElement;
+        root.classList.add("js-motion");
+        // Only trip if the motion module never announced itself. Tripping
+        // unconditionally would un-hide the whole page and cancel every
+        // below-the-fold reveal on any load slower than the timer.
+        window.setTimeout(function () {
+          if (!root.classList.contains("motion-ready")) {
+            root.classList.add("motion-failsafe");
+          }
+        }, 6000);
+      })();
+    </script>
     <link rel="stylesheet" href="/static/styles.css">
     <script type="module" src="/static/schedule.js"></script>
   </head>
@@ -49,13 +66,14 @@
           <span aria-hidden="true"></span>
         </button>
         <div class="nav-links" id="site-nav" data-nav-links></div>
+        <div class="scroll-progress" aria-hidden="true"><span data-scroll-progress></span></div>
       </nav>
     </header>
 
     <main class="subpage-main">
       <section class="section section-dashboard page-content-section" aria-labelledby="schedule-list-title">
         <div class="section-inner">
-          <div class="panel-heading page-panel-heading">
+          <div class="panel-heading page-panel-heading" data-reveal="up">
             <div>
               <p class="section-kicker" data-schedule-kicker></p>
               <h1 id="schedule-list-title">Seminar Schedule</h1>
@@ -65,7 +83,7 @@
               <a class="button-link button-primary panel-button" href="/speakers/">View speakers</a>
             </div>
           </div>
-          <div class="talk-showcase-grid" data-full-schedule-list></div>
+          <div class="talk-showcase-grid" data-full-schedule-list data-skeleton style="--skeleton-height: 460px"></div>
         </div>
       </section>
     </main>

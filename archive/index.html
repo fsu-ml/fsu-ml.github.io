@@ -33,6 +33,23 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap"
     >
+    <script>
+      // Runs before the stylesheet so gated content never flashes: `js-motion`
+      // switches on the entrance states, and the timer is a failsafe that
+      // un-hides everything if a module never loads.
+      (function () {
+        var root = document.documentElement;
+        root.classList.add("js-motion");
+        // Only trip if the motion module never announced itself. Tripping
+        // unconditionally would un-hide the whole page and cancel every
+        // below-the-fold reveal on any load slower than the timer.
+        window.setTimeout(function () {
+          if (!root.classList.contains("motion-ready")) {
+            root.classList.add("motion-failsafe");
+          }
+        }, 6000);
+      })();
+    </script>
     <link rel="stylesheet" href="/static/styles.css">
     <script type="module" src="/static/archive.js"></script>
   </head>
@@ -49,21 +66,22 @@
           <span aria-hidden="true"></span>
         </button>
         <div class="nav-links" id="site-nav" data-nav-links></div>
+        <div class="scroll-progress" aria-hidden="true"><span data-scroll-progress></span></div>
       </nav>
     </header>
 
     <main class="subpage-main archive-main">
       <section class="section archive-page-section page-content-section" aria-labelledby="archive-title">
         <div class="section-inner archive-page-inner">
-          <div class="archive-page-header">
+          <div class="archive-page-header" data-reveal="up">
             <div class="archive-page-intro" data-archive-intro></div>
             <div class="panel-actions archive-page-actions">
               <a class="button-link button-primary panel-button" href="/schedule/">Current schedule</a>
               <a class="button-link button-primary panel-button" href="/speakers/">View speakers</a>
             </div>
           </div>
-          <div data-archive-nav></div>
-          <div class="archive-content" data-archive-content></div>
+          <div data-reveal="fade" data-archive-nav></div>
+          <div class="archive-content" data-archive-content data-skeleton style="--skeleton-height: 480px"></div>
         </div>
       </section>
     </main>

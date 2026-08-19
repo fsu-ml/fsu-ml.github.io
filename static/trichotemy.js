@@ -1,6 +1,8 @@
 import { qs } from "./js/utils/dom.js";
 import { renderFooter, renderNavigation } from "./js/render/sections.js";
 import { bindNavigation } from "./js/ui/navigation.js";
+import { bindHeaderChrome } from "./js/ui/chrome.js";
+import { activateMotion } from "./js/ui/reveal.js";
 
 const bindCopyPrompt = () => {
   const button = qs("[data-copy-prompt]");
@@ -18,8 +20,10 @@ const bindCopyPrompt = () => {
     }
     const original = button.textContent;
     button.textContent = "Copied!";
+    button.classList.add("is-copied");
     setTimeout(() => {
       button.textContent = original;
+      button.classList.remove("is-copied");
     }, 1400);
   });
 };
@@ -28,6 +32,8 @@ const init = () => {
   renderNavigation("");
   renderFooter();
   bindNavigation();
+  bindHeaderChrome();
+  activateMotion();
   bindCopyPrompt();
 };
 

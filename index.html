@@ -66,6 +66,23 @@
       href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap"
     >
     <link rel="preload" href="images/banner-wide-half-dark.webp" as="image" type="image/webp">
+    <script>
+      // Runs before the stylesheet so gated content never flashes: `js-motion`
+      // switches on the entrance states, and the timer is a failsafe that
+      // un-hides everything if a module never loads.
+      (function () {
+        var root = document.documentElement;
+        root.classList.add("js-motion");
+        // Only trip if the motion module never announced itself. Tripping
+        // unconditionally would un-hide the whole page and cancel every
+        // below-the-fold reveal on any load slower than the timer.
+        window.setTimeout(function () {
+          if (!root.classList.contains("motion-ready")) {
+            root.classList.add("motion-failsafe");
+          }
+        }, 6000);
+      })();
+    </script>
     <link rel="stylesheet" href="static/styles.css">
     <script type="module" src="static/app.js"></script>
   </head>
@@ -82,6 +99,7 @@
           <span aria-hidden="true"></span>
         </button>
         <div class="nav-links" id="site-nav" data-nav-links></div>
+        <div class="scroll-progress" aria-hidden="true"><span data-scroll-progress></span></div>
       </nav>
     </header>
 
@@ -102,26 +120,26 @@
             </p>
             <div class="hero-actions" data-hero-actions></div>
           </div>
-          <aside class="next-seminar" aria-label="Next seminar" data-next-seminar></aside>
+          <aside class="next-seminar" aria-label="Next seminar" data-next-seminar data-skeleton style="--skeleton-height: 430px"></aside>
         </div>
       </section>
 
       <section class="section section-overview" id="why-attend" aria-labelledby="why-attend-title">
         <div class="section-inner split-layout">
-          <div class="section-copy">
+          <div class="section-copy" data-reveal="up">
             <h2 id="why-attend-title">About the Artificial Intelligence Seminar</h2>
             <p data-overview-intro></p>
           </div>
-          <div class="feature-grid" data-feature-grid></div>
-          <aside class="sister-seminar" data-sister-seminar aria-label="Sister seminar"></aside>
-          <p class="overview-guide-link" data-overview-link></p>
+          <div class="feature-grid" data-feature-grid data-skeleton style="--skeleton-height: 150px"></div>
+          <aside class="sister-seminar" data-reveal="up" data-sister-seminar aria-label="Sister seminar"></aside>
+          <p class="overview-guide-link" data-reveal="fade" data-overview-link></p>
         </div>
       </section>
 
       <section class="section section-dashboard" aria-label="Seminar dashboard">
         <div class="section-inner dashboard-layout">
           <article class="dashboard-panel dashboard-panel-talks" id="schedule" aria-labelledby="talks-title">
-            <div class="panel-heading">
+            <div class="panel-heading" data-reveal="up">
               <div>
                 <p class="section-kicker" data-schedule-season>This Semester</p>
                 <h2 id="talks-title">Upcoming Discussions</h2>
@@ -130,11 +148,11 @@
                 <a class="button-link button-primary panel-button" href="/schedule/" data-schedule-action>View full schedule</a>
               </div>
             </div>
-            <div data-schedule-list></div>
+            <div data-schedule-list data-skeleton style="--skeleton-height: 320px"></div>
           </article>
 
           <article class="dashboard-panel dashboard-panel-roster" id="speakers" aria-labelledby="speakers-title">
-            <div class="panel-heading">
+            <div class="panel-heading" data-reveal="up">
               <div>
                 <p class="section-kicker" data-speakers-season>Seminar Speakers</p>
                 <h2 id="speakers-title">The Presenters</h2>
@@ -143,16 +161,16 @@
                 <a class="button-link button-primary panel-button" href="/speakers/" data-speakers-action>View all speakers</a>
               </div>
             </div>
-            <div class="speaker-roster-grid" data-speaker-grid></div>
+            <div class="speaker-roster-grid" data-speaker-grid data-skeleton style="--skeleton-height: 300px"></div>
           </article>
 
           <article class="dashboard-panel dashboard-panel-community" id="community" aria-labelledby="community-title">
-            <div class="panel-heading">
+            <div class="panel-heading" data-reveal="up">
               <div>
                 <h2 id="community-title">Join Our Community</h2>
               </div>
             </div>
-            <div class="community-grid" data-community-grid></div>
+            <div class="community-grid" data-community-grid data-skeleton style="--skeleton-height: 200px"></div>
           </article>
         </div>
       </section>

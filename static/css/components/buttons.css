@@ -12,19 +12,35 @@
   font-weight: 600;
   letter-spacing: 0.01em;
   line-height: 1;
-  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease,
-    transform 160ms ease;
+  transition:
+    background-color var(--dur-base) var(--ease-out-soft),
+    border-color var(--dur-base) var(--ease-out-soft),
+    box-shadow var(--dur-base) var(--ease-out-soft),
+    transform var(--dur-base) var(--ease-out-soft);
   box-shadow: 0 1px 2px rgba(7, 17, 31, 0.12);
 }
 
 .button-link:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 2px 4px rgba(7, 17, 31, 0.1), 0 10px 20px -10px rgba(7, 17, 31, 0.3);
 }
 
+/* Presses land fast and flat - a slow press feels unresponsive even when the
+   hover is luxurious. */
 .button-link:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.985);
   box-shadow: 0 1px 2px rgba(7, 17, 31, 0.12);
+  transition-duration: var(--dur-fast);
+}
+
+.button-link svg,
+.button-link .inline-icon {
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+
+.button-link:hover svg,
+.button-link:hover .inline-icon {
+  transform: scale(1.08);
 }
 
 .button-link:focus-visible {

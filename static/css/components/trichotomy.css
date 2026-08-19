@@ -45,6 +45,23 @@
   border-radius: var(--radius);
   background: var(--white);
   box-shadow: var(--shadow-card);
+  transition:
+    box-shadow var(--dur-slow) var(--ease-out-soft),
+    transform var(--dur-slow) var(--ease-out-soft),
+    border-color var(--dur-slow) var(--ease-out-soft);
+}
+
+.trichotomy-card:hover {
+  transform: translateY(var(--lift));
+  border-color: rgba(120, 47, 64, 0.24);
+  box-shadow: 0 2px 4px rgba(7, 17, 31, 0.05), 0 18px 36px -18px rgba(7, 17, 31, 0.26);
+}
+
+/* Copy confirmation. The label swap alone is easy to miss on a wide button, so
+   the colour change carries the feedback and the label confirms it. */
+.trichotomy-copy.is-copied {
+  background: #1f7a4d;
+  border-color: rgba(15, 61, 39, 0.4);
 }
 
 .trichotomy-card h3 {

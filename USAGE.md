@@ -223,11 +223,12 @@ templates/              Reusable HTML fragments fetched and filled at runtime
 static/styles.css       CSS entrypoint — only imports from static/css/
 static/css/base.css     Variables, resets, typography
 static/css/components/  Per-component styling (header, hero, content-sections, footer, …)
+static/css/components/motion.css  Motion tokens, scroll-reveal states, skeletons, reduced-motion
 static/css/responsive.css  Breakpoint overrides
 static/app.js           JS entrypoint — only orchestrates initialization
 static/js/data/         page-data.js, speakers.js, semester-schedule.js, archive-schedule.js, templates.js
 static/js/render/       Functions that turn data into markup
-static/js/ui/           Navigation, icons, scroll behavior
+static/js/ui/           Navigation, icons, scroll behavior, reveal.js, chrome.js
 static/js/utils/        CSV parsing, DOM helpers, HTML escaping, materials links
 data/                   speakers.csv, speaker-profiles.csv, images, archived HTML
 images/                 Banner and general artwork
@@ -239,6 +240,7 @@ images/                 Banner and general artwork
 
 - Keep structure (`index.html`), markup fragments (`templates/`), styling (`static/css/`), behavior (`static/js/`), and content data (`data/`, `page-data.js`) separated.
 - No inline `<style>` or `<script>` in `index.html` or the templates. Add a file under `static/css/` or `static/js/` and import it from `static/styles.css` or `static/app.js`.
+  - The one sanctioned exception is the four-line motion boot script in each page `<head>`. It must run before the stylesheet is applied, and an external file would add a round-trip during which the entrance states are unstyled — the exact flash it exists to prevent. Do not add a second exception.
 - Do not duplicate card or button markup inside JavaScript when a template in `templates/` can be used.
 - Escape any user-facing string interpolated into markup with `escapeHtml` from `static/js/utils/html.js`.
 - Use relative or root-relative URLs (`/schedule/`, `data/speakers.csv`) — never absolute paths to a local machine.
@@ -250,3 +252,13 @@ images/                 Banner and general artwork
 - Cards stay at or below `8px` border radius.
 - Use semantic headings and landmark sections.
 - Avoid decorative markup that neither communicates content nor supports layout.
+
+### Motion rules
+
+Timings, easings and travel distances are tokens in `static/css/components/motion.css`. Use them; do not write a new `0.15s ease` by hand.
+
+- To make something animate in on scroll, add `data-reveal="up|fade|row|left|right|scale"` to the element — in a template, in `index.html`, or in a renderer's markup string. Nothing else is required; `activateMotion()` picks it up after each render pass.
+- Never nest one `[data-reveal]` inside another. The outer entrance would run first and the inner one would animate against a moving parent.
+- Reveals animate `opacity` plus the independent `translate`/`scale` properties, never `transform`. `transform` is left free for component hover lifts. A reveal that used `transform` would silently disable the hover on every card it touched.
+- If a renderer emits a container that starts empty, give it `data-skeleton` and a `--skeleton-height` matching the filled height, so the layout does not jump when data lands.
+- Portraits added by a renderer take `data-fade` to fade in as they decode.

@@ -3,6 +3,8 @@ import { renderArchive } from "./js/render/archive.js";
 import { renderFooter, renderNavigation } from "./js/render/sections.js";
 import { qs } from "./js/utils/dom.js";
 import { bindNavigation } from "./js/ui/navigation.js";
+import { bindHeaderChrome } from "./js/ui/chrome.js";
+import { activateMotion } from "./js/ui/reveal.js";
 
 const init = async () => {
   document.title = `Archive | ${pageData.page.title}`;
@@ -15,6 +17,8 @@ const init = async () => {
   await renderArchive();
   renderFooter();
   bindNavigation();
+  bindHeaderChrome();
+  activateMotion();
 };
 
 init().catch((error) => {

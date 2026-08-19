@@ -3,6 +3,8 @@ import { loadTemplates } from "./js/data/templates.js";
 import { qs } from "./js/utils/dom.js";
 import { renderFooter, renderNavigation, renderSpeakerDirectory } from "./js/render/sections.js";
 import { bindNavigation } from "./js/ui/navigation.js";
+import { bindHeaderChrome } from "./js/ui/chrome.js";
+import { activateMotion } from "./js/ui/reveal.js";
 
 const init = async () => {
   document.title = `Speakers | ${pageData.page.title}`;
@@ -16,6 +18,8 @@ const init = async () => {
   await renderSpeakerDirectory(templates);
   renderFooter();
   bindNavigation();
+  bindHeaderChrome();
+  activateMotion();
 };
 
 init().catch((error) => {
