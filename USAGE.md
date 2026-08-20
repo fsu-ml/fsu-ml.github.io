@@ -8,6 +8,7 @@ file. You should not need to touch HTML for normal content changes.
 - [Running the site locally](#running-the-site-locally)
 - [Adding or editing a talk](#adding-or-editing-a-talk)
 - [Adding or editing a speaker](#adding-or-editing-a-speaker)
+- [Writing a talk description](#writing-a-talk-description)
   - [What to collect before adding a speaker](#what-to-collect-before-adding-a-speaker)
   - [Writing a speaker bio](#writing-a-speaker-bio)
 - [Images](#images)
@@ -23,6 +24,8 @@ file. You should not need to touch HTML for normal content changes.
 | Task | Edit this |
 | --- | --- |
 | Add / reschedule / remove a talk | `data/speakers.csv` |
+| Write the blurb for a talk | [Writing a talk description](#writing-a-talk-description) |
+| Write a speaker bio | [Writing a speaker bio](#writing-a-speaker-bio) |
 | Add a new speaker's bio, photo, or links | `data/speaker-profiles.csv` (+ `data/speaker-images/`) |
 | Find out what to ask a new speaker for | [Intake checklist](#what-to-collect-before-adding-a-speaker) |
 | Add a holiday or break row to the schedule | `data/speakers.csv` (see [Break rows](#break-and-no-seminar-rows)) |
@@ -73,7 +76,7 @@ season,name,talk_title,talk_date,description,materials,event_image
 | `name` | yes | Speaker name, matching a `name` in `speaker-profiles.csv`. Separate co-speakers with `;` (`Tommie Juzek;Lan Li`). Use `Speaker TBA` if unknown. |
 | `talk_title` | yes | Title shown in the schedule and archive. |
 | `talk_date` | yes | ISO date, `YYYY-MM-DD`. |
-| `description` | no | One- or two-sentence summary shown in the schedule's Description column. |
+| `description` | no | What the talk is about — **not** who the speaker is. 250–450 characters. See [Writing a talk description](#writing-a-talk-description). |
 | `materials` | no | Semicolon-separated links (video, slides). Rendered as link chips on `/archive/`. |
 | `event_image` | no | Filename only, from `data/event-images/` — artwork shown in place of a speaker on break rows. |
 
@@ -131,7 +134,7 @@ name,title,department,affiliation,specialties,email,website,profile_url,image,bi
 | `website` | Optional personal or lab site; used first for name links. |
 | `profile_url` | Optional institutional profile; used when `website` is empty. |
 | `image` | **Filename only**, resolved as `data/speaker-images/{image}`. Leave empty for a placeholder. |
-| `bio` | Optional. One paragraph, 3–4 sentences. See [Writing a speaker bio](#writing-a-speaker-bio) — there is a length ceiling, and it matters. |
+| `bio` | Optional but wanted. One paragraph, 80–120 words. See [Writing a speaker bio](#writing-a-speaker-bio). |
 
 Notes:
 
@@ -161,9 +164,10 @@ gives you a source to check against later.
 | 6 | Three research topics, in their own words | `specialties` | Required |
 | 7 | A public email they are happy to have published | `email` | Optional |
 | 8 | A headshot, roughly square, at least 400 px | `image` | Strongly preferred |
-| 9 | **Bio material** — PhD institution, postdoc, what they run, any notable award | `bio` | Strongly preferred |
-| 10 | Talk title, date, and a one- or two-sentence description | `speakers.csv` | Required |
-| 11 | Slides and video links | `materials` in `speakers.csv` | After the talk |
+| 9 | **Bio material** — training, career path, named contributions, awards | `bio` | Strongly preferred |
+| 10 | Talk title and date | `speakers.csv` | Required |
+| 11 | **An abstract**, or a few sentences on what the talk covers | `description` | Strongly preferred |
+| 12 | Slides and video links | `materials` in `speakers.csv` | After the talk |
 
 #### A message you can paste
 
@@ -179,10 +183,13 @@ A few details for the seminar website (https://fsu-ml.github.io), whenever you g
 5. Three research areas, in your own words
 6. A public email to list (optional — say "skip" to leave it off)
 7. A headshot, roughly square and at least 400 px (JPEG or PNG is fine)
-8. Two or three lines for a short bio: where you did your PhD, any postdoc, anything
-   you run, and any award worth naming. We keep these to about 60 words, so no need
-   to send a full CV paragraph.
-9. Your talk title, plus one or two sentences describing it
+8. A short bio, or a link to one we can work from: where you studied, the positions
+   that got you here, the work you'd most want mentioned, and any awards. We run these
+   at about 100 words — a CV or existing bio paragraph is perfect, we'll trim it.
+9. Your talk title
+10. An abstract, or a few sentences on what the talk covers — what it's about, and what
+    you want people to come away with. This is what appears in the schedule, so it
+    matters more than the title does.
 ```
 
 If you are handing this to an assistant or filling it in yourself, give the profile URL
@@ -220,63 +227,118 @@ pass at the start of each semester over that semester's speakers, checking `titl
 
 ### Writing a speaker bio
 
-**Three to four sentences. Roughly 40–70 words, 300–450 characters.** That is a ceiling,
-not a target to fill.
+**Aim for 80–120 words, five to seven sentences.** The job of a bio is to make a reader
+think *this person sounds worth an hour of my time* — so it needs enough substance to
+earn that. A two-line bio does not.
 
-The reason is proportion. The bio is the last block of prose a reader meets, sitting
-under the talk description — and for most rows that `description` is a single line of
-103–201 characters. A six-sentence bio would run three times the length of the talk
-blurb directly above it, which inverts the whole thing: people came for the talk, not
-the CV. Until longer abstracts exist, keep bios at the short end.
+Roughly, in this order:
 
-#### What the sentences should carry
+1. **Training** — where they studied, in what, and with whom if the advisor is notable
+2. **Career path** — the positions that got them here, in order
+3. **What they actually did** — the specific contribution, named. "Wrote MIGRATE, a
+   Bayesian package for estimating migration rates from genetic data" beats "works in
+   population genetics"
+4. **Recognition** — awards, fellowships, books, widely cited papers
+5. **A hook** — the detail a reader would repeat to someone else
 
-1. **Role and what they run** — "directs the Optimal Robotics Laboratory"
-2. **Training** — PhD and where, then any postdoc
-3. **Recognition** — awards, but only genuinely notable ones
-4. **A hook** — the detail someone would actually repeat afterwards
+The bio should be *specific*. Named papers, named labs, named prizes, real numbers. A
+bio made of category labels ("his research spans machine learning and its applications")
+tells a reader nothing they could not guess from the specialties chips already on the
+card. Every sentence should carry a fact that is not already on the page.
 
-Drop 3 and 4 when there is nothing real to say. **Two solid sentences beat four padded
-ones**, and a bio that reaches for filler reads worse than a short one. Several bios in
-the file are deliberately two or three sentences for exactly this reason.
+Two or three sentences is still the right answer when there is genuinely nothing more to
+say — a first-year graduate student with no publications does not need padding out to
+100 words. But reach for the material before reaching for the shorter bio.
 
 #### What to leave out
 
-Do not restate `title`, `department`, `affiliation`, or `specialties`. All four are
-rendered directly above the bio, so a bio opening "X is an Associate Professor of
-Scientific Computing at Florida State University working on scientific machine learning"
-says the same thing twice in adjacent lines. Start at the second sentence instead — the
-one that says something the columns cannot.
+Do not restate `title`, `department`, `affiliation`, or `specialties` as a full sentence.
+All four render directly above the bio, so an opening like "X is an Associate Professor
+of Scientific Computing at Florida State University working on scientific machine
+learning" says the same thing twice in adjacent lines. Naming a role in passing while
+saying something new about it is fine; spending the first sentence on it is not.
 
 #### Grounding
 
 **Every claim in a bio is about a real person, so every claim needs a source.** Take
-facts from the speaker directly, from their own site, or from their institutional page —
-and if a detail cannot be confirmed, leave it out. An empty `bio` cell is completely
-fine; eleven rows currently have one. A wrong PhD institution or an invented award is
-not a small error, and it is the kind of thing the subject notices first.
+facts from the speaker, from their own site, from their institutional page, or from a CV
+they have published. If a detail cannot be confirmed, leave it out. An empty `bio` cell
+is completely fine; eleven rows currently have one. A wrong PhD institution or an
+invented award is not a small error, and it is exactly what the subject will notice
+first.
 
-Two traps worth naming:
+Three traps worth naming:
 
 - **Search-engine summaries are not sources.** They paraphrase, and they merge people
   with similar names. Follow the link and read the page.
 - **Inference is not confirmation.** "They were a graduate assistant at University X
   from 2012 to 2018" does not establish that the PhD is from University X, even though
   it usually is. Confirm it or omit it.
+- **CVs go stale.** A personal CV dated 2006 is authoritative about a 1999 PhD and
+  unreliable about a current title. Take the fixed facts from the CV and the current
+  ones from the institutional page.
 
 #### Formatting in the CSV
 
-One paragraph per cell, wrapped in double quotes, since a bio will almost always contain
-a comma:
+One paragraph per cell, wrapped in double quotes, since a bio will always contain a
+comma. Keep it to a single paragraph — a blank line inside a quoted CSV field is legal
+but miserable to edit, and nothing renders multiple paragraphs.
 
 ```csv
-name,title,department,affiliation,specialties,email,website,profile_url,image,bio
-Ryan Murray,Associate Professor,Department of Mathematics,North Carolina State University,"calculus of variations; machine learning theory",,,,,"He earned his PhD in mathematical sciences at Carnegie Mellon University in 2016, advised by Giovanni Leoni and Bob Pego. He was then a Chowla Research Assistant Professor at Penn State, working with Alberto Bressan."
+name,...,image,bio
+Ryan Murray,...,,"He studied mathematics at Brigham Young University, then earned his PhD in mathematical sciences at Carnegie Mellon University in 2016 under Giovanni Leoni and Bob Pego, supported by an NSF PIRE graduate fellowship. He spent three years at Penn State as a Chowla Research Assistant Professor, mentored by Alberto Bressan, before joining NC State."
 ```
 
-Keep it to a single paragraph — no blank lines inside the cell. A blank line in a quoted
-CSV field is legal but miserable to edit, and nothing currently renders multiple
-paragraphs.
+---
+
+## Writing a talk description
+
+The `description` column in `data/speakers.csv` should describe **the talk**, not the
+speaker. The speaker is already covered twice over — by the profile columns rendered
+beside the row, and by the bio.
+
+This is the single most common thing to get wrong. A description like:
+
+> ~~Dr. Xiuwen Liu, Professor of Computer Science, on planning, tool use, and memory in
+> autonomous LLM agents.~~
+
+spends its first eight words on information already on screen, and leaves a reader no
+wiser about the talk. Rewritten to be about the subject:
+
+> A language model becomes an agent once it can plan, call tools, and carry state across
+> steps. This session covers how those three pieces are built and, more usefully, where
+> they break: planning that degrades over long horizons, tool calls that fail silently,
+> and memory that either discards what mattered or buries the model in what did not.
+
+**Aim for 250–450 characters, two or three sentences.** Enough to convey what the talk is
+actually about and why someone might care; short enough to scan in a schedule table.
+
+What works:
+
+- **Open with the idea, not the person.** No "Dr. X will discuss…". Start with the
+  subject itself.
+- **Say what the thing *is* before saying what is hard about it.** A reader who does not
+  already know what data assimilation is cannot be interested in its failure modes.
+- **Name the tension.** The most readable descriptions have a "but" in them somewhere —
+  the assumption that breaks, the gap between demo and deployment, the tradeoff nobody
+  has solved. That is what makes a topic sound worth an hour.
+- **Prefer concrete over abstract.** "Errors are assumed roughly Gaussian, which fails
+  badly for clouds and precipitation" beats "addresses various statistical challenges".
+
+#### Descriptions for talks that have not happened yet
+
+Most upcoming rows have no abstract from the speaker, because most speakers send one
+late or not at all. A description written in advance is therefore a **description of the
+topic**, not a promise about the talk's contents. Keep it that way:
+
+- Describe the subject area and the open questions in it — things that are true whether
+  or not the speaker mentions them.
+- Do not attribute specific claims, results, or conclusions to the speaker.
+- Do not invent a paper, dataset, or demo that will be shown.
+
+When the speaker does send an abstract, replace the placeholder with theirs. A real
+abstract always beats a good guess, and the [intake message](#a-message-you-can-paste)
+asks for one.
 
 ---
 
