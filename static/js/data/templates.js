@@ -1,8 +1,6 @@
 const templateFiles = {
   button: "../../../templates/button-link.html",
   featureCard: "../../../templates/feature-card.html",
-  scheduleItem: "../../../templates/schedule-item.html",
-  speakerCard: "../../../templates/speaker-card.html",
   speakerDirectoryCard: "../../../templates/speaker-directory-card.html",
   communityCard: "../../../templates/community-card.html"
 };

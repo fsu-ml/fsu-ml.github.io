@@ -1,0 +1,456 @@
+/* ---------------------------------------------------------------------------
+   Motion system
+   ---------------------------------------------------------------------------
+   One vocabulary for every animation on the site: three easings, four
+   durations, one travel distance. Component files reference these tokens
+   instead of inventing their own timings.
+
+   Everything that hides content is gated behind `.js-motion`, which the inline
+   boot script in each page head adds. If scripting is off the markup renders
+   plain and fully visible. `.motion-failsafe` is a second net: the same boot
+   script sets it on a timer, so a module that never loads cannot leave the page
+   stuck at opacity 0.
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Decelerating curve for entrances - fast start, long soft landing. */
+  --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  /* Sharper version for longer travel, so big moves still settle quickly. */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Slight overshoot, reserved for small affordances (icons, badges). */
+  --ease-spring: cubic-bezier(0.34, 1.42, 0.64, 1);
+
+  --dur-fast: 140ms;
+  --dur-base: 220ms;
+  --dur-slow: 380ms;
+  --dur-reveal: 620ms;
+
+  --reveal-shift: 22px;
+  --reveal-stagger: 70ms;
+  --lift: -3px;
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll reveal
+   -------------------------------------------------------------------------- */
+
+/*
+ * Two deliberate choices here, both about not fighting the components:
+ *
+ * 1. Reveals are keyframe *animations*, not transitions. A `transition`
+ *    declaration on the reveal would replace the whole transition list on any
+ *    card that also animates its hover, silently killing that hover.
+ * 2. Travel uses the independent `translate`/`scale` properties rather than
+ *    `transform`. Those compose with a component's own `transform: translateY()`
+ *    hover lift instead of overwriting it.
+ */
+
+.js-motion [data-reveal] {
+  opacity: 0;
+  --reveal-delay: calc(var(--reveal-index, 0) * var(--reveal-stagger));
+}
+
+.js-motion [data-reveal].is-revealed {
+  animation: reveal-up var(--dur-reveal) var(--ease-out-expo) var(--reveal-delay) both;
+}
+
+.js-motion [data-reveal="fade"].is-revealed {
+  animation-name: reveal-fade;
+}
+
+/* Table rows travel less: a tall stack cascading a full 22px reads as noise. */
+.js-motion [data-reveal="row"].is-revealed {
+  animation-name: reveal-row;
+}
+
+.js-motion [data-reveal="left"].is-revealed {
+  animation-name: reveal-left;
+}
+
+.js-motion [data-reveal="right"].is-revealed {
+  animation-name: reveal-right;
+}
+
+.js-motion [data-reveal="scale"].is-revealed {
+  animation-name: reveal-scale;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    translate: 0 var(--reveal-shift);
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes reveal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes reveal-row {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes reveal-left {
+  from {
+    opacity: 0;
+    translate: calc(var(--reveal-shift) * -1.2) 0;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes reveal-right {
+  from {
+    opacity: 0;
+    translate: calc(var(--reveal-shift) * 1.2) 0;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes reveal-scale {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+    scale: 0.97;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Skeleton placeholders
+
+   The page shell paints before the CSV and template fetches resolve. Without
+   these, the containers are zero-height voids that shove the layout down the
+   moment data lands. `:empty` means they retire on their own once a renderer
+   writes into them - no cleanup code needed.
+   -------------------------------------------------------------------------- */
+
+.js-motion [data-skeleton]:empty {
+  display: block;
+  min-height: var(--skeleton-height, 220px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0) 28%,
+      rgba(255, 255, 255, 0.72) 48%,
+      rgba(255, 255, 255, 0) 68%
+    ),
+    rgba(20, 32, 51, 0.045);
+  background-size: 220% 100%, auto;
+  background-repeat: no-repeat;
+  animation: skeleton-sweep 1500ms linear infinite;
+}
+
+@keyframes skeleton-sweep {
+  from {
+    background-position: 160% 0, 0 0;
+  }
+  to {
+    background-position: -60% 0, 0 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Hero entrance
+
+   Deliberately CSS-only and keyed to first paint rather than to app-ready.
+   The hero copy is static markup, so there is no reason to make it wait behind
+   a schedule fetch it does not depend on.
+   -------------------------------------------------------------------------- */
+
+@keyframes motion-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes motion-settle {
+  from {
+    transform: scale(1.07);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes motion-drop {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -100%, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.js-motion .hero-media {
+  /* A slow settle behind the copy - the banner reads as alive without moving
+     enough to compete with the headline. */
+  animation: motion-settle 1600ms var(--ease-out-expo) both;
+}
+
+.js-motion .site-header {
+  animation: motion-drop 560ms var(--ease-out-expo) both;
+}
+
+/*
+ * The hero enters from the left rather than rising like the rest of the page.
+ * The copy is a left-aligned column against a full-bleed banner, so a lateral
+ * entrance follows the reading direction and keeps the hero distinct from the
+ * scroll reveals further down.
+ */
+@keyframes motion-slide-in {
+  from {
+    opacity: 0;
+    translate: -38px 0;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.js-motion .hero-logo {
+  animation: motion-slide-in 760ms var(--ease-out-expo) 90ms both;
+}
+
+.js-motion .hero-copy h1 span:nth-child(1) {
+  animation: motion-slide-in 760ms var(--ease-out-expo) 190ms both;
+}
+
+.js-motion .hero-copy h1 span:nth-child(2) {
+  animation: motion-slide-in 760ms var(--ease-out-expo) 265ms both;
+}
+
+.js-motion .hero-subtitle {
+  animation: motion-slide-in 760ms var(--ease-out-expo) 350ms both;
+}
+
+/*
+ * The action buttons are injected by renderHero, not present at first paint.
+ * A CSS animation begins when the element is inserted, so the delays below are
+ * measured from insertion time - no observer and no ordering dependency on
+ * activateMotion(), which is what left the card blank before.
+ */
+.js-motion .hero-actions .button-link {
+  animation: motion-slide-in 640ms var(--ease-out-expo) both;
+}
+
+.js-motion .hero-actions .button-link:nth-child(1) { animation-delay: 40ms; }
+.js-motion .hero-actions .button-link:nth-child(2) { animation-delay: 115ms; }
+.js-motion .hero-actions .button-link:nth-child(3) { animation-delay: 190ms; }
+.js-motion .hero-actions .button-link:nth-child(n + 4) { animation-delay: 265ms; }
+
+/* ---------------------------------------------------------------------------
+   Next-seminar card
+
+   The card is the one thing on the page a visitor is looking for, so it gets
+   its own entrance: rows assemble top to bottom and the talk title arrives a
+   word at a time. Everything is insertion-triggered for the reason above.
+   -------------------------------------------------------------------------- */
+
+@keyframes motion-card-row {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes motion-word-in {
+  from {
+    opacity: 0;
+    translate: 0 0.32em;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.js-motion .seminar-card-body > * {
+  animation: motion-card-row 520ms var(--ease-out-soft) both;
+}
+
+.js-motion .seminar-card-body > .seminar-label { animation-delay: 60ms; }
+.js-motion .seminar-card-body > .seminar-title { animation-delay: 110ms; }
+.js-motion .seminar-card-body > .seminar-description { animation-delay: 400ms; }
+.js-motion .seminar-card-body > .seminar-card-spacer { animation-delay: 460ms; }
+.js-motion .seminar-card-body > .seminar-speaker-row { animation-delay: 520ms; }
+.js-motion .seminar-card-body > .seminar-divider { animation-delay: 580ms; }
+.js-motion .seminar-card-body > .seminar-meta { animation-delay: 620ms; }
+
+/* Word-at-a-time rather than character-at-a-time: a CSS steps() typewriter
+   needs a fixed single-line width, and these titles wrap to two or three
+   lines at most widths. Words give the same cadence and survive wrapping. */
+.js-motion .seminar-title .typed-word {
+  display: inline-block;
+  animation: motion-word-in 420ms var(--ease-out-soft) both;
+  animation-delay: calc(150ms + var(--word-index, 0) * 52ms);
+}
+
+/* The title's own row animation would double up on the per-word one. */
+.js-motion .seminar-card-body > .seminar-title:has(.typed-word) {
+  animation: none;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-motion .seminar-title .typed-word,
+  .js-motion .seminar-card-body > *,
+  .js-motion .hero-actions .button-link {
+    animation: none !important;
+    opacity: 1 !important;
+    translate: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Header chrome
+   -------------------------------------------------------------------------- */
+
+.site-header {
+  transition:
+    background-color var(--dur-slow) var(--ease-out-soft),
+    box-shadow var(--dur-slow) var(--ease-out-soft),
+    border-color var(--dur-slow) var(--ease-out-soft);
+}
+
+.nav-shell {
+  transition: min-height var(--dur-slow) var(--ease-out-soft);
+}
+
+.site-header.is-scrolled {
+  border-bottom-color: rgba(206, 184, 136, 0.5);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.38);
+}
+
+.site-header.is-scrolled .nav-shell {
+  min-height: 62px;
+}
+
+/* Reading-progress hairline along the bottom edge of the header. */
+.scroll-progress {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.scroll-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--fsu-gold), var(--fsu-garnet-bright));
+  transform: scaleX(var(--scroll-progress, 0));
+  transform-origin: 0 50%;
+}
+
+/* ---------------------------------------------------------------------------
+   Images
+
+   Speaker portraits arrive one network round-trip after their card. Fading
+   them in stops the card from flickering as each photo pops into place.
+   -------------------------------------------------------------------------- */
+
+.js-motion img[data-fade] {
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out-soft);
+}
+
+.js-motion img[data-fade].is-loaded {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------------------
+   Anchor offset for the fixed header
+   -------------------------------------------------------------------------- */
+
+[id] {
+  scroll-margin-top: 96px;
+}
+
+/* ---------------------------------------------------------------------------
+   Escape hatches
+   -------------------------------------------------------------------------- */
+
+/* Set on a timer by the boot script: if a module failed to load, content still
+   ends up on screen rather than permanently transparent. */
+.motion-failsafe [data-reveal],
+.motion-failsafe img[data-fade] {
+  opacity: 1 !important;
+  translate: none !important;
+  scale: none !important;
+}
+
+.motion-failsafe [data-skeleton]:empty {
+  animation: none;
+  background: none;
+  border: 0;
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .js-motion [data-reveal],
+  .js-motion img[data-fade] {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: none !important;
+  }
+
+  .js-motion [data-skeleton]:empty {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

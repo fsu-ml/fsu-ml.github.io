@@ -1,0 +1,135 @@
+# =============================================================================
+# audit-profile.yaml — FSU SC Artificial Intelligence Seminar (sc-ai.net)
+# =============================================================================
+# Scoping record for the website-audit skill (.claude/skills/website-audit).
+# Every routing decision in that skill keys off this file. Revalidate before
+# each run; stale > 90 days or older than the last deploy ⇒ re-detect.
+# =============================================================================
+
+site:
+  url:              https://sc-ai.net/
+  staging_url:      http://localhost:4173/   # `python3 -m http.server 4173` via .claude/launch.json
+  type:             web
+  primary_job:      inform
+  category:         lab
+  url_count:        5                        # VERIFIED — sitemap.xml: /, /schedule/, /speakers/, /archive/, /trichotemy.html
+  multilingual:     false                    # VERIFIED — lang="en" only, no hreflang, no switcher
+  expected_life:    years
+  maintainer:       FSU Department of Scientific Computing (site repo: fsu-ml.github.io)
+
+audience:
+  intent:           mixed                    # prospective attendees looking for the next talk (goal-directed)
+                                             # plus browsers reading about the series (exploratory)
+  success_metric:   "A visitor can find the next seminar's date, time, place and Zoom link within one screen of landing."
+
+# -----------------------------------------------------------------------------
+# COMPLIANCE
+# Florida State University is a public (state) institution, so its web content
+# falls under ADA Title II and the DOJ web accessibility rule. FSU is also a
+# federal grantee, so Section 508 obligations flow down to federally funded
+# deliverables published here. regime != none ⇒ every WCAG A/AA failure is
+# BLOCKER severity (reporting.md §2).
+# -----------------------------------------------------------------------------
+compliance:
+  regime:           title-ii
+  target:           wcag22-aa
+  deliverable:      none
+  known_complaint:  false
+
+# -----------------------------------------------------------------------------
+# CONTENT — VERIFIED by grep over the repo + rendered-DOM inspection
+# -----------------------------------------------------------------------------
+content:
+  has_forms:              false
+  has_auth:               false
+  has_search:             false
+  has_video:              false              # YouTube links out; nothing embedded
+  has_audio:              false
+  has_animation:          true               # scroll reveals, hero entrance, scroll-progress bar,
+                                             # skeleton shimmer — static/css/components/motion.css
+  has_carousel:           false
+  has_images_of_text:     false
+  has_data_tables:        true               # archive/ + /schedule/ render tabular schedules
+  has_custom_widgets:     true               # hand-rolled nav disclosure (.nav-toggle, aria-expanded)
+  has_multistep_process:  false
+  has_visualizations:     false
+  has_animation_layer:    false
+  has_pdfs:               true               # speaker slide decks under materials/ (data/speakers.csv)
+  has_office_docs:        false              # slides are Google Slides links, not .pptx downloads
+  has_latex_pdfs:         unknown            # speaker-supplied decks; origin not controlled by the site
+  has_epub:               false
+  has_html_email:         false
+  volume:                 moderate
+
+# -----------------------------------------------------------------------------
+# STACK
+# -----------------------------------------------------------------------------
+stack:
+  rendering:        csr                      # VERIFIED — static HTML shell; schedule, speakers,
+                                             # community, footer and nav are all injected by
+                                             # static/app.js from CSV/JS data at runtime
+  cms:              null                     # data lives in data/*.csv + static/js/data/*.js
+  hosting:          GitHub Pages (custom domain sc-ai.net via CNAME)
+  licence_policy:   any
+  third_parties:                             # VERIFIED — every non-first-party origin
+    - fonts.googleapis.com                   # Inter stylesheet (render-blocking)
+    - fonts.gstatic.com                      # Inter font files
+
+mobile:
+  required:         true
+  known_problem_sections:
+    # CORRECTED 2026-08-19: /schedule/ and /archive/ do NOT use <table> markup;
+    # they are .talk-card / .archive-talk flex+grid card lists. The homepage
+    # dashboard is the only place a real <table> is rendered.
+    - archive talk card grid (/archive/, .archive-talk)
+    - schedule talk card list (/schedule/, .talk-card)
+    - homepage dashboard schedule table (/, table.schedule-table)
+    - hero split layout (.hero-inner)
+    - dashboard grid (.dashboard-layout)
+    # VERIFIED CLEAN 2026-08-19 across V1-V8: no horizontal overflow, no
+    # reflow content loss, no SC 2.5.8 target-size failures on any of these.
+
+motion:
+  budget:           expressive
+  scroll_reveals:   true                     # data-reveal + IntersectionObserver (static/js/ui/reveal.js)
+                                             # ⇒ fail-open checks are BLOCKER severity
+  reduced_motion_handled: true               # VERIFY each run — motion.css has a
+                                             # prefers-reduced-motion block; confirm behaviour, not source
+  # ---------------------------------------------------------------------------
+  # OWNER CONSTRAINT (2026-08-19): the current motion design is intentional and
+  # newly shipped. Motion findings are REPORT-ONLY unless they are a fail-open
+  # blocker or a reduced-motion conformance failure. Do not restyle, retime or
+  # remove animations as part of an audit fix pass.
+  # ---------------------------------------------------------------------------
+
+perf:
+  device_floor:     mid-android-4g
+  budget_file:      null
+  hard_requirement: null
+
+seo:
+  priority:         basic
+  local_business:   false                    # a seminar series, not a business with a service area
+  ecommerce:        false
+  ai_visibility:    false
+  data_access:      []                       # no Search Console / CrUX / analytics access
+                                             # ⇒ ALL performance findings are lab-only. Say so in reports.
+
+engagement:
+  mode:             live-audit
+  out_of_scope:
+    # CORRECTED 2026-08-19 after the hygiene pass: these ARE publicly served.
+    # GitHub Pages serves every committed file with no access control, so
+    # backup/ (78 files) and data/past-html/ both return 200 on the live
+    # domain. They are out of scope for *content* review, not for hygiene.
+    - backup/            # superseded snapshots — served, stale, indexable
+    - data/past-html/    # archived source data — served, stale, indexable
+    - speaker-supplied PDFs under materials/ (not authored here)
+    - the motion/animation design itself (see motion.budget note above)
+  fix_budget:       prioritised
+  report_path:      ./audit-report.md
+
+meta:
+  created:          2026-08-19
+  last_verified:    2026-08-19
+  verified_by:      "website-audit skill, automated detection + repo inspection"

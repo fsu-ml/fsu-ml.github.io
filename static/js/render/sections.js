@@ -15,6 +15,7 @@ import {
 } from "../data/speakers.js";
 import { renderSpeakerNameLinks } from "./speaker-links.js";
 import { icon } from "../ui/icons.js";
+import { activateMotion } from "../ui/reveal.js";
 import { qs } from "../utils/dom.js";
 import { escapeHtml, renderTemplate } from "../utils/html.js";
 import { renderButton } from "./buttons.js";
@@ -203,7 +204,7 @@ const renderScheduleRow = (talk, nextTalkDate) => {
   const badge = dateBadge(talk.talkDate);
   const isNext = talk.talkDate === nextTalkDate && !isBreakEntry(talk);
   return `
-    <tr class="${scheduleRowClasses(talk, nextTalkDate)}">
+    <tr class="${scheduleRowClasses(talk, nextTalkDate)}" data-reveal="row">
       <th class="schedule-table-date" scope="row">
         <span class="schedule-table-date-badge" aria-hidden="true">
           <span class="date-month">${escapeHtml(badge.month)}</span>
@@ -261,11 +262,12 @@ const renderTalkCard = (speaker, details = {}) => {
       : `<span class="talk-event-fallback" aria-hidden="true">${escapeHtml(speaker.name || "")}</span>`;
 
     return `
-      <article class="talk-card talk-card-event">
+      <article class="talk-card talk-card-event" data-reveal="up">
         <div class="talk-card-header">
-          <div class="date-badge" aria-label="${escapeHtml(readableDate(speaker.talkDate))}">
-            <span class="date-month">${escapeHtml(badge.month)}</span>
-            <span class="date-day">${escapeHtml(badge.day)}</span>
+          <div class="date-badge">
+            <span class="sr-only">${escapeHtml(readableDate(speaker.talkDate))}</span>
+            <span class="date-month" aria-hidden="true">${escapeHtml(badge.month)}</span>
+            <span class="date-day" aria-hidden="true">${escapeHtml(badge.day)}</span>
           </div>
           <h3>${escapeHtml(speaker.talkTitle)}</h3>
         </div>
@@ -283,7 +285,7 @@ const renderTalkCard = (speaker, details = {}) => {
   const showProfileDetails = !multiSpeaker && (speaker.hasProfile ?? true);
   const initials = escapeHtml(speakerInitials(primarySpeaker.name || name));
   const imageMarkup = primarySpeaker.image
-    ? `<img src="${escapeHtml(primarySpeaker.image)}" alt="${escapeHtml(primarySpeaker.name || name)}" onerror="this.remove(); this.nextElementSibling.hidden = false;">`
+    ? `<img data-fade src="${escapeHtml(primarySpeaker.image)}" alt="${escapeHtml(primarySpeaker.name || name)}" onerror="this.remove(); this.nextElementSibling.hidden = false;">`
     : "";
   const tag = details.tag || topicTag(speaker.topic);
   const titleMarkup =
@@ -310,11 +312,12 @@ const renderTalkCard = (speaker, details = {}) => {
     : ` href="${escapeHtml(speakerWebsite(primarySpeaker))}"`;
 
   return `
-    <article class="talk-card">
+    <article class="talk-card" data-reveal="up">
       <div class="talk-card-header">
-        <div class="date-badge" aria-label="${escapeHtml(readableDate(speaker.talkDate))}">
-          <span class="date-month">${escapeHtml(badge.month)}</span>
-          <span class="date-day">${escapeHtml(badge.day)}</span>
+        <div class="date-badge">
+          <span class="sr-only">${escapeHtml(readableDate(speaker.talkDate))}</span>
+          <span class="date-month" aria-hidden="true">${escapeHtml(badge.month)}</span>
+          <span class="date-day" aria-hidden="true">${escapeHtml(badge.day)}</span>
         </div>
         <h3>${escapeHtml(speaker.talkTitle)}</h3>
       </div>
@@ -346,6 +349,50 @@ export const renderNavigation = (activeId = "home") => {
     .join("");
 };
 
+// How long the placeholder takes to fade before the real card replaces it.
+// Matches the transition on .seminar-skeleton in seminar-card.css.
+const SKELETON_FADE_MS = 240;
+
+// Hands the hero card over from placeholder to content. The placeholder holds
+// the card's height while it fades, so the hero does not lurch mid-swap.
+const swapSeminarCard = (html) => {
+  const mount = qs("[data-next-seminar]");
+  if (!mount) {
+    return;
+  }
+  if (!mount.querySelector("[data-seminar-skeleton]")) {
+    mount.innerHTML = html;
+    activateMotion(mount);
+    return;
+  }
+  mount.classList.add("is-swapping");
+  window.setTimeout(() => {
+    mount.innerHTML = html;
+    mount.classList.remove("is-swapping");
+    // This write lands after init()'s activateMotion() pass has already run, so
+    // the new subtree needs its own activation - otherwise the speaker portrait
+    // never receives .is-loaded and stays fully transparent.
+    activateMotion(mount);
+  }, SKELETON_FADE_MS);
+};
+
+// Wraps each word so the title can arrive a word at a time. Each word is
+// escaped individually; splitting on whitespace after escaping would be safe
+// too, since no entity contains a space, but this keeps the intent obvious.
+// The index is capped so a long title does not animate for several seconds.
+const typedTitle = (text = "") => {
+  const words = String(text).trim().split(/\s+/).filter(Boolean);
+  if (!words.length) {
+    return escapeHtml(text);
+  }
+  return words
+    .map(
+      (word, index) =>
+        `<span class="typed-word" style="--word-index:${Math.min(index, 14)}">${escapeHtml(word)}</span>`
+    )
+    .join(" ");
+};
+
 export const renderHero = async (templates) => {
   qs("[data-hero-actions]").innerHTML = pageData.hero.content.buttons
     .map((button) => renderButton(templates.button, button))
@@ -355,12 +402,12 @@ export const renderHero = async (templates) => {
   const resolved = await loadResolvedSchedule();
 
   if (resolved?.status === "break") {
-    qs("[data-next-seminar]").innerHTML = `
+    swapSeminarCard(`
       <div class="seminar-card-body">
         <p class="seminar-label">${icon("calendar")}<span>${escapeHtml(nextSeminarLabel())}</span></p>
         <p class="seminar-description schedule-break-message">${escapeHtml(getBreakMessage(resolved.breakKind))}</p>
       </div>
-    `;
+    `);
     return;
   }
 
@@ -388,7 +435,7 @@ export const renderHero = async (templates) => {
   const speakerInitialsMarkup = escapeHtml(speakerInitials(primarySpeaker.name || speakerName));
   const speakerImageSrc = primarySpeaker.image || (!useCsv ? seminar.speakerImage : "");
   const speakerImageMarkup = speakerImageSrc
-    ? `<img src="${escapeHtml(speakerImageSrc)}" alt="${escapeHtml(primarySpeaker.name || speakerName)}" onerror="this.remove(); this.nextElementSibling.hidden = false;">`
+    ? `<img data-fade src="${escapeHtml(speakerImageSrc)}" alt="${escapeHtml(primarySpeaker.name || speakerName)}" onerror="this.remove(); this.nextElementSibling.hidden = false;">`
     : "";
   const speakerTitleMarkup =
     showProfileDetails && primarySpeaker.title
@@ -408,10 +455,10 @@ export const renderHero = async (templates) => {
       ? `<p class="seminar-specialties">${escapeHtml(speakerSpecialties)}</p>`
       : "";
 
-  qs("[data-next-seminar]").innerHTML = `
+  swapSeminarCard(`
     <div class="seminar-card-body">
       <p class="seminar-label">${icon("calendar")}<span>${escapeHtml(seminarLabel)}</span></p>
-      <h2 class="seminar-title">${escapeHtml(talkTitle)}</h2>
+      <h2 class="seminar-title">${typedTitle(talkTitle)}</h2>
       <p class="seminar-description">${escapeHtml(talkDescription)}</p>
       <div class="seminar-card-spacer" aria-hidden="true"></div>
       <div class="seminar-speaker-row">
@@ -437,7 +484,7 @@ export const renderHero = async (templates) => {
           .join(" + ")}</span></div>
       </div>
     </div>
-  `;
+  `);
 };
 
 export const renderOverview = (templates) => {
@@ -590,7 +637,7 @@ export const renderSpeakers = async (templates) => {
           .join(""),
         website: escapeHtml(speakerProfileHref(speaker, "/speakers/")),
         imageMarkup: speaker.image
-          ? `<img src="${escapeHtml(speaker.image)}" alt="${escapeHtml(speaker.name)}" onerror="this.remove(); this.nextElementSibling.hidden = false;">`
+          ? `<img data-fade src="${escapeHtml(speaker.image)}" alt="${escapeHtml(speaker.name)}" onerror="this.remove(); this.nextElementSibling.hidden = false;">`
           : "",
         initialsHidden: speaker.image ? "hidden" : ""
       })
@@ -625,19 +672,19 @@ const renderFooterLink = (item) => `
 export const renderFooter = () => {
   const footer = pageData.footer;
   qs("[data-footer]").innerHTML = `
-    <div class="footer-block">
+    <div class="footer-block" data-reveal="up">
       <div class="footer-brand">
         <img class="footer-logo" src="${escapeHtml(footerLogoUrl)}" alt="Florida State University Scientific Computing">
       </div>
       <p class="footer-description">${escapeHtml(footer.description)}</p>
     </div>
-    <div class="footer-block">
+    <div class="footer-block" data-reveal="up">
       <h3>${escapeHtml(footer.contact.title)}</h3>
       <ul class="footer-list">
         ${footer.contact.items.map(renderFooterLink).join("")}
       </ul>
     </div>
-    <div class="footer-block">
+    <div class="footer-block" data-reveal="up">
       <h3>${escapeHtml(footer.social.title)}</h3>
       <ul class="footer-list">
         ${footer.social.items.map(renderFooterLink).join("")}
@@ -707,7 +754,7 @@ export const renderSpeakerDirectory = async (templates) => {
           .join(""),
         website: escapeHtml(speakerWebsite(speaker, "#speaker-directory")),
         imageMarkup: speaker.image
-          ? `<img src="${escapeHtml(speaker.image)}" alt="${escapeHtml(speaker.name)}" onerror="this.remove(); this.nextElementSibling.hidden = false;">`
+          ? `<img data-fade src="${escapeHtml(speaker.image)}" alt="${escapeHtml(speaker.name)}" onerror="this.remove(); this.nextElementSibling.hidden = false;">`
           : "",
         initialsHidden: speaker.image ? "hidden" : ""
       })

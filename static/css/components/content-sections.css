@@ -130,7 +130,7 @@
 .sister-seminar-kicker {
   margin: 0;
   color: var(--fsu-gold);
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -227,6 +227,16 @@
   background: var(--white);
   box-shadow: var(--shadow-card);
   text-align: center;
+  transition:
+    box-shadow var(--dur-slow) var(--ease-out-soft),
+    transform var(--dur-slow) var(--ease-out-soft),
+    border-color var(--dur-slow) var(--ease-out-soft);
+}
+
+.feature-card:hover {
+  transform: translateY(var(--lift));
+  border-color: rgba(120, 47, 64, 0.24);
+  box-shadow: 0 2px 4px rgba(7, 17, 31, 0.05), 0 18px 36px -18px rgba(7, 17, 31, 0.26);
 }
 
 .card-icon {
@@ -238,6 +248,19 @@
   color: var(--fsu-garnet);
   background: rgba(206, 184, 136, 0.24);
   border: 1px solid rgba(206, 184, 136, 0.4);
+  transition:
+    background-color var(--dur-slow) var(--ease-out-soft),
+    border-color var(--dur-slow) var(--ease-out-soft),
+    transform var(--dur-slow) var(--ease-spring);
+}
+
+/* The icon leads the card's hover by a hair, which is what makes the lift read
+   as one gesture instead of a flat rectangle moving. */
+.feature-card:hover .card-icon,
+.community-card:hover .card-icon {
+  background: rgba(206, 184, 136, 0.42);
+  border-color: rgba(206, 184, 136, 0.72);
+  transform: scale(1.07);
 }
 
 .card-icon svg,
@@ -474,11 +497,14 @@
   border-radius: var(--radius);
   background: var(--white);
   box-shadow: var(--shadow-card);
-  transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
+  transition:
+    box-shadow var(--dur-slow) var(--ease-out-soft),
+    transform var(--dur-slow) var(--ease-out-soft),
+    border-color var(--dur-slow) var(--ease-out-soft);
 }
 
 .talk-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(var(--lift));
   border-color: rgba(120, 47, 64, 0.24);
   box-shadow: 0 2px 4px rgba(7, 17, 31, 0.05), 0 18px 36px -18px rgba(7, 17, 31, 0.26);
 }
@@ -629,6 +655,14 @@
   width: 17%;
 }
 
+/* Date and Speaker columns are centered; Topic and Description stay left aligned. */
+.schedule-table thead th:nth-child(1),
+.schedule-table thead th:nth-child(4),
+.schedule-table-date,
+.schedule-table-speaker {
+  text-align: center;
+}
+
 .schedule-table thead th {
   padding: 13px 18px;
   border-bottom: 2px solid rgba(120, 47, 64, 0.28);
@@ -661,6 +695,37 @@
 .schedule-table-row:last-child td,
 .schedule-table-row:last-child th {
   border-bottom: 0;
+}
+
+/* Rows are the densest surface on the site, so hover gets a wash and a garnet
+   edge rather than a lift - moving them would jitter the whole table. */
+.schedule-table-row {
+  position: relative;
+  transition: background-color var(--dur-base) var(--ease-out-soft);
+}
+
+.schedule-table-row:hover {
+  background: rgba(120, 47, 64, 0.05);
+}
+
+.schedule-table-row td,
+.schedule-table-row th {
+  transition: color var(--dur-base) var(--ease-out-soft);
+}
+
+.schedule-table-row:hover .schedule-table-title {
+  color: var(--fsu-garnet);
+}
+
+.schedule-table-row .schedule-table-date-badge {
+  transition:
+    transform var(--dur-base) var(--ease-spring),
+    box-shadow var(--dur-base) var(--ease-out-soft);
+}
+
+.schedule-table-row:hover .schedule-table-date-badge {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px -8px rgba(7, 17, 31, 0.4);
 }
 
 .schedule-table-row:nth-child(even) {
@@ -745,11 +810,24 @@
   border-radius: 999px;
   background: var(--fsu-garnet);
   color: var(--white);
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   vertical-align: middle;
+  animation: next-tag-pulse 3.2s var(--ease-out-soft) infinite;
+}
+
+/* Deliberately slow and low-contrast: enough to draw the eye on arrival,
+   not enough to nag while someone is reading the table. */
+@keyframes next-tag-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(120, 47, 64, 0.34);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(120, 47, 64, 0);
+  }
 }
 
 .schedule-table-speaker {
@@ -764,6 +842,30 @@
   font-weight: 600;
   text-decoration: none;
   text-underline-offset: 3px;
+}
+
+/* Underline wipes out from the middle - it reads as the link "opening" rather
+   than as a browser default switching on. */
+.schedule-table-speaker-link {
+  position: relative;
+  transition: color var(--dur-fast) var(--ease-out-soft);
+}
+
+.schedule-table-speaker-link::after {
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  left: 0;
+  height: 1px;
+  content: "";
+  background: currentColor;
+  transform: scaleX(0);
+  transition: transform var(--dur-base) var(--ease-out-soft);
+}
+
+.schedule-table-speaker-link:hover::after,
+.schedule-table-speaker-link:focus-visible::after {
+  transform: scaleX(1);
 }
 
 .schedule-table-speaker-link:hover,
@@ -848,7 +950,18 @@
   text-decoration: none;
   overflow: hidden;
   border: 2px solid rgba(206, 184, 136, 0.6);
-  box-shadow: 0 4px 12px rgba(7, 17, 31, 0.12);
+  box-shadow: 0 4px 12px rgba(7, 17, 31, 0.12), 0 0 0 0 rgba(206, 184, 136, 0);
+  transition:
+    border-color var(--dur-slow) var(--ease-out-soft),
+    box-shadow 420ms var(--ease-out-soft);
+}
+
+/* Same halo as the presenter cards - a portrait behaves identically wherever
+   it appears, even though the talk card around it still lifts. */
+.talk-card:hover .speaker-media,
+.talk-card:focus-within .speaker-media {
+  border-color: var(--fsu-gold);
+  box-shadow: 0 4px 14px rgba(7, 17, 31, 0.14), 0 0 0 5px rgba(206, 184, 136, 0.3);
 }
 
 .speaker-media img {
@@ -889,6 +1002,19 @@
 .community-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+}
+
+.community-card {
+  transition:
+    box-shadow var(--dur-slow) var(--ease-out-soft),
+    transform var(--dur-slow) var(--ease-out-soft),
+    border-color var(--dur-slow) var(--ease-out-soft);
+}
+
+.community-card:hover {
+  transform: translateY(var(--lift));
+  border-color: rgba(120, 47, 64, 0.24);
+  box-shadow: 0 2px 4px rgba(7, 17, 31, 0.05), 0 18px 36px -18px rgba(7, 17, 31, 0.26);
 }
 
 .community-card {
@@ -945,7 +1071,16 @@
   gap: 20px;
 }
 
+/*
+ * Presenter cards deliberately do NOT use the lift-and-zoom that the talk cards
+ * use. A wall of faces all bouncing toward the cursor reads as restless, and
+ * scaling someone's portrait is a slightly odd thing to do to a photo of a
+ * person. Instead the card holds absolutely still and the person comes into
+ * focus: a brand rule wipes across the top edge, the ground warms, and a gold
+ * halo blooms around the portrait. Nothing translates and nothing scales.
+ */
 .speaker-directory-card {
+  position: relative;
   display: grid;
   justify-items: center;
   gap: 14px;
@@ -956,13 +1091,37 @@
   background: var(--white);
   box-shadow: var(--shadow-card);
   text-align: center;
-  transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
+  overflow: hidden;
+  transition:
+    box-shadow var(--dur-slow) var(--ease-out-soft),
+    background-color var(--dur-slow) var(--ease-out-soft),
+    border-color var(--dur-slow) var(--ease-out-soft);
 }
 
-.speaker-directory-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(120, 47, 64, 0.24);
-  box-shadow: 0 2px 4px rgba(7, 17, 31, 0.05), 0 18px 36px -18px rgba(7, 17, 31, 0.26);
+/* The signature move: a garnet-to-gold rule drawn along the top edge. */
+.speaker-directory-card::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  content: "";
+  background: linear-gradient(90deg, var(--fsu-garnet), var(--fsu-gold));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 420ms var(--ease-out-expo);
+}
+
+.speaker-directory-card:hover,
+.speaker-directory-card:focus-within {
+  border-color: rgba(120, 47, 64, 0.3);
+  background-color: #fffdf9;
+  box-shadow: 0 2px 4px rgba(7, 17, 31, 0.05), 0 14px 30px -20px rgba(7, 17, 31, 0.22);
+}
+
+.speaker-directory-card:hover::before,
+.speaker-directory-card:focus-within::before {
+  transform: scaleX(1);
 }
 
 .speaker-directory-photo {
@@ -980,7 +1139,18 @@
   text-decoration: none;
   overflow: hidden;
   border: 2px solid rgba(206, 184, 136, 0.6);
-  box-shadow: 0 6px 16px rgba(7, 17, 31, 0.14);
+  /* The halo is declared at zero spread so it interpolates rather than
+     snapping - box-shadow only animates between lists of equal length. */
+  box-shadow: 0 6px 16px rgba(7, 17, 31, 0.14), 0 0 0 0 rgba(206, 184, 136, 0);
+  transition:
+    border-color var(--dur-slow) var(--ease-out-soft),
+    box-shadow 420ms var(--ease-out-soft);
+}
+
+.speaker-directory-card:hover .speaker-directory-photo,
+.speaker-directory-card:focus-within .speaker-directory-photo {
+  border-color: var(--fsu-gold);
+  box-shadow: 0 6px 18px rgba(7, 17, 31, 0.16), 0 0 0 7px rgba(206, 184, 136, 0.32);
 }
 
 .speaker-directory-photo img {

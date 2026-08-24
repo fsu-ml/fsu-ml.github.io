@@ -12,6 +12,8 @@ import {
 } from "./js/render/sections.js";
 import { bindNavigation } from "./js/ui/navigation.js";
 import { bindHashScroll, scrollToHashAfterPaint } from "./js/ui/scroll-to-hash.js";
+import { bindHeaderChrome } from "./js/ui/chrome.js";
+import { activateMotion } from "./js/ui/reveal.js";
 
 const init = async () => {
   document.title = pageData.page.title;
@@ -26,6 +28,8 @@ const init = async () => {
   renderCommunity(templates);
   renderFooter();
   bindNavigation();
+  bindHeaderChrome();
+  activateMotion();
   bindHashScroll();
   scrollToHashAfterPaint();
 };

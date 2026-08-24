@@ -17,26 +17,57 @@
       content="A quick guide to the NASA Trichotomy (Basics · Details · Deep Dive) with an LLM prompt for self-review."
     >
     <meta property="og:url" content="https://sc-ai.net/trichotemy.html">
-    <meta property="og:image" content="https://sc-ai.net/images/banner-wide.png">
+    <meta property="og:image" content="https://sc-ai.net/images/banner-wide.jpg">
+    <meta property="og:image:alt" content="FSU Scientific Computing Artificial Intelligence Seminar banner">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="NASA Trichotomy of Presenting | FSU SC Artificial Intelligence Seminar">
     <meta
       name="twitter:description"
       content="A quick guide to the NASA Trichotomy (Basics · Details · Deep Dive) with an LLM prompt for self-review."
     >
-    <meta name="twitter:image" content="https://sc-ai.net/images/banner-wide.png">
-    <title>NASA Trichotomy of Presenting | FSU SC Artificial Intelligence Seminar</title>
+    <meta name="twitter:image" content="https://sc-ai.net/images/banner-wide.jpg">
+    <title>NASA Trichotomy of Presenting | FSU SC AI Seminar</title>
     <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Loaded non-render-blocking: the sheet is fetched at print priority and
+         promoted to `all` on load, so first paint is not held up by a
+         third-party round trip. `&display=swap` already covers the FOUT. The
+         <noscript> copy keeps the font for scripting-disabled clients. -->
     <link
       rel="stylesheet"
+      media="print"
+      onload="this.media='all';this.onload=null"
       href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap"
     >
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap"
+      >
+    </noscript>
+    <script>
+      // Runs before the stylesheet so gated content never flashes: `js-motion`
+      // switches on the entrance states, and the timer is a failsafe that
+      // un-hides everything if a module never loads.
+      (function () {
+        var root = document.documentElement;
+        root.classList.add("js-motion");
+        // Only trip if the motion module never announced itself. Tripping
+        // unconditionally would un-hide the whole page and cancel every
+        // below-the-fold reveal on any load slower than the timer.
+        window.setTimeout(function () {
+          if (!root.classList.contains("motion-ready")) {
+            root.classList.add("motion-failsafe");
+          }
+        }, 6000);
+      })();
+    </script>
     <link rel="stylesheet" href="/static/styles.css">
     <script type="module" src="/static/trichotemy.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
     <header class="site-header" data-site-header>
       <nav class="nav-shell" aria-label="Primary navigation">
         <a class="brand" href="/" aria-label="FSU SC Artificial Intelligence Seminar home">
@@ -49,13 +80,14 @@
           <span aria-hidden="true"></span>
         </button>
         <div class="nav-links" id="site-nav" data-nav-links></div>
+        <div class="scroll-progress" aria-hidden="true"><span data-scroll-progress></span></div>
       </nav>
     </header>
 
-    <main class="subpage-main">
+    <main class="subpage-main" id="main" tabindex="-1">
       <section class="section page-content-section trichotomy-page-section" aria-labelledby="trichotomy-title">
         <div class="section-inner trichotomy-inner">
-          <div class="trichotomy-header">
+          <div class="trichotomy-header" data-reveal="up">
             <p class="section-kicker">Presenter Guide</p>
             <h1 id="trichotomy-title">NASA Trichotomy of Presenting</h1>
             <p class="trichotomy-intro">
@@ -75,30 +107,31 @@
           </div>
 
           <img
+            data-reveal="scale"
             class="trichotomy-illustration"
-            src="/images/trichotomy-illustration.png"
+            src="/images/trichotomy-illustration.webp"
             alt="Illustration of the NASA Trichotomy: The Basics, The Details, The Deep Dive"
           >
 
           <div class="trichotomy-guide">
-            <article class="trichotomy-card">
-              <h3>1) The Basics</h3>
+            <article class="trichotomy-card" data-reveal="up">
+              <h2>1) The Basics</h2>
               <ul>
                 <li>Clear topic &amp; why it matters</li>
                 <li>Plain English; minimal jargon</li>
                 <li>One-sentence takeaway</li>
               </ul>
             </article>
-            <article class="trichotomy-card">
-              <h3>2) The Details</h3>
+            <article class="trichotomy-card" data-reveal="up">
+              <h2>2) The Details</h2>
               <ul>
                 <li><em>Research</em>: methods, data, key figures, limits</li>
                 <li><em>Surveys</em>: scope, representative sources, contrasts, caveats</li>
                 <li>Be specific; cite essentials</li>
               </ul>
             </article>
-            <article class="trichotomy-card">
-              <h3>3) The Deep Dive</h3>
+            <article class="trichotomy-card" data-reveal="up">
+              <h2>3) The Deep Dive</h2>
               <ul>
                 <li>Discuss some key elements with rigour and in-depth</li>
                 <li>Backup slide / worked example / suggested reading</li>
@@ -107,7 +140,7 @@
             </article>
           </div>
 
-          <div class="trichotomy-llm">
+          <div class="trichotomy-llm" data-reveal="up">
             <h2>Test your slides with an LLM</h2>
             <p class="trichotomy-intro">
               Paste your notes or draft slides into your preferred LLM and use the prompt below.
@@ -156,7 +189,36 @@ For the attached notes/slides, output (≤40 words total): For 1–3, label Adeq
 
     <footer class="site-footer">
       <div class="footer-media" aria-hidden="true"></div>
-      <div class="footer-inner" data-footer></div>
+      <div class="footer-inner" data-footer>
+        <!-- Progressive-enhancement fallback. renderFooter() replaces this
+             wholesale, so it is invisible to anyone running JS. It exists so
+             that (a) /archive/ and /trichotemy.html have real inbound links in
+             raw HTML rather than being sitemap-only, and (b) a visitor whose
+             script 404s or is blocked still gets the Zoom room and a contact
+             address. Deliberately NOT wrapped in <noscript>: noscript does not
+             render when JS is enabled but the module fails to load, which is
+             the failure mode this is here to cover.
+             Keep the hrefs in sync with static/js/data/page-data.js. -->
+          <nav class="footer-block" aria-label="Site">
+            <h3>Pages</h3>
+            <ul class="footer-list">
+              <li><a class="footer-link" href="/">Home</a></li>
+              <li><a class="footer-link" href="/schedule/">Schedule</a></li>
+              <li><a class="footer-link" href="/speakers/">Speakers</a></li>
+              <li><a class="footer-link" href="/archive/">Archive</a></li>
+              <li><a class="footer-link" href="/trichotemy.html">NASA Trichotomy guide</a></li>
+            </ul>
+          </nav>
+          <div class="footer-block">
+            <h3>Join a seminar</h3>
+            <ul class="footer-list">
+              <li><a class="footer-link" href="https://fsu.zoom.us/j/9038137210">Zoom room</a></li>
+              <li><a class="footer-link" href="https://goo.gl/maps/BJLxE3Q7H1MTBqMu6">DSL/SC-499, Dirac Science Library</a></li>
+              <li><a class="footer-link" href="mailto:gerlebacher@fsu.edu">Mailing list request</a></li>
+              <li><a class="footer-link" href="https://www.sc.fsu.edu">FSU Department of Scientific Computing</a></li>
+            </ul>
+          </div>
+      </div>
     </footer>
   </body>
 </html>

@@ -79,10 +79,11 @@ const renderArchiveTalk = (talk) => {
     : "";
 
   return `
-    <article class="archive-talk">
-      <div class="archive-talk-date" aria-label="${escapeHtml(readableDate(talk.talkDate))}">
-        <span class="archive-date-month">${escapeHtml(badge.month)}</span>
-        <span class="archive-date-day">${escapeHtml(badge.day)}</span>
+    <article class="archive-talk" data-reveal="up">
+      <div class="archive-talk-date">
+        <span class="sr-only">${escapeHtml(readableDate(talk.talkDate))}</span>
+        <span class="archive-date-month" aria-hidden="true">${escapeHtml(badge.month)}</span>
+        <span class="archive-date-day" aria-hidden="true">${escapeHtml(badge.day)}</span>
       </div>
       <div class="archive-talk-main">
         <h3 class="archive-talk-title">${escapeHtml(talk.talkTitle || "Talk TBA")}</h3>
@@ -98,7 +99,7 @@ const renderArchiveTalk = (talk) => {
 
 const renderSemesterSection = (semester) => `
   <section id="${escapeHtml(semester.anchorId)}" class="archive-semester" aria-labelledby="${escapeHtml(semester.anchorId)}-title">
-    <header class="archive-semester-header">
+    <header class="archive-semester-header" data-reveal="up">
       <h2 id="${escapeHtml(semester.anchorId)}-title">${escapeHtml(semester.heading)}</h2>
       <p class="archive-semester-count">${escapeHtml(formatTalkCount(semester.talks.length))}</p>
     </header>

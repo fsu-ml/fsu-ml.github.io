@@ -59,6 +59,34 @@ img {
   max-width: 100%;
 }
 
+/* WCAG 2.4.1 Bypass Blocks. Off-screen until focused, then pinned to the top
+   of the viewport above the sticky header. Deliberately uses no transition:
+   this must appear the instant it receives focus, and it sits outside the
+   motion system so a reduced-motion preference cannot affect it. */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 8px;
+  z-index: 1000;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  background: var(--fsu-garnet);
+  color: var(--white);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 8px;
+}
+
+/* The skip target itself must not paint a focus ring — focus is moved there
+   programmatically by the browser, and a visible outline on a whole <main>
+   reads as a rendering bug. */
+[id="main"]:focus {
+  outline: none;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

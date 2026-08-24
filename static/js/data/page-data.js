@@ -34,7 +34,7 @@ export const pageData = {
       talkTitle: "Building Reliable AI Workflows for Scientific Teams",
       speaker: "Brendon Gutierrez",
       affiliation: "Florida State University",
-      speakerImage: "data/speaker-images/brendon_gutierrez.jpg"
+      speakerImage: "data/speaker-images/brendon_gutierrez.webp"
     }
   },
   sections: [

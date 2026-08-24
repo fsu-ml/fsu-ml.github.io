@@ -1,4 +1,13 @@
 User-agent: *
 Allow: /
 
+# Superseded snapshots and archived source data. GitHub Pages serves every
+# committed file with no access control, so these are publicly reachable and
+# would otherwise compete with the live pages as duplicate, stale content.
+Disallow: /backup/
+Disallow: /data/past-html/
+
+# Render-only fragments ({{ placeholders }}), not pages.
+Disallow: /templates/
+
 Sitemap: https://sc-ai.net/sitemap.xml

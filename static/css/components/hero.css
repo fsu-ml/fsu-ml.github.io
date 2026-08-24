@@ -10,7 +10,7 @@
 .footer-media {
   position: absolute;
   inset: 0;
-  background-image: url("../../../images/banner-wide-half-dark.png");
+  background-image: url("../../../images/banner-wide-half-dark.webp");
   background-size: cover;
   background-position: center;
 }

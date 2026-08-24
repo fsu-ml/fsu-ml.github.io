@@ -11,31 +11,68 @@
     display: block;
   }
 
+  /* Kept in flow with visibility/opacity rather than display:none so the panel
+     can actually animate open and closed. */
   .nav-links {
     position: fixed;
     top: 76px;
     right: 0;
     left: 0;
-    display: none;
+    display: flex;
     padding: 18px 24px 28px;
     flex-direction: column;
     align-items: stretch;
     background: rgba(31, 4, 12, 0.98);
     border-bottom: 1px solid rgba(206, 184, 136, 0.22);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate3d(0, -10px, 0);
+    pointer-events: none;
+    transition:
+      opacity var(--dur-base) var(--ease-out-soft),
+      transform var(--dur-base) var(--ease-out-soft),
+      visibility 0s linear var(--dur-base);
   }
 
   body.nav-open .nav-links {
-    display: flex;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+    transition-delay: 0s;
   }
 
   .nav-link {
     padding: 13px 0;
+    opacity: 0;
+    transform: translate3d(0, -6px, 0);
+    transition:
+      color var(--dur-fast) var(--ease-out-soft),
+      opacity var(--dur-base) var(--ease-out-soft),
+      transform var(--dur-base) var(--ease-out-soft);
   }
+
+  body.nav-open .nav-link {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Links cascade in behind the panel so the menu unfolds instead of blinking. */
+  body.nav-open .nav-link:nth-child(1) { transition-delay: 60ms; }
+  body.nav-open .nav-link:nth-child(2) { transition-delay: 100ms; }
+  body.nav-open .nav-link:nth-child(3) { transition-delay: 140ms; }
+  body.nav-open .nav-link:nth-child(4) { transition-delay: 180ms; }
+  body.nav-open .nav-link:nth-child(5) { transition-delay: 220ms; }
+  body.nav-open .nav-link:nth-child(6) { transition-delay: 260ms; }
 
   .nav-link.is-active::after {
     right: auto;
     left: 0;
     width: 42px;
+  }
+
+  .site-header.is-scrolled .nav-links {
+    top: 64px;
   }
 
   .hero-inner,
@@ -160,6 +197,12 @@
   .schedule-table tbody th {
     padding: 0;
     border-bottom: 0;
+  }
+
+  /* Stacked rows read as a block, so the centered desktop columns go back to left. */
+  .schedule-table-date,
+  .schedule-table-speaker {
+    text-align: left;
   }
 
   .schedule-table-date {

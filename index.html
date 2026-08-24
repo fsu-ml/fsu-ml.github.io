@@ -17,14 +17,15 @@
       content="Weekly conversations on AI, machine learning, scientific computing, and applied research at Florida State University."
     >
     <meta property="og:url" content="https://sc-ai.net/">
-    <meta property="og:image" content="https://sc-ai.net/images/banner-wide.png">
+    <meta property="og:image" content="https://sc-ai.net/images/banner-wide.jpg">
+    <meta property="og:image:alt" content="FSU Scientific Computing Artificial Intelligence Seminar banner">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="FSU SC Artificial Intelligence Seminar">
     <meta
       name="twitter:description"
       content="Weekly conversations on AI, machine learning, scientific computing, and applied research at Florida State University."
     >
-    <meta name="twitter:image" content="https://sc-ai.net/images/banner-wide.png">
+    <meta name="twitter:image" content="https://sc-ai.net/images/banner-wide.jpg">
     <title>FSU SC Artificial Intelligence Seminar</title>
     <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
     <script type="application/ld+json">
@@ -61,15 +62,45 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Loaded non-render-blocking: the sheet is fetched at print priority and
+         promoted to `all` on load, so first paint is not held up by a
+         third-party round trip. `&display=swap` already covers the FOUT. The
+         <noscript> copy keeps the font for scripting-disabled clients. -->
     <link
       rel="stylesheet"
+      media="print"
+      onload="this.media='all';this.onload=null"
       href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap"
     >
-    <link rel="preload" href="images/banner-wide-half-dark.png" as="image">
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap"
+      >
+    </noscript>
+    <link rel="preload" href="images/banner-wide-half-dark.webp" as="image" type="image/webp">
+    <script>
+      // Runs before the stylesheet so gated content never flashes: `js-motion`
+      // switches on the entrance states, and the timer is a failsafe that
+      // un-hides everything if a module never loads.
+      (function () {
+        var root = document.documentElement;
+        root.classList.add("js-motion");
+        // Only trip if the motion module never announced itself. Tripping
+        // unconditionally would un-hide the whole page and cancel every
+        // below-the-fold reveal on any load slower than the timer.
+        window.setTimeout(function () {
+          if (!root.classList.contains("motion-ready")) {
+            root.classList.add("motion-failsafe");
+          }
+        }, 6000);
+      })();
+    </script>
     <link rel="stylesheet" href="static/styles.css">
     <script type="module" src="static/app.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
     <header class="site-header" data-site-header>
       <nav class="nav-shell" aria-label="Primary navigation">
         <a class="brand" href="/" aria-label="FSU SC Artificial Intelligence Seminar home">
@@ -82,10 +113,11 @@
           <span aria-hidden="true"></span>
         </button>
         <div class="nav-links" id="site-nav" data-nav-links></div>
+        <div class="scroll-progress" aria-hidden="true"><span data-scroll-progress></span></div>
       </nav>
     </header>
 
-    <main>
+    <main id="main" tabindex="-1">
       <section class="hero" id="home" aria-labelledby="hero-title">
         <div class="hero-media" aria-hidden="true"></div>
         <div class="hero-overlay" aria-hidden="true"></div>
@@ -93,8 +125,11 @@
           <div class="hero-copy">
             <img
               class="hero-logo"
-              src="images/FSU-Scientific-Computing.svg"
+              src="/images/FSU-Scientific-Computing.svg"
               alt="Florida State University Scientific Computing"
+              fetchpriority="high"
+              width="1364"
+              height="269"
             >
             <h1 id="hero-title"><span>Artificial Intelligence</span><span>Seminar</span></h1>
             <p class="hero-subtitle">
@@ -102,26 +137,53 @@
             </p>
             <div class="hero-actions" data-hero-actions></div>
           </div>
-          <aside class="next-seminar" aria-label="Next seminar" data-next-seminar></aside>
+          <aside class="next-seminar" aria-label="Next seminar" data-next-seminar>
+            <!-- Shaped placeholder, in the static markup so it paints before any
+                 script runs. renderHero swaps it for the real card. -->
+            <div class="seminar-skeleton" data-seminar-skeleton>
+              <p class="sr-only" role="status">Loading the next seminar details.</p>
+              <span class="sk sk-pill" aria-hidden="true"></span>
+              <span class="sk sk-title" aria-hidden="true"></span>
+              <span class="sk sk-title sk-narrow" aria-hidden="true"></span>
+              <span class="sk-block" aria-hidden="true">
+                <span class="sk sk-line"></span>
+                <span class="sk sk-line"></span>
+                <span class="sk sk-line"></span>
+                <span class="sk sk-line sk-narrow"></span>
+              </span>
+              <span class="sk-gap" aria-hidden="true"></span>
+              <span class="sk-speaker" aria-hidden="true">
+                <span class="sk sk-avatar"></span>
+                <span class="sk-block">
+                  <span class="sk sk-line"></span>
+                  <span class="sk sk-line sk-narrow"></span>
+                </span>
+              </span>
+              <span class="sk sk-line sk-specialty" aria-hidden="true"></span>
+              <span class="sk-rule" aria-hidden="true"></span>
+              <span class="sk sk-meta" aria-hidden="true"></span>
+              <span class="sk sk-meta sk-narrow" aria-hidden="true"></span>
+            </div>
+          </aside>
         </div>
       </section>
 
       <section class="section section-overview" id="why-attend" aria-labelledby="why-attend-title">
         <div class="section-inner split-layout">
-          <div class="section-copy">
+          <div class="section-copy" data-reveal="up">
             <h2 id="why-attend-title">About the Artificial Intelligence Seminar</h2>
             <p data-overview-intro></p>
           </div>
-          <div class="feature-grid" data-feature-grid></div>
-          <aside class="sister-seminar" data-sister-seminar aria-label="Sister seminar"></aside>
-          <p class="overview-guide-link" data-overview-link></p>
+          <div class="feature-grid" data-feature-grid data-skeleton style="--skeleton-height: 150px"></div>
+          <aside class="sister-seminar" data-reveal="up" data-sister-seminar aria-label="Sister seminar"></aside>
+          <p class="overview-guide-link" data-reveal="fade" data-overview-link></p>
         </div>
       </section>
 
       <section class="section section-dashboard" aria-label="Seminar dashboard">
         <div class="section-inner dashboard-layout">
           <article class="dashboard-panel dashboard-panel-talks" id="schedule" aria-labelledby="talks-title">
-            <div class="panel-heading">
+            <div class="panel-heading" data-reveal="up">
               <div>
                 <p class="section-kicker" data-schedule-season>This Semester</p>
                 <h2 id="talks-title">Upcoming Discussions</h2>
@@ -130,11 +192,11 @@
                 <a class="button-link button-primary panel-button" href="/schedule/" data-schedule-action>View full schedule</a>
               </div>
             </div>
-            <div data-schedule-list></div>
+            <div data-schedule-list data-skeleton style="--skeleton-height: 320px"></div>
           </article>
 
           <article class="dashboard-panel dashboard-panel-roster" id="speakers" aria-labelledby="speakers-title">
-            <div class="panel-heading">
+            <div class="panel-heading" data-reveal="up">
               <div>
                 <p class="section-kicker" data-speakers-season>Seminar Speakers</p>
                 <h2 id="speakers-title">The Presenters</h2>
@@ -143,16 +205,16 @@
                 <a class="button-link button-primary panel-button" href="/speakers/" data-speakers-action>View all speakers</a>
               </div>
             </div>
-            <div class="speaker-roster-grid" data-speaker-grid></div>
+            <div class="speaker-roster-grid" data-speaker-grid data-skeleton style="--skeleton-height: 300px"></div>
           </article>
 
           <article class="dashboard-panel dashboard-panel-community" id="community" aria-labelledby="community-title">
-            <div class="panel-heading">
+            <div class="panel-heading" data-reveal="up">
               <div>
                 <h2 id="community-title">Join Our Community</h2>
               </div>
             </div>
-            <div class="community-grid" data-community-grid></div>
+            <div class="community-grid" data-community-grid data-skeleton style="--skeleton-height: 200px"></div>
           </article>
         </div>
       </section>
@@ -160,7 +222,36 @@
 
     <footer class="site-footer">
       <div class="footer-media" aria-hidden="true"></div>
-      <div class="footer-inner" data-footer></div>
+      <div class="footer-inner" data-footer>
+        <!-- Progressive-enhancement fallback. renderFooter() replaces this
+             wholesale, so it is invisible to anyone running JS. It exists so
+             that (a) /archive/ and /trichotemy.html have real inbound links in
+             raw HTML rather than being sitemap-only, and (b) a visitor whose
+             script 404s or is blocked still gets the Zoom room and a contact
+             address. Deliberately NOT wrapped in <noscript>: noscript does not
+             render when JS is enabled but the module fails to load, which is
+             the failure mode this is here to cover.
+             Keep the hrefs in sync with static/js/data/page-data.js. -->
+          <nav class="footer-block" aria-label="Site">
+            <h3>Pages</h3>
+            <ul class="footer-list">
+              <li><a class="footer-link" href="/">Home</a></li>
+              <li><a class="footer-link" href="/schedule/">Schedule</a></li>
+              <li><a class="footer-link" href="/speakers/">Speakers</a></li>
+              <li><a class="footer-link" href="/archive/">Archive</a></li>
+              <li><a class="footer-link" href="/trichotemy.html">NASA Trichotomy guide</a></li>
+            </ul>
+          </nav>
+          <div class="footer-block">
+            <h3>Join a seminar</h3>
+            <ul class="footer-list">
+              <li><a class="footer-link" href="https://fsu.zoom.us/j/9038137210">Zoom room</a></li>
+              <li><a class="footer-link" href="https://goo.gl/maps/BJLxE3Q7H1MTBqMu6">DSL/SC-499, Dirac Science Library</a></li>
+              <li><a class="footer-link" href="mailto:gerlebacher@fsu.edu">Mailing list request</a></li>
+              <li><a class="footer-link" href="https://www.sc.fsu.edu">FSU Department of Scientific Computing</a></li>
+            </ul>
+          </div>
+      </div>
     </footer>
   </body>
 </html>
