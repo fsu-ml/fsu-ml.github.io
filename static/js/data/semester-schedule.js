@@ -42,14 +42,18 @@ export const getNextSemester = ({ year, term }) => {
 
 const toLocalDate = ({ year, month, day }) => new Date(year, month - 1, day);
 
+// Seminars run 12:00-1:00 PM, so a talk stays "upcoming" through its own hour
+// and only drops off the hero card and the schedule once it has actually ended.
+export const TALK_END_HOUR = 13;
+
 export const isUpcoming = (talkDate = "", today = new Date()) => {
   const parsed = parseIsoDateParts(talkDate);
   if (!parsed) {
     return false;
   }
-  const talk = toLocalDate(parsed);
-  const now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  return talk >= now;
+  const talkEnd = toLocalDate(parsed);
+  talkEnd.setHours(TALK_END_HOUR, 0, 0, 0);
+  return talkEnd > today;
 };
 
 export const filterUpcomingBySeason = (talks = [], targetSeasonKey = "", today = new Date()) => {
