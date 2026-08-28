@@ -25,24 +25,21 @@
 .brand {
   display: inline-flex;
   align-items: center;
+  gap: 12px;
   min-width: 0;
   color: var(--white);
   text-decoration: none;
   font-weight: 800;
 }
 
+/* The badge artwork carries its own gold ring and garnet ground, so the mark
+   needs no border or fill of its own -- only the circular clip. */
 .brand-mark {
-  display: inline-grid;
+  display: block;
   width: 48px;
   height: 48px;
   flex: 0 0 48px;
-  place-items: center;
-  border: 2px solid var(--fsu-gold);
   border-radius: 50%;
-  background: var(--fsu-garnet);
-  color: var(--fsu-gold);
-  font-size: 0.86rem;
-  letter-spacing: 0;
 }
 
 .brand-name {

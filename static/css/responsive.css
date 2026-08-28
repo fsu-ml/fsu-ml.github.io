@@ -120,8 +120,16 @@
 }
 
 @media (max-width: 620px) {
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+  }
+
+  /* 96px covered the shell gutters plus the nav toggle; the mark and its gap
+     add another 48px that the name can no longer use. */
   .brand-name {
-    max-width: calc(100vw - 96px);
+    max-width: calc(100vw - 144px);
     font-size: 1rem;
     white-space: normal;
   }
