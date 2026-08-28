@@ -138,6 +138,7 @@ const mapSpeakerRecord = (profile, schedule = {}, { hasProfile: profileListed = 
   season: schedule.season || "",
   description: schedule.description || "",
   materials: schedule.materials || "",
+  locationNote: schedule.location_note || "",
   eventImage: schedule.event_image ? new URL(schedule.event_image, eventImagesUrl).href : "",
   image: profile.image ? new URL(profile.image, speakerImagesUrl).href : "",
   hasProfile: profileListed

@@ -101,6 +101,13 @@
   color: var(--fsu-gold);
 }
 
+/* The hero card sits on a dark ground, so the moved-session row is picked out
+   by going fully gold rather than by taking a filled badge like the schedule. */
+.meta-row-note {
+  color: var(--fsu-gold);
+  font-weight: 700;
+}
+
 .seminar-affiliation {
   margin: 3px 0 0;
   color: rgba(255, 255, 255, 0.78);

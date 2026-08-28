@@ -173,6 +173,18 @@ const loadResolvedSchedule = async () => {
 const isBreakEntry = (talk = {}) =>
   /\b(no classes|holiday|break|recess)\b/i.test(talk.talkTitle || "");
 
+// Talks inherit one standing time and room from page-data, so a session that
+// moves needs its own note. Where a row sets one it replaces the default rather
+// than sitting beside it, since showing both would contradict.
+const locationNote = (talk = {}) => (talk.locationNote || "").trim();
+
+const locationNoteMarkup = (talk, tag = "span") => {
+  const note = locationNote(talk);
+  return note
+    ? `<${tag} class="location-note">${icon("map-pin")}<span>${escapeHtml(note)}</span></${tag}>`
+    : "";
+};
+
 const scheduleRowSpeakerCell = (talk) => {
   if (isBreakEntry(talk)) {
     if (talk.eventImage) {
@@ -215,6 +227,7 @@ const renderScheduleRow = (talk, nextTalkDate) => {
       <td class="schedule-table-topic">
         <span class="schedule-table-title">${escapeHtml(talk.talkTitle)}</span>
         ${isNext ? '<span class="schedule-table-next-tag">Next up</span>' : ""}
+        ${locationNoteMarkup(talk)}
       </td>
       <td class="schedule-table-description">${
         talk.description
@@ -321,6 +334,7 @@ const renderTalkCard = (speaker, details = {}) => {
         </div>
         <h3>${escapeHtml(speaker.talkTitle)}</h3>
       </div>
+      ${locationNoteMarkup(speaker, "p")}
       <p class="talk-description">${escapeHtml(description)}</p>
       <div class="talk-card-spacer" aria-hidden="true"></div>
       <${speakerRowTag} class="talk-speaker-row"${speakerRowAttrs}>
@@ -432,6 +446,22 @@ export const renderHero = async (templates) => {
     ? `${readableDate(speaker.talkDate)} - 12:00 PM ET`
     : seminar.dateTime;
   const seminarLabel = nextSeminarLabel(speaker.talkDate, seminar.dateTime);
+  // A talk carrying its own note keeps neither the standing time nor the
+  // standing room, because both would be wrong for it. The date still shows in
+  // the card label above, so nothing is lost by dropping the clock row.
+  const talkLocationNote = locationNote(speaker);
+  const metaRowsMarkup = talkLocationNote
+    ? `<div class="meta-row meta-row-note"><span class="meta-icon">${icon(
+        "map-pin"
+      )}</span><span>${escapeHtml(talkLocationNote)}</span></div>`
+    : `<div class="meta-row"><span class="meta-icon">${icon("clock")}</span><span>${escapeHtml(
+        dateTime
+      )}</span></div>
+        <div class="meta-row"><span class="meta-icon">${icon("map-pin")}</span><span>${(
+          seminar.locationLinks || []
+        )
+          .map((link) => `<a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`)
+          .join(" + ")}</span></div>`;
   const speakerInitialsMarkup = escapeHtml(speakerInitials(primarySpeaker.name || speakerName));
   const speakerImageSrc = primarySpeaker.image || (!useCsv ? seminar.speakerImage : "");
   const speakerImageMarkup = speakerImageSrc
@@ -474,14 +504,7 @@ export const renderHero = async (templates) => {
       </div>
       <div class="seminar-divider" aria-hidden="true"></div>
       <div class="seminar-meta seminar-meta-secondary">
-        <div class="meta-row"><span class="meta-icon">${icon("clock")}</span><span>${escapeHtml(
-          dateTime
-        )}</span></div>
-        <div class="meta-row"><span class="meta-icon">${icon("map-pin")}</span><span>${(
-          seminar.locationLinks || []
-        )
-          .map((link) => `<a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`)
-          .join(" + ")}</span></div>
+        ${metaRowsMarkup}
       </div>
     </div>
   `);

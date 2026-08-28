@@ -803,6 +803,37 @@
   overflow-wrap: anywhere;
 }
 
+/* Flags a session that departs from the standing Friday noon slot in
+   DSL/SC-499. Gold on garnet rather than the garnet-on-white of "Next up", so
+   that when a row carries both badges the two stay tellable apart. Block-level
+   with a shrink-wrapped width so it drops onto its own line under the title. */
+.location-note {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 7px;
+  margin-top: 9px;
+  padding: 5px 12px;
+  border: 1px solid var(--fsu-gold);
+  border-radius: 999px;
+  background: var(--fsu-garnet);
+  color: var(--fsu-gold);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.location-note svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .schedule-table-next-tag {
   display: inline-block;
   margin-left: 8px;
