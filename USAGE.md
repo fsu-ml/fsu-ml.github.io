@@ -67,7 +67,7 @@ All talks — upcoming, past, and holiday placeholders — live in one file:
 Header row:
 
 ```csv
-season,name,talk_title,talk_date,description,materials,event_image
+season,name,talk_title,talk_date,description,materials,event_image,location_note,start_time,location,registration_url
 ```
 
 | Column | Required | Meaning |
@@ -79,6 +79,37 @@ season,name,talk_title,talk_date,description,materials,event_image
 | `description` | no | What the talk is about — **not** who the speaker is. 250–450 characters. See [Writing a talk description](#writing-a-talk-description). |
 | `materials` | no | Semicolon-separated links (video, slides). Rendered as link chips on `/archive/`. |
 | `event_image` | no | Filename only, from `data/event-images/` — artwork shown in place of a speaker on break rows. |
+| `location_note` | no | Free-text sentence describing a session that departs from the standing time or room. Predates the three columns below and still works; prefer them for new edits. |
+| `start_time` | no | Start time when it is not the standing 12:00, written how it should read (`1:20 p.m.`). |
+| `location` | no | Room when it is not the standing DSL/SC-499 (`Love 106`). |
+| `registration_url` | no | Where to go to attend online when the standing Zoom room is not the way in. Renders as **Register to join** instead of the Zoom link. |
+
+### Sessions that move
+
+`start_time`, `location` and `registration_url` are independent overrides. Leave one
+blank and the standing value is used — **a blank `location` means DSL/SC-499, not
+"no room"**. A row setting none of them is completely unaffected, which is nearly
+every row.
+
+```csv
+2026-Fall,Dustin Mixon,Using AI in Mathematical Research II,2026-10-16,"...",,,,1:20 p.m.,Love 106,
+```
+
+That row starts late in a different room but keeps the standing Zoom. A session
+reached by registering elsewhere sets `registration_url` and leaves `location`
+blank, keeping the usual room:
+
+```csv
+2026-Fall,Max Weinreich via FSU Maths,The crisis of AI-generated mathematics (Math Joint),2026-09-11,"...",,,,1:20 p.m.,,https://www.math.fsu.edu/~bauer/AI-Math
+```
+
+Where these columns are set they win; `location_note` fills whatever they leave and
+is shown alongside them. Nothing has to be migrated.
+
+The columns feed the homepage hero button, the next-seminar card, the schedule
+table and the talk cards. They are also read by the Otto announcement bot, which
+re-reads this file every five minutes — an edit is live within about five minutes
+with no deploy, and editing a row after its announcement has gone out is safe.
 
 Rules and gotchas:
 
@@ -87,6 +118,7 @@ Rules and gotchas:
 - Keep past rows in the file. They are what populates `/archive/`.
 - Season labels follow the calendar: Spring covers Dec 21 – Jun 20, Fall covers Jun 21 – Dec 20. A talk on Dec 28, 2026 belongs to `2027-Spring`.
 - An optional `featured` column is supported: a row whose `featured` is `false` is hidden everywhere. Omit the column entirely for normal talks.
+- Columns are matched by **header name**, not position, so new optional columns are appended safely. Trailing empty columns may be omitted — most rows stop after `materials`. Edit this file by hand; a spreadsheet round-trip can reorder or drop those trailing columns.
 
 ### A typical new talk
 

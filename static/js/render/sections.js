@@ -173,15 +173,29 @@ const loadResolvedSchedule = async () => {
 const isBreakEntry = (talk = {}) =>
   /\b(no classes|holiday|break|recess)\b/i.test(talk.talkTitle || "");
 
-// Talks inherit one standing time and room from page-data, so a session that
-// moves needs its own note. Where a row sets one it replaces the default rather
-// than sitting beside it, since showing both would contradict.
-const locationNote = (talk = {}) => (talk.locationNote || "").trim();
+// Talks inherit one standing time, room and Zoom from page-data. A row may
+// override any part of that with start_time, location and registration_url;
+// whatever it leaves blank keeps the standing value, so a blank location means
+// the usual room rather than no room. location_note predates those columns and
+// still works: it sits beside them and fills whatever they leave, which is why
+// no existing row has to be migrated.
+const STANDING_TIME = "12:00 PM ET";
 
-const locationNoteMarkup = (talk, tag = "span") => {
-  const note = locationNote(talk);
-  return note
-    ? `<${tag} class="location-note">${icon("map-pin")}<span>${escapeHtml(note)}</span></${tag}>`
+const locationNote = (talk = {}) => (talk.locationNote || "").trim();
+const sessionTime = (talk = {}) => (talk.startTime || "").trim();
+const sessionLocation = (talk = {}) => (talk.location || "").trim();
+const sessionRegistration = (talk = {}) => (talk.registrationUrl || "").trim();
+
+// The schedule table and talk cards have room for a single line, so they carry
+// only what departs from the standing time and room. A row that overrides
+// nothing renders nothing here, exactly as before these columns existed.
+const sessionSummary = (talk = {}) =>
+  [sessionTime(talk), sessionLocation(talk), locationNote(talk)].filter(Boolean).join(" · ");
+
+const sessionSummaryMarkup = (talk, tag = "span") => {
+  const summary = sessionSummary(talk);
+  return summary
+    ? `<${tag} class="location-note">${icon("map-pin")}<span>${escapeHtml(summary)}</span></${tag}>`
     : "";
 };
 
@@ -227,7 +241,7 @@ const renderScheduleRow = (talk, nextTalkDate) => {
       <td class="schedule-table-topic">
         <span class="schedule-table-title">${escapeHtml(talk.talkTitle)}</span>
         ${isNext ? '<span class="schedule-table-next-tag">Next up</span>' : ""}
-        ${locationNoteMarkup(talk)}
+        ${sessionSummaryMarkup(talk)}
       </td>
       <td class="schedule-table-description">${
         talk.description
@@ -334,7 +348,7 @@ const renderTalkCard = (speaker, details = {}) => {
         </div>
         <h3>${escapeHtml(speaker.talkTitle)}</h3>
       </div>
-      ${locationNoteMarkup(speaker, "p")}
+      ${sessionSummaryMarkup(speaker, "p")}
       <p class="talk-description">${escapeHtml(description)}</p>
       <div class="talk-card-spacer" aria-hidden="true"></div>
       <${speakerRowTag} class="talk-speaker-row"${speakerRowAttrs}>
@@ -408,12 +422,22 @@ const typedTitle = (text = "") => {
 };
 
 export const renderHero = async (templates) => {
-  qs("[data-hero-actions]").innerHTML = pageData.hero.content.buttons
-    .map((button) => renderButton(templates.button, button))
-    .join("");
-
   const seminar = pageData.hero.nextSeminarCard;
   const resolved = await loadResolvedSchedule();
+  const upcomingTalk = resolved?.status === "break" ? null : resolved?.talks?.[0];
+
+  // The hero offers the standing Zoom room, which is the wrong door for a
+  // session joined by registering elsewhere. Retarget it while that talk is the
+  // next one up; every other week the button is untouched.
+  const heroRegistrationUrl = sessionRegistration(upcomingTalk || {});
+  qs("[data-hero-actions]").innerHTML = pageData.hero.content.buttons
+    .map((button) =>
+      heroRegistrationUrl && button.icon === "zoom"
+        ? { ...button, label: "Register to Join", href: heroRegistrationUrl }
+        : button
+    )
+    .map((button) => renderButton(templates.button, button))
+    .join("");
 
   if (resolved?.status === "break") {
     swapSeminarCard(`
@@ -443,25 +467,36 @@ export const renderHero = async (templates) => {
   const talkDescription =
     speaker.description || scheduleItem.description || "Talk description coming soon.";
   const dateTime = useCsv
-    ? `${readableDate(speaker.talkDate)} - 12:00 PM ET`
+    ? `${readableDate(speaker.talkDate)} - ${sessionTime(speaker) || STANDING_TIME}`
     : seminar.dateTime;
   const seminarLabel = nextSeminarLabel(speaker.talkDate, seminar.dateTime);
-  // A talk carrying its own note keeps neither the standing time nor the
-  // standing room, because both would be wrong for it. The date still shows in
-  // the card label above, so nothing is lost by dropping the clock row.
+
+  // page-data lists the standing room first and the standing Zoom second. A row
+  // overriding one keeps the other, so the two are resolved independently.
+  const [standingRoom, standingOnline] = seminar.locationLinks || [];
+  const linkMarkup = (label, href) =>
+    href ? `<a href="${escapeHtml(href)}">${escapeHtml(label)}</a>` : escapeHtml(label);
+  const roomMarkup = sessionLocation(speaker)
+    ? escapeHtml(sessionLocation(speaker))
+    : linkMarkup(standingRoom?.label || "", standingRoom?.href || "");
+  // A session reached by registering is not reached through the standing Zoom
+  // room, so the link says what it actually does.
+  const onlineMarkup = sessionRegistration(speaker)
+    ? linkMarkup("Register to join", sessionRegistration(speaker))
+    : linkMarkup(standingOnline?.label || "", standingOnline?.href || "");
+
+  const metaRow = (name, inner, extraClass = "") =>
+    `<div class="meta-row${extraClass}"><span class="meta-icon">${icon(
+      name
+    )}</span><span>${inner}</span></div>`;
   const talkLocationNote = locationNote(speaker);
-  const metaRowsMarkup = talkLocationNote
-    ? `<div class="meta-row meta-row-note"><span class="meta-icon">${icon(
-        "map-pin"
-      )}</span><span>${escapeHtml(talkLocationNote)}</span></div>`
-    : `<div class="meta-row"><span class="meta-icon">${icon("clock")}</span><span>${escapeHtml(
-        dateTime
-      )}</span></div>
-        <div class="meta-row"><span class="meta-icon">${icon("map-pin")}</span><span>${(
-          seminar.locationLinks || []
-        )
-          .map((link) => `<a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`)
-          .join(" + ")}</span></div>`;
+  const metaRowsMarkup = [
+    metaRow("clock", escapeHtml(dateTime)),
+    metaRow("map-pin", [roomMarkup, onlineMarkup].filter(Boolean).join(" + ")),
+    talkLocationNote ? metaRow("map-pin", escapeHtml(talkLocationNote), " meta-row-note") : ""
+  ]
+    .filter(Boolean)
+    .join("\n        ");
   const speakerInitialsMarkup = escapeHtml(speakerInitials(primarySpeaker.name || speakerName));
   const speakerImageSrc = primarySpeaker.image || (!useCsv ? seminar.speakerImage : "");
   const speakerImageMarkup = speakerImageSrc
