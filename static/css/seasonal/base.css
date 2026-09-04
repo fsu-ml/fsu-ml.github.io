@@ -93,23 +93,16 @@
   pointer-events: none;
 }
 
-/* Strip hanging off the bottom edge of the header, or the top edge of the
-   footer: snow cap, leaf garland, drip edge. Overflows its host deliberately,
-   so hosts that clip must opt out rather than in. */
+/* A decorative strip pinned across the full width of its host: snow lying on
+   the bar, a leaf garland hanging under it. Whether it sits at the host's top
+   or bottom edge is the theme's call, so only the width and the height token
+   are set here. */
 .season-edge-strip {
   position: absolute;
   right: 0;
   left: 0;
   height: var(--season-edge);
   pointer-events: none;
-}
-
-/* Snow lies *on* the bar, along its top edge — the strip is prepended so the
-   nav content paints in front of it. Hung below the bar instead, the scalloped
-   underside read as a row of clouds floating under the header rather than as
-   snow settled on it. */
-.site-header .season-edge-strip {
-  top: 0;
 }
 
 .site-footer .season-edge-strip {
@@ -147,6 +140,61 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Section dividers
+   ---------------------------------------------------------------------------
+   A rule across the seam between two sections with a seasonal mark at its
+   centre. Positioned by the host section, drawn by the theme.
+   -------------------------------------------------------------------------- */
+
+:root[data-season] .section-dashboard {
+  position: relative;
+}
+
+.season-divider {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  width: min(100% - 32px, 1360px);
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Speaker photographs
+   ---------------------------------------------------------------------------
+   The artboards' logo treatments, applied to the circular portraits. All three
+   are rings rather than caps or hats: these are photographs of people, and
+   anything that sits on top of one covers a face.
+   -------------------------------------------------------------------------- */
+
+:root[data-season] .speaker-directory-photo,
+:root[data-season] .seminar-speaker-photo {
+  position: relative;
+  /* The ring sits slightly proud of the portrait, so the photo must stop
+     clipping it. */
+  overflow: visible;
+}
+
+.season-ring {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.season-ring svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ---------------------------------------------------------------------------
    Reduced motion
    ---------------------------------------------------------------------------
    Two paths, deliberately both:
@@ -161,7 +209,9 @@
 
 :root.season-static .season-layer *,
 :root.season-static .season-scene *,
-:root.season-static .season-edge-strip * {
+:root.season-static .season-edge-strip *,
+:root.season-static .season-divider *,
+:root.season-static .season-ring * {
   animation: none !important;
   transition: none !important;
 }
@@ -169,7 +219,9 @@
 @media (prefers-reduced-motion: reduce) {
   .season-layer *,
   .season-scene *,
-  .season-edge-strip * {
+  .season-edge-strip *,
+  .season-divider *,
+  .season-ring * {
     animation: none !important;
     transition: none !important;
   }

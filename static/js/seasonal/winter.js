@@ -12,7 +12,7 @@
  * so teardown is total.
  */
 
-import { Disposer, buildParticles, make, pick, range, seeded } from "./engine.js";
+import { Disposer, buildParticles, decorate, make, pick, range, seeded } from "./engine.js";
 
 /* One flake per three density points, hard-capped. Forty animated elements is
    the budget for the whole layer; past that the page stops being a seminar
@@ -284,32 +284,42 @@ const treelineSvg = (seed) => {
     </svg>`;
 };
 
+/* Section divider: a hairline rule with a slowly turning snowflake at its
+   centre, sitting on the seam between two light sections. */
+const SNOWFLAKE = `
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none">
+      <path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1"></path>
+      <path d="M12 6l-2.4-2.4M12 6l2.4-2.4M12 18l-2.4 2.4M12 18l2.4 2.4"></path>
+      <path d="M6 12l-2.4-2.4M6 12l-2.4 2.4M18 12l2.4-2.4M18 12l2.4 2.4"></path>
+    </g>
+  </svg>`;
+
+const DIVIDER = `
+  <span class="wn-rule"></span>
+  <span class="wn-rule-mark">${SNOWFLAKE}</span>
+  <span class="wn-rule"></span>`;
+
+/* Logo treatment for the circular speaker photographs: the artboard's wreath
+   ring. A ring rather than a cap, because these are people's faces and a cap
+   sits on top of one. */
+const WREATH = `
+  <svg class="wn-wreath" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+    <circle cx="50" cy="50" r="46" fill="none" stroke="#2f4f3e" stroke-width="7"
+            stroke-dasharray="3 5"></circle>
+    <circle cx="50" cy="50" r="46" fill="none" stroke="#3e6b52" stroke-width="4.5"
+            stroke-dasharray="5 9" stroke-dashoffset="3"></circle>
+    <g fill="#c1273b">
+      <circle cx="50" cy="4" r="3.4"></circle>
+      <circle cx="86" cy="28" r="3"></circle>
+      <circle cx="14" cy="72" r="3"></circle>
+      <circle cx="72" cy="90" r="2.6"></circle>
+    </g>
+  </svg>`;
+
 /* ---------------------------------------------------------------------------
    Mount
    -------------------------------------------------------------------------- */
-
-/**
- * Appends a decoration container to a host, if the host is on this page.
- * Returns the container so callers can keep decorating it, or null.
- */
-const scene = (disposer, selector, className, html, { first = false } = {}) => {
-  const host = document.querySelector(selector);
-  if (!host) {
-    return null;
-  }
-  const node = make("div", { class: className, "aria-hidden": "true" });
-  node.innerHTML = html;
-  /* `first` puts the scene behind the host's own content by tree order, which
-     is how the header snow ends up under the logo and nav rather than over
-     them. Stacking contexts are not involved, so no z-index is needed. */
-  if (first) {
-    host.prepend(node);
-  } else {
-    host.appendChild(node);
-  }
-  disposer.node(node);
-  return node;
-};
 
 const buildSnow = (overlay, density, motion) => {
   const count = flakeCount(density);
@@ -366,10 +376,12 @@ export const mount = ({ overlay, density, motion }) => {
 
   /* Header: snow lying on the bar, and a string of lights hanging below it
      that comes on a bulb at a time as the page is scrolled. */
-  scene(disposer, ".site-header", "season-edge-strip wn-header-edge", snowLedge(41, 30), {
+  decorate(disposer, ".site-header", "season-edge-strip wn-header-edge", snowLedge(41, 30), {
     first: true
   });
-  const lights = scene(disposer, ".site-header", "season-scene wn-lights", lightStringHtml());
+  /* `decorate` returns one node per matching host; there is exactly one
+     header, so the string is the first (and only) entry. */
+  const [lights] = decorate(disposer, ".site-header", "season-scene wn-lights", lightStringHtml());
   const syncLights = lights ? bindLightString(disposer, lights) : () => {};
 
   const brand = document.querySelector(".site-header .brand");
@@ -382,7 +394,7 @@ export const mount = ({ overlay, density, motion }) => {
 
   /* Hero: frost in the upper corners and a bank along the bottom that bleeds
      into the section below. */
-  scene(
+  decorate(
     disposer,
     ".hero",
     "season-scene wn-hero",
@@ -394,7 +406,7 @@ export const mount = ({ overlay, density, motion }) => {
 
   /* Footer: night treeline with snow on the ground. The link columns sit in
      front of it untouched. */
-  scene(
+  decorate(
     disposer,
     ".site-footer",
     "season-scene wn-footer",
@@ -407,6 +419,12 @@ export const mount = ({ overlay, density, motion }) => {
        )}%;top:${(rand() * 46).toFixed(1)}%;--delay:${(-rand() * 3).toFixed(1)}s"></span>`;
      }).join("")}`
   );
+
+  /* Section seam between the overview and the dashboard. */
+  decorate(disposer, ".section-dashboard", "season-divider wn-divider", DIVIDER, { first: true });
+
+  /* Every circular speaker photograph gets the wreath ring. */
+  decorate(disposer, ".speaker-directory-photo, .seminar-speaker-photo", "season-ring", WREATH);
 
   return {
     /* Applies the current scroll position to the light string immediately,

@@ -326,6 +326,27 @@
   animation: wn-glow 1.8s ease-in-out infinite;
 }
 
+/* Snow settles along the button's top edge on hover. A repeating radial
+   gradient gives the scalloped ridge with one declaration and no artwork. */
+:root[data-season="winter"] .button-primary::before {
+  position: absolute;
+  top: -5px;
+  right: -1px;
+  left: -1px;
+  height: 10px;
+  content: "";
+  background: radial-gradient(circle at 6px 9px, #f7fbff 5.4px, transparent 5.8px) 0 0 / 12px 10px
+    repeat-x;
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  pointer-events: none;
+  transition: transform var(--dur-slow) var(--ease-spring);
+}
+
+:root[data-season="winter"] .button-primary:hover::before {
+  transform: scaleY(1);
+}
+
 /* The next-seminar card is the one panel over the hero art, so it gets the
    cap rather than a corner frost. */
 :root[data-season="winter"] .next-seminar {
@@ -358,8 +379,45 @@
   padding-bottom: 76px;
 }
 
-/* Ornaments hang past the 20px edge strip; nothing between them and the hero
-   may clip. */
+/* Snow lies *on* the bar, along its top edge; winter.js prepends it so the
+   logo and nav paint in front. Hung below the bar instead, the scalloped
+   underside read as a row of clouds floating under the header. */
 .wn-header-edge {
+  top: 0;
   overflow: visible;
+}
+
+/* ---------------------------------------------------------------------------
+   Section divider
+   -------------------------------------------------------------------------- */
+
+.wn-rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(120, 47, 64, 0.34), transparent);
+}
+
+.wn-rule-mark {
+  display: block;
+  width: 24px;
+  color: var(--fsu-garnet);
+  animation: wn-spin 60s linear infinite;
+}
+
+.wn-rule-mark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   Speaker photographs: the wreath ring
+   -------------------------------------------------------------------------- */
+
+.wn-wreath {
+  animation: wn-spin 240s linear infinite;
+}
+
+.season-ring:has(.wn-wreath) {
+  inset: -8%;
 }

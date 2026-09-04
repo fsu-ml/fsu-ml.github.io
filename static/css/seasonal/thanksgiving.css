@@ -1,0 +1,395 @@
+/* ---------------------------------------------------------------------------
+   Thanksgiving — November
+   ---------------------------------------------------------------------------
+   Golden hour, harvest, warmth. Garnet and amber are a natural pairing, so the
+   brand needs no adjustment at all here — November only adds the light.
+
+   Everything that moves reads one variable, `--wind`, written to the document
+   root once per frame by the wind engine. Nothing below runs JavaScript of its
+   own; `calc()` does the work.
+
+   Keyframes are namespaced `tg-`.
+   -------------------------------------------------------------------------- */
+
+:root[data-season="thanksgiving"] {
+  --season-accent: #d98e3f;
+  --season-accent-soft: #e8d5a8;
+  --season-deep: #4a1c27;
+  --season-particle: #b4562c;
+  --season-glow: rgba(217, 142, 63, 0.42);
+  --season-edge: 0px;
+
+  /* Warm, and net-darkening at the top and bottom where the type sits. The
+     amber lift is kept to the middle band, well clear of the headline. */
+  --season-sky:
+    radial-gradient(circle at 42% 14%, rgba(217, 142, 63, 0.26), transparent 44%),
+    linear-gradient(180deg, rgba(74, 28, 39, 0.52) 0%, rgba(150, 72, 40, 0.1) 52%, rgba(58, 20, 30, 0.62) 100%);
+}
+
+/* ---------------------------------------------------------------------------
+   Keyframes
+   -------------------------------------------------------------------------- */
+
+@keyframes tg-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* Hand-picked opacity stops on steps(1): a smooth interpolation reads as a
+   dimmer, not a flame. */
+@keyframes tg-flicker {
+  0%,
+  100% {
+    transform: scale(1, 1) skewX(0);
+  }
+  20% {
+    transform: scale(0.94, 1.08) skewX(-3deg);
+  }
+  40% {
+    transform: scale(1.05, 0.95) skewX(2deg);
+  }
+  60% {
+    transform: scale(0.97, 1.04) skewX(-2deg);
+  }
+  80% {
+    transform: scale(1.03, 0.98) skewX(3deg);
+  }
+}
+
+/* A leaf blows in and settles on the button's top edge. */
+@keyframes tg-land {
+  from {
+    transform: translate(-14px, -26px) rotate(-120deg);
+    opacity: 0;
+  }
+  70% {
+    opacity: 1;
+  }
+  to {
+    transform: translate(0, 0) rotate(-14deg);
+    opacity: 1;
+  }
+}
+
+@keyframes tg-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(217, 142, 63, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 6px var(--season-glow);
+  }
+}
+
+@keyframes tg-cross {
+  from {
+    transform: translateX(-220px);
+  }
+  to {
+    transform: translateX(calc(100vw + 220px));
+  }
+}
+
+/* Wings beat by foreshortening the whole bird vertically, which is what a
+   flap looks like from the side at this size. */
+@keyframes tg-flap {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0.3);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Ambient
+   -------------------------------------------------------------------------- */
+
+.tg-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Chrome
+   -------------------------------------------------------------------------- */
+
+/* The garland hangs off the bar's bottom edge, appended so it paints over the
+   hero rather than behind the navigation. */
+.tg-garland {
+  top: 100%;
+  height: 0;
+  overflow: visible;
+}
+
+.tg-garland-leaf {
+  position: absolute;
+  display: block;
+  filter: drop-shadow(0 2px 3px rgba(42, 17, 24, 0.4));
+}
+
+.tg-berry {
+  position: absolute;
+  top: -3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8e1f31;
+  box-shadow: 0 0 0 1px rgba(247, 242, 232, 0.25);
+}
+
+.tg-hero,
+.tg-footer {
+  inset: 0;
+  overflow: hidden;
+}
+
+/* The table occupies the bottom 230px of the footer. Reserve it, so a stacked
+   column on a narrow screen never lands on the plank. */
+:root[data-season="thanksgiving"] .footer-inner {
+  padding-bottom: 238px;
+}
+
+.tg-geese {
+  position: absolute;
+  top: 16%;
+  left: 0;
+  width: 180px;
+  animation: tg-cross 56s linear infinite;
+}
+
+.tg-geese svg {
+  width: 100%;
+  height: auto;
+}
+
+.tg-goose {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: tg-flap 0.42s ease-in-out infinite alternate;
+}
+
+/* ---------------------------------------------------------------------------
+   Components
+   ---------------------------------------------------------------------------
+   Decoration only. Nothing below changes a text colour, a background a text
+   sits on, or a focus ring.
+   -------------------------------------------------------------------------- */
+
+:root[data-season="thanksgiving"] .button-primary:hover {
+  animation: tg-glow 1.8s ease-in-out infinite;
+}
+
+/* A leaf blows in and settles on the button's top edge on hover, and a
+   handful tumble out of it on click (thanksgiving.js). */
+:root[data-season="thanksgiving"] .button-primary::before {
+  position: absolute;
+  top: -9px;
+  right: 14px;
+  width: 18px;
+  height: 18px;
+  content: "";
+  background: no-repeat center/contain
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23d98e3f' d='M12 2l2 5 5-1-3 4 4 3-5 1 1 5-4-3-4 3 1-5-5-1 4-3-3-4 5 1z'/%3E%3C/svg%3E");
+  opacity: 0;
+  pointer-events: none;
+}
+
+:root[data-season="thanksgiving"] .button-primary:hover::before {
+  animation: tg-land 0.5s var(--ease-out-soft) forwards;
+}
+
+:root[data-season="thanksgiving"] .feature-card,
+:root[data-season="thanksgiving"] .community-card,
+:root[data-season="thanksgiving"] .talk-card {
+  position: relative;
+}
+
+:root[data-season="thanksgiving"] .feature-card::after,
+:root[data-season="thanksgiving"] .community-card::after,
+:root[data-season="thanksgiving"] .talk-card::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  border-radius: inherit;
+  background: radial-gradient(circle at 100% 0%, rgba(217, 142, 63, 0.3), transparent 42%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-slow) var(--ease-out-soft);
+}
+
+:root[data-season="thanksgiving"] .feature-card:hover::after,
+:root[data-season="thanksgiving"] .community-card:hover::after,
+:root[data-season="thanksgiving"] .talk-card:hover::after,
+:root[data-season="thanksgiving"] .feature-card:focus-within::after,
+:root[data-season="thanksgiving"] .community-card:focus-within::after,
+:root[data-season="thanksgiving"] .talk-card:focus-within::after {
+  opacity: 1;
+}
+
+/* A vine underline that grows from the left on nav hover, in place of the
+   site's own gold wipe. Same shape, seasonal colour. */
+:root[data-season="thanksgiving"] .nav-link::after {
+  background: linear-gradient(90deg, var(--fsu-gold), var(--season-accent));
+}
+
+@media (max-width: 620px) {
+  .tg-table {
+    height: 178px;
+  }
+
+  :root[data-season="thanksgiving"] .footer-inner {
+    padding-bottom: 186px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Footer: the table after dinner
+   -------------------------------------------------------------------------- */
+
+.tg-table {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 230px;
+  pointer-events: none;
+}
+
+/* Plank surface. The lit top edge and the darkened underside are what give it
+   thickness; the repeating hairlines are the grain. */
+.tg-plank {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 96px;
+  box-shadow:
+    inset 0 5px 0 #8c4d2e,
+    inset 0 -24px 30px rgba(0, 0, 0, 0.22);
+}
+
+.tg-plank span {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.09) 0 1px, transparent 1px 9px);
+  opacity: 0.6;
+}
+
+.tg-item {
+  position: absolute;
+  bottom: 88px;
+  display: block;
+  filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.45));
+}
+
+.tg-item svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* A pool of candlelight on the plank. */
+.tg-candleglow {
+  position: absolute;
+  bottom: 70px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(242, 166, 90, 0.35) 0%, rgba(242, 166, 90, 0) 70%);
+}
+
+.tg-flame {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: tg-flicker 1.7s steps(1) infinite;
+}
+
+/* Two flames on different clocks never look synced; a single duration reads as
+   one light source blinking. */
+.tg-item:nth-of-type(even) .tg-flame {
+  animation-duration: 2.3s;
+}
+
+.tg-table-leaf {
+  position: absolute;
+  display: block;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.35));
+}
+
+.tg-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--cream);
+  animation: tg-twinkle 3s ease-in-out var(--delay, 0s) infinite;
+}
+
+/* ---------------------------------------------------------------------------
+   Section divider
+   -------------------------------------------------------------------------- */
+
+.tg-rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(180, 86, 44, 0.5), transparent);
+}
+
+.tg-rule-mark {
+  display: block;
+  width: 22px;
+  transform: rotate(calc(var(--wind, 0) * 0.12deg));
+  transform-origin: 50% 0;
+  transition: transform 0.55s ease-out;
+}
+
+.tg-rule-mark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   Speaker photographs: the leaf wreath
+   -------------------------------------------------------------------------- */
+
+.tg-wreath {
+  position: absolute;
+  inset: -9%;
+}
+
+/* Each leaf is rotated out to the rim, then given its own tilt. Two rotations
+   with a translate between them puts a leaf on a circle without any
+   per-leaf trigonometry. */
+.tg-wreath-leaf {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  margin: -8px 0 0 -8px;
+  transform-origin: 50% 50%;
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll: the sunset
+   -------------------------------------------------------------------------- */
+
+/* A second sky laid over the first and cross-faded by scroll progress, so the
+   hero deepens from golden hour to dusk as the page is read. Cross-fading two
+   whole gradients is the only way to interpolate between them. */
+.tg-dusk {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 42% 14%, rgba(142, 31, 49, 0.34), transparent 46%),
+    linear-gradient(180deg, rgba(38, 12, 22, 0.72) 0%, rgba(74, 28, 39, 0.4) 54%, rgba(24, 8, 14, 0.8) 100%);
+  opacity: var(--season-progress, 0);
+  pointer-events: none;
+}

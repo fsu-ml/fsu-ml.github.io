@@ -166,6 +166,31 @@ export const buildParticles = (count, seed, factory) => {
   return fragment;
 };
 
+/**
+ * Attaches a decoration to every element matching `selector`, if any are on
+ * this page, and registers each with the disposer so teardown is total.
+ *
+ * `first` prepends instead of appending, which is how a decoration ends up
+ * *behind* its host's own content by tree order rather than in front of it —
+ * no z-index and no stacking context required.
+ *
+ * Returns the nodes created, or an empty array.
+ */
+export const decorate = (disposer, selector, className, html, { first = false } = {}) => {
+  const hosts = Array.from(document.querySelectorAll(selector));
+  return hosts.map((host) => {
+    const node = make("div", { class: className, "aria-hidden": "true" });
+    node.innerHTML = html;
+    if (first) {
+      host.prepend(node);
+    } else {
+      host.appendChild(node);
+    }
+    disposer.node(node);
+    return node;
+  });
+};
+
 /* ---------------------------------------------------------------------------
    Canvas
    -------------------------------------------------------------------------- */
@@ -432,6 +457,72 @@ export const trackPointer = (disposer) => {
     state.active = false;
   });
   return state;
+};
+
+/* ---------------------------------------------------------------------------
+   Scroll progress
+   -------------------------------------------------------------------------- */
+
+/**
+ * Writes page scroll progress, 0 to 1, to `--season-progress` on the document
+ * root. Themes read it through `calc()` — fog rises, a sky turns to dusk —
+ * so a whole page of scroll-driven decoration costs one variable write per
+ * frame and no per-element JavaScript.
+ *
+ * Returns its `update`, which the mounted theme re-exposes. Hidden documents
+ * never fire requestAnimationFrame, so without a way to advance this by hand
+ * the effect cannot be verified anywhere the page is not literally on screen.
+ */
+export const bindProgress = (disposer, root) => {
+  let last = -1;
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const ratio = scrollable > 0 ? clamp(window.scrollY / scrollable, 0, 1) : 0;
+    /* Two decimal places is well under a pixel of visible difference and
+       keeps this from invalidating style on every sub-pixel scroll. */
+    const value = Math.round(ratio * 100) / 100;
+    if (value === last) {
+      return;
+    }
+    last = value;
+    root.style.setProperty("--season-progress", String(value));
+  };
+
+  const onScroll = () => {
+    if (ticking) {
+      return;
+    }
+    ticking = true;
+    requestAnimationFrame(update);
+  };
+
+  disposer.listen(window, "scroll", onScroll, { passive: true });
+  disposer.listen(window, "resize", onScroll, { passive: true });
+  disposer.add(() => root.style.removeProperty("--season-progress"));
+  update();
+  return update;
+};
+
+/**
+ * Calls `handler(x, y, event)` when a primary action is clicked, with the
+ * click point in viewport coordinates. Themes use it to release bats or leaves
+ * from the button that was pressed.
+ *
+ * Bound on the document rather than on each button, so buttons rendered after
+ * the theme mounted still work and there is exactly one listener to remove.
+ */
+export const onButtonPress = (disposer, selector, handler) => {
+  disposer.listen(document, "click", (event) => {
+    const button = event.target.closest(selector);
+    if (!button) {
+      return;
+    }
+    const r = button.getBoundingClientRect();
+    handler(r.left + r.width / 2, r.top + r.height / 2, event);
+  });
 };
 
 /* ---------------------------------------------------------------------------
