@@ -317,6 +317,10 @@ const WREATH = `
     </g>
   </svg>`;
 
+/* Card treatment: frost creeps into the top-right corner on hover. The same
+   crystal as the hero corners, at card scale. */
+const CARD_FROST = `<div class="wn-card-frost">${frostSvg(53)}</div>`;
+
 /* ---------------------------------------------------------------------------
    Mount
    -------------------------------------------------------------------------- */
@@ -425,6 +429,14 @@ export const mount = ({ overlay, density, motion }) => {
 
   /* Every circular speaker photograph gets the wreath ring. */
   decorate(disposer, ".speaker-directory-photo, .seminar-speaker-photo", "season-ring", WREATH);
+
+  /* Cards get frost in the corner, drawn in on hover. */
+  decorate(
+    disposer,
+    ".speaker-directory-card, .feature-card, .community-card, .talk-card",
+    "season-card-art",
+    CARD_FROST
+  );
 
   return {
     /* Applies the current scroll position to the light string immediately,

@@ -505,6 +505,29 @@ const leafWreath = (seed) => {
   return `<div class="tg-wreath">${parts.join("")}</div>`;
 };
 
+/* Card treatment: three leaves slide into the top corners on hover, each from
+   a slightly different angle and on its own delay. */
+const cardLeaves = (seed) => {
+  const rand = seeded(seed);
+  const spots = [
+    [4, -6, -28],
+    [16, 2, 22],
+    [30, -3, -8]
+  ];
+  return `<div class="tg-card-leaves">${spots
+    .map(
+      ([right, top, rot], i) =>
+        `<span style="right:${right}px;top:${top}px;--turn:${rot}deg;--wait:${(i * 70).toFixed(
+          0
+        )}ms">${leafSvg(
+          LEAF_KINDS[Math.floor(rand() * 4)],
+          LEAF_COLORS[Math.floor(rand() * 4)],
+          20 + rand() * 8
+        )}</span>`
+    )
+    .join("")}</div>`;
+};
+
 /* ---------------------------------------------------------------------------
    Mount
    -------------------------------------------------------------------------- */
@@ -587,6 +610,14 @@ export const mount = ({ overlay, density, motion, root }) => {
     ".speaker-directory-photo, .seminar-speaker-photo",
     "season-ring",
     leafWreath(43)
+  );
+
+  /* Cards get leaves sliding into the corner on hover. */
+  decorate(
+    disposer,
+    ".speaker-directory-card, .feature-card, .community-card, .talk-card",
+    "season-card-art",
+    cardLeaves(87)
   );
 
   return {

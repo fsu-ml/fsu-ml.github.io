@@ -16,7 +16,6 @@ import {
   Loop,
   Surface,
   buildParticles,
-  bindProgress,
   clamp,
   make,
   onButtonPress,
@@ -141,7 +140,14 @@ class BatSwarm {
        and bats that reach it fade out. Population stays bounded without bats
        ever popping out of existence mid-air. */
     const att = this.recall > 0 ? roost : this.attractor();
-    const P = this.pointer && this.pointer.active ? this.pointer : null;
+    /* The canvas now lives inside the hero rather than over the viewport, so
+       the pointer has to be rebased into canvas space. One layout read per
+       frame, hoisted out of the per-bat loop. */
+    let P = null;
+    if (this.pointer && this.pointer.active) {
+      const box = this.surface.canvas.getBoundingClientRect();
+      P = { x: this.pointer.x - box.left, y: this.pointer.y - box.top };
+    }
 
     for (let i = 0; i < bats.length; i += 1) {
       const b = bats[i];
@@ -332,31 +338,42 @@ class BatSwarm {
    Artwork
    -------------------------------------------------------------------------- */
 
-/* Cobweb: spokes from a corner, plus rings that sag toward it.
+/* Cobweb. `corner` anchors the origin at the top-left and sweeps a quarter
+   turn; `full` puts the origin at the centre and sweeps the whole circle,
+   which is the artboard's "cobweb ring" logo treatment.
+
    `pathLength="1"` lets one dash animation draw every path regardless of its
    real length, so no path has to be measured. */
-const cobweb = (size, { spokes = 7, rings = 5, stroke = "rgba(247,242,232,.5)" } = {}) => {
-  const ox = 0;
-  const oy = 0;
+const cobweb = (size, { spokes = 7, rings = 5, stroke = "rgba(247,242,232,.5)", full = false } = {}) => {
+  const ox = full ? size / 2 : 0;
+  const oy = full ? size / 2 : 0;
+  const outer = full ? size / 2 - 1 : size;
+  const sweep = full ? Math.PI * 2 : Math.PI / 2;
   const paths = [];
   const ang = [];
   for (let i = 0; i < spokes; i += 1) {
-    ang.push((Math.PI / 2) * (i / (spokes - 1)));
+    ang.push(sweep * (full ? i / spokes : i / (spokes - 1)));
   }
   const pt = (a, r) => [ox + Math.cos(a) * r, oy + Math.sin(a) * r];
   ang.forEach((a, i) => {
-    const [x, y] = pt(a, size);
+    const [x, y] = pt(a, outer);
     paths.push({ d: `M${ox} ${oy}L${x.toFixed(1)} ${y.toFixed(1)}`, delay: i * 0.05 });
   });
   for (let k = 1; k <= rings; k += 1) {
-    const r = size * (k / rings);
+    const r = outer * (k / rings);
     const pts = ang.map((a) => pt(a, r));
+    /* A full ring has to close back onto its first spoke; a corner one stops. */
+    if (full) {
+      pts.push(pts[0]);
+    }
     let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
     for (let i = 1; i < pts.length; i += 1) {
       const [x1, y1] = pts[i - 1];
       const [x2, y2] = pts[i];
       const mx = (x1 + x2) / 2;
       const my = (y1 + y2) / 2;
+      /* Control point pulled toward the anchor, so each span sags inward the
+         way silk does between two attachment points. */
       d += `Q${(ox + (mx - ox) * 0.86).toFixed(1)} ${(oy + (my - oy) * 0.86).toFixed(
         1
       )} ${x2.toFixed(1)} ${y2.toFixed(1)}`;
@@ -373,97 +390,168 @@ const cobweb = (size, { spokes = 7, rings = 5, stroke = "rgba(247,242,232,.5)" }
     </svg>`;
 };
 
-/* A tangle of interconnected bare branches for the footer.
- *
- * Several trees are grown from points along the bottom with a wide branching
- * angle so their canopies genuinely interleave, and then tips from different
- * trees are joined by thin connectors. The interlock is what makes it gloomy —
- * a row of separate trees just reads as scenery.
- *
- * Segments are bucketed by stroke width and emitted as a handful of multi-part
- * paths rather than one element each: depth 5 across seven trees is on the
- * order of 1500 segments, which is nothing as geometry and far too much as DOM.
- */
-const branchTangle = (seed, { W = 1200, H = 210, trees = 7 } = {}) => {
-  const rnd = seeded(seed);
-  const buckets = new Map();
-  const tips = [];
+/* Stars. Static by design: a sky of independently pulsing dots is exactly the
+   kind of ambient motion that makes a page tiring to read. */
+const starfield = (seed, n, maxTop) => {
+  const rand = seeded(seed);
+  return Array.from({ length: n }, () => {
+    const r = rand();
+    const size = r > 0.86 ? 2.6 : r > 0.6 ? 1.9 : 1.3;
+    return `<span class="hw-star" style="left:${(rand() * 100).toFixed(2)}%;top:${(
+      rand() * maxTop
+    ).toFixed(2)}%;width:${size}px;height:${size}px;opacity:${(0.35 + rand() * 0.55).toFixed(
+      2
+    )}"></span>`;
+  }).join("");
+};
 
-  const push = (x, y, x2, y2, w) => {
-    const key = Math.max(0.8, Math.round(w * 2) / 2).toFixed(1);
-    if (!buckets.has(key)) {
-      buckets.set(key, []);
+/* Crescent moon. Cut by subtraction rather than drawn as an arc, so the
+   terminator stays a true circular edge. */
+const moon = (className, id) => `
+  <div class="${className}" data-hw-roost>
+    <div class="hw-moon-glow"></div>
+    <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+      <defs>
+        <!-- The id has to be its own argument rather than derived from the
+             class list: a class list can contain spaces, and a space in an id
+             makes url(#…) resolve to nothing, which silently renders the
+             crescent as a full disc. -->
+        <mask id="hw-crescent-${id}">
+          <rect width="100" height="100" fill="black"></rect>
+          <circle cx="50" cy="50" r="33" fill="white"></circle>
+          <circle cx="67" cy="39" r="29" fill="black"></circle>
+        </mask>
+      </defs>
+      <circle cx="50" cy="50" r="33" fill="#fdf7ea" mask="url(#hw-crescent-${id})"></circle>
+    </svg>
+  </div>`;
+
+/* Drip edge.
+ *
+ * Mounted at the *top of the section below the hero*, not inside the hero.
+ * Inside, the hero clips its overflow, so the only way to suggest drips was to
+ * cut them out of a white shape — and what that actually renders is white
+ * teeth, not dark drips. Hung off the next section they can be the night
+ * colour and hang down into the page, which is what the reference shows.
+ *
+ * Narrow fingers of varying length: wide ones read as clouds, and round ones
+ * pinched off at the neck read as a row of dots. */
+const dripEdge = (seed) => {
+  const W = 1200;
+  const H = 62;
+  const rand = seeded(seed);
+  const shoulder = 9;
+  let d = `M0 0H${W}V${shoulder}`;
+  let x = W;
+  while (x > 0) {
+    const gap = range(rand, 14, 46);
+    const w = range(rand, 9, 18);
+    const depth = range(rand, 8, 48);
+    const start = Math.max(0, x - gap);
+    const end = Math.max(0, start - w);
+    d += `H${start.toFixed(1)}`;
+    /* Control points directly below the shoulders, so the sides run down
+       vertically to a rounded tip: a finger, not a bowl. */
+    d += `C${start.toFixed(1)} ${(shoulder + depth).toFixed(1)} ${end.toFixed(1)} ${(
+      shoulder + depth
+    ).toFixed(1)} ${end.toFixed(1)} ${shoulder}`;
+    x = end;
+    if (end <= 0) {
+      break;
     }
-    buckets.get(key).push(`M${x.toFixed(1)} ${y.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}`);
-  };
+  }
+  d += `H0Z`;
+  return `
+    <svg class="hw-drip" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"
+         aria-hidden="true" focusable="false">
+      <path fill="currentColor" d="${d}"></path>
+    </svg>`;
+};
 
+/* Bare tree by recursive branching. Each segment is a round-capped stroke that
+   thins with depth, so the trunk tapers into twigs with no bookkeeping. */
+const bareTree = (seed, { W = 200, H = 260, trunk = 8, depth = 6 } = {}) => {
+  const rnd = seeded(seed);
+  const segs = [];
   const branch = (x, y, ang, len, w, d) => {
     const x2 = x + Math.cos(ang) * len;
     const y2 = y + Math.sin(ang) * len;
-    push(x, y, x2, y2, w);
+    segs.push({ x, y, x2, y2, w });
     if (d === 0 || len < 4) {
-      /* Subsampled: every tip would make the pairwise connector scan
-         quadratic in the thousands for no visible gain. */
-      if (rnd() > 0.82) {
-        tips.push([x2, y2]);
-      }
       return;
     }
-    const n = 2 + (rnd() > 0.5 ? 1 : 0);
+    const n = 2 + (rnd() > 0.55 ? 1 : 0);
     for (let i = 0; i < n; i += 1) {
       branch(
         x2,
         y2,
-        ang + (rnd() - 0.5) * 1.5 + (i - (n - 1) / 2) * 0.72,
-        len * (0.62 + rnd() * 0.22),
-        w * 0.64,
+        ang + (rnd() - 0.5) * 1.2 + (i - (n - 1) / 2) * 0.6,
+        len * (0.62 + rnd() * 0.2),
+        w * 0.63,
         d - 1
       );
     }
   };
+  branch(W / 2, H, -Math.PI / 2 + (rnd() - 0.5) * 0.3, H * 0.3, trunk, depth);
+  return `
+    <svg viewBox="0 0 ${W} ${H}" aria-hidden="true" focusable="false" preserveAspectRatio="none">
+      <g stroke="currentColor" stroke-linecap="round" fill="none">
+        ${segs
+          .map(
+            (t) =>
+              `<path d="M${t.x.toFixed(1)} ${t.y.toFixed(1)}L${t.x2.toFixed(1)} ${t.y2.toFixed(
+                1
+              )}" stroke-width="${Math.max(0.8, t.w).toFixed(1)}"/>`
+          )
+          .join("")}
+      </g>
+    </svg>`;
+};
 
-  for (let i = 0; i < trees; i += 1) {
-    const x = ((i + 0.5) * W) / trees + (rnd() - 0.5) * (W / trees) * 0.7;
-    const h = H * (0.58 + rnd() * 0.4);
-    branch(x, H + 6, -Math.PI / 2 + (rnd() - 0.5) * 0.5, h * 0.34, 5 + rnd() * 4, 5);
-  }
-
-  /* Connectors: join tips that are near each other but far enough apart to be
-     from different limbs. Only a fraction are taken, so the result reads as a
-     tangle rather than a net. */
-  const sample = tips.length > 150 ? tips.filter((_, i) => i % Math.ceil(tips.length / 150) === 0) : tips;
-  const links = [];
-  for (let i = 0; i < sample.length; i += 1) {
-    for (let j = i + 1; j < sample.length; j += 1) {
-      const dx = sample[i][0] - sample[j][0];
-      const dy = sample[i][1] - sample[j][1];
-      const d2 = dx * dx + dy * dy;
-      if (d2 > 500 && d2 < 5200 && rnd() > 0.88) {
-        const [x1, y1] = sample[i];
-        const [x2, y2] = sample[j];
-        /* A slight sag, so a connector looks like a branch that grew across
-           rather than a straight wire. */
-        links.push(
-          `M${x1.toFixed(1)} ${y1.toFixed(1)}Q${((x1 + x2) / 2).toFixed(1)} ${(
-            (y1 + y2) / 2 +
-            6
-          ).toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`
-        );
-      }
+/* Graveyard edge: a ground line, leaning headstones and the odd cross. */
+const graveyard = (seed) => {
+  const rand = seeded(seed);
+  const W = 1200;
+  const H = 96;
+  const n = 11;
+  const parts = [
+    `<path d="M0 ${H}V${H - 12}C${W * 0.2} ${H - 18} ${W * 0.4} ${H - 8} ${W * 0.6} ${H - 14}S${
+      W * 0.9
+    } ${H - 6} ${W} ${H - 12}V${H}Z"/>`
+  ];
+  for (let i = 0; i < n; i += 1) {
+    const x = ((i + 0.5) * W) / n + (rand() - 0.5) * (W / n) * 0.7;
+    const w = range(rand, 16, 34);
+    const h = range(rand, 22, 52);
+    const tilt = (rand() - 0.5) * 10;
+    const base = H - 10;
+    const g = `transform="rotate(${tilt.toFixed(1)} ${x.toFixed(1)} ${base})"`;
+    if (rand() > 0.72) {
+      parts.push(
+        `<g ${g}><rect x="${(x - 3).toFixed(1)}" y="${(base - h).toFixed(
+          1
+        )}" width="6" height="${h.toFixed(1)}"/><rect x="${(x - w / 2).toFixed(1)}" y="${(
+          base -
+          h +
+          9
+        ).toFixed(1)}" width="${w.toFixed(1)}" height="6"/></g>`
+      );
+    } else {
+      parts.push(
+        `<g ${g}><path d="M${(x - w / 2).toFixed(1)} ${base}V${(base - h + w / 2).toFixed(
+          1
+        )}A${(w / 2).toFixed(1)} ${(w / 2).toFixed(1)} 0 0 1 ${(x + w / 2).toFixed(1)} ${(
+          base -
+          h +
+          w / 2
+        ).toFixed(1)}V${base}Z"/></g>`
+      );
     }
   }
-
-  const groups = [...buckets.entries()]
-    .map(([w, ds]) => `<path stroke-width="${w}" d="${ds.join("")}"/>`)
-    .join("");
-
   return `
-    <svg class="hw-branches" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"
+    <svg class="hw-graveyard" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"
          aria-hidden="true" focusable="false">
-      <g stroke="${NIGHT}" fill="none" stroke-linecap="round">
-        ${groups}
-        <g stroke-width="0.9" opacity=".75">${links.join("") && `<path d="${links.join("")}"/>`}</g>
-      </g>
+      <g fill="currentColor">${parts.join("")}</g>
     </svg>`;
 };
 
@@ -510,9 +598,23 @@ const DIVIDER = `
   <span class="hw-rule"></span>`;
 
 /* Logo treatment for the circular speaker photographs: the artboard's cobweb
-   ring. It occupies one quadrant of the rim, so it never covers a face. */
+   ring — a full radial web around the mark, ten spokes and five sagging
+   rings, in dark garnet. Revealed on hover only; a web permanently ringing
+   every portrait is decoration the reader cannot switch off. */
 const PHOTO_WEB = `
-  <div class="hw-photo-web">${cobweb(64, { spokes: 6, rings: 4, stroke: "rgba(224,122,47,.75)" })}</div>`;
+  <div class="hw-photo-web">${cobweb(110, {
+    spokes: 10,
+    rings: 5,
+    stroke: "rgba(42,17,24,.55)",
+    full: true
+  })}</div>`;
+
+/* Card treatment: a web draws itself into the top-right corner on hover. */
+const CARD_WEB = `<div class="hw-card-web">${cobweb(120, {
+  spokes: 7,
+  rings: 5,
+  stroke: "rgba(16,8,12,.6)"
+})}</div>`;
 
 /* ---------------------------------------------------------------------------
    Mount
@@ -552,35 +654,64 @@ export const mount = ({ overlay, density, motion, root }) => {
 
   buildEmbers(overlay, density, motion);
 
-  const canvas = make("canvas", { class: "season-canvas hw-canvas", "aria-hidden": "true" });
-  overlay.appendChild(canvas);
-  const surface = new Surface(canvas);
-  disposer.add(() => surface.destroy());
-
   /* --- chrome --- */
 
-  decorate(
+  /* The hero is the whole night scene: sky, stars, moon, bare trees at both
+     edges, ground mist, and drips melting into the section below. */
+  const [heroScene] = decorate(
     disposer,
     ".hero",
     "season-scene hw-hero",
     `<div class="season-sky"></div>
-     <div class="hw-corner-web">${cobweb(150)}</div>
-     ${FOG}`
+     ${starfield(3, 46, 74)}
+     ${moon("hw-moon", "hero")}
+     <div class="hw-tree hw-tree-left">${bareTree(5, { H: 260 })}</div>
+     <div class="hw-tree hw-tree-right">${bareTree(12, { H: 300 })}</div>
+     ${FOG}
+     <canvas class="hw-canvas" aria-hidden="true"></canvas>`
   );
 
+  /* The drips belong to the top of the section below the hero, where they can
+     be the night colour hanging into the page. */
+  decorate(disposer, ".section-overview, .subpage-main", "hw-drip-band", dripEdge(17), {
+    first: true
+  });
+
+  /* Footer: the same night, with a graveyard, a bare tree and an owl in it. */
   decorate(
     disposer,
     ".site-footer",
     "season-scene hw-footer",
     `<div class="season-sky"></div>
+     ${starfield(29, 26, 60)}
+     ${moon("hw-moon hw-moon-footer", "footer")}
      ${FOG}
-     ${branchTangle(31)}
-     ${OWL}`
+     <div class="hw-tree hw-tree-footer">${bareTree(31, { H: 220, trunk: 7 })}</div>
+     ${OWL}
+     ${graveyard(9)}`
   );
 
-  /* The swarm roosts just behind the header's top-right corner, so bursts
-     always arrive from somewhere off the edge rather than out of thin air. */
-  const roost = () => ({ x: Math.max(80, surface.width - 90), y: 40 });
+  /* The swarm's canvas is a child of the hero, not of the fixed overlay: bats
+     fly in the hero and scroll away with it instead of following the reader
+     down the page. */
+  const canvas = heroScene ? heroScene.querySelector(".hw-canvas") : null;
+  if (!canvas) {
+    return { destroy: () => disposer.dispose() };
+  }
+  const surface = new Surface(canvas);
+  disposer.add(() => surface.destroy());
+
+  /* Bats roost on the hero's moon, so bursts always arrive from somewhere
+     rather than out of thin air. Coordinates are canvas-local. */
+  const moonEl = heroScene.querySelector(".hw-moon");
+  const roost = () => {
+    if (moonEl) {
+      const m = moonEl.getBoundingClientRect();
+      const c = canvas.getBoundingClientRect();
+      return { x: m.left - c.left + m.width / 2, y: m.top - c.top + m.height / 2 };
+    }
+    return { x: Math.max(80, surface.width - 110), y: 90 };
+  };
 
   const swarm = new BatSwarm(surface, { target: batTarget(density), roost });
   swarm.pointer = trackPointer(disposer);
@@ -608,11 +739,13 @@ export const mount = ({ overlay, density, motion, root }) => {
   }
   loop.start();
 
-  /* Drives the fog, which rises as the page is scrolled. */
-  const syncProgress = bindProgress(disposer, root);
-
-  /* Click a primary action and three bats fly out of it and join the swarm. */
-  onButtonPress(disposer, ".button-primary", (x, y) => swarm.release(x, y, 3));
+  /* Click a primary action and three bats fly out of it and join the swarm.
+     The click point is in viewport space and the canvas is not, so it is
+     rebased; a button below the hero releases at the nearest hero edge. */
+  onButtonPress(disposer, ".button-primary", (x, y) => {
+    const c = canvas.getBoundingClientRect();
+    swarm.release(clamp(x - c.left, 10, surface.width - 10), clamp(y - c.top, 10, surface.height - 10), 3);
+  });
 
   /* Section seam between the overview and the dashboard. */
   decorate(disposer, ".section-dashboard", "season-divider hw-divider", DIVIDER, { first: true });
@@ -620,12 +753,24 @@ export const mount = ({ overlay, density, motion, root }) => {
   /* Every circular speaker photograph gets a web across one corner of its rim. */
   decorate(disposer, ".speaker-directory-photo, .seminar-speaker-photo", "season-ring", PHOTO_WEB);
 
+  /* Cards get a web that draws itself into the corner on hover.
+     Speaker cards are excluded on purpose: a web in their corner lands behind
+     the portrait, and the portrait already carries the cobweb ring. The
+     next-seminar card is excluded too — `swapSeminarCard` rewrites its
+     innerHTML on a timer after the theme has mounted, so anything put inside
+     it is discarded a moment later. */
+  decorate(
+    disposer,
+    ".feature-card, .community-card, .talk-card",
+    "season-card-art",
+    CARD_WEB
+  );
+
   return {
     /* Exposed for tuning and for verification: hidden documents never fire
        rAF, so this is the only way to advance the swarm off-screen. */
     swarm,
     loop,
-    syncProgress,
     destroy() {
       disposer.dispose();
     }

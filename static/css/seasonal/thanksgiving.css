@@ -393,3 +393,32 @@
   opacity: var(--season-progress, 0);
   pointer-events: none;
 }
+
+/* ---------------------------------------------------------------------------
+   Card artwork: leaves sliding into the corner
+   -------------------------------------------------------------------------- */
+
+.tg-card-leaves span {
+  position: absolute;
+  display: block;
+  opacity: 0;
+  transform: translate(18px, -20px) rotate(calc(var(--turn) - 60deg));
+  transition:
+    opacity var(--dur-slow) var(--ease-out-soft) var(--wait),
+    transform var(--dur-reveal) var(--ease-spring) var(--wait);
+}
+
+.tg-card-leaves svg {
+  display: block;
+  filter: drop-shadow(0 2px 3px rgba(42, 17, 24, 0.32));
+}
+
+:is(.speaker-directory-card, .feature-card, .community-card, .talk-card):hover
+  .tg-card-leaves
+  span,
+:is(.speaker-directory-card, .feature-card, .community-card, .talk-card):focus-within
+  .tg-card-leaves
+  span {
+  opacity: 1;
+  transform: translate(0, 0) rotate(var(--turn));
+}

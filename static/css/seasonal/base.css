@@ -176,9 +176,17 @@
 :root[data-season] .speaker-directory-photo,
 :root[data-season] .seminar-speaker-photo {
   position: relative;
-  /* The ring sits slightly proud of the portrait, so the photo must stop
-     clipping it. */
+  /* The ring sits proud of the portrait, so the photo must stop clipping it. */
   overflow: visible;
+}
+
+/* ...but the portrait was round *because* of that clip, so the circle has to
+   be restored on the contents themselves. Without this the photographs go
+   square the moment a season is active. */
+:root[data-season] .speaker-directory-photo > img,
+:root[data-season] .speaker-directory-photo > .speaker-directory-initials,
+:root[data-season] .seminar-speaker-photo > img {
+  border-radius: 50%;
 }
 
 .season-ring {
@@ -192,6 +200,33 @@
   width: 100%;
   height: 100%;
   overflow: visible;
+}
+
+/* ---------------------------------------------------------------------------
+   Card artwork
+   ---------------------------------------------------------------------------
+   The artboards' card treatments. Each theme supplies the drawing; this gives
+   it a box and the reveal-on-hover contract.
+
+   Deliberately clipped to the card and never interactive, so a decoration can
+   never intercept a click meant for the link inside.
+   -------------------------------------------------------------------------- */
+
+:root[data-season] .speaker-directory-card,
+:root[data-season] .feature-card,
+:root[data-season] .community-card,
+:root[data-season] .talk-card,
+:root[data-season] .next-seminar {
+  position: relative;
+}
+
+.season-card-art {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 /* ---------------------------------------------------------------------------
@@ -211,7 +246,8 @@
 :root.season-static .season-scene *,
 :root.season-static .season-edge-strip *,
 :root.season-static .season-divider *,
-:root.season-static .season-ring * {
+:root.season-static .season-ring *,
+:root.season-static .season-card-art * {
   animation: none !important;
   transition: none !important;
 }
@@ -221,7 +257,8 @@
   .season-scene *,
   .season-edge-strip *,
   .season-divider *,
-  .season-ring * {
+  .season-ring *,
+  .season-card-art * {
     animation: none !important;
     transition: none !important;
   }
