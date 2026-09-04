@@ -73,12 +73,11 @@
   height: 100%;
 }
 
-/* Base for every DOM particle. A theme sets the glyph, size and keyframe;
-   position and compositing hints live here so they cannot be forgotten. */
+/* Base for every DOM particle. A theme sets the glyph, size, placement and
+   keyframe; only the compositing hints live here, so they cannot be forgotten
+   on a new theme. */
 .season-particle {
   position: absolute;
-  top: 0;
-  left: var(--x, 0);
   will-change: transform, opacity;
 }
 
@@ -119,14 +118,18 @@
   overflow: visible;
 }
 
-/* Seasonal wash over the hero and footer artwork. Painted between the existing
-   overlay and the content, so type keeps the contrast it was audited with. */
-:root[data-season] .hero::after,
-:root[data-season] .site-footer::after {
+/* Seasonal wash over the hero and footer artwork.
+   A real node, placed first inside the theme's own scene container, rather
+   than a pseudo-element on the host. A `::after` on `.hero` is painted as its
+   last child, so it landed on top of the theme's own snow drift and greyed it
+   out. Inside the scene the order is explicit: wash, then artwork.
+
+   The scene itself carries no z-index, so it sits above `.hero-media` and
+   `.hero-overlay` (earlier in tree order) and below `.hero-inner` (z-index 1).
+   Type therefore keeps the contrast it was audited with. */
+.season-sky {
   position: absolute;
   inset: 0;
-  z-index: 0;
-  content: "";
   background: var(--season-sky);
   pointer-events: none;
 }

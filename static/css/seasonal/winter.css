@@ -1,0 +1,305 @@
+/* ---------------------------------------------------------------------------
+   Winter — December
+   ---------------------------------------------------------------------------
+   Snow, frost and a night treeline. The quietest of the three: the artboard's
+   own note is that smaller and slower reads more elegant than dense, so the
+   flakes stay 3-9px and take 12-26s to cross the viewport.
+
+   Every keyframe here is namespaced `wn-` so the three themes can never
+   collide even though only one is ever mounted.
+   -------------------------------------------------------------------------- */
+
+:root[data-season="winter"] {
+  --season-accent: #dce9f2;
+  --season-accent-soft: #f4f9ff;
+  --season-deep: #0b1a2e;
+  --season-particle: #ffffff;
+  --season-glow: rgba(206, 184, 136, 0.45);
+  --season-edge: 20px;
+
+  /* Net-darkening, with the cool tint carried by the lighter top stop only.
+     A wash that lifted the hero's mid-tones would eat the contrast the white
+     and gold type was audited at, so the layer is only ever allowed to make
+     that background darker. */
+  --season-sky:
+    radial-gradient(circle at 50% -8%, rgba(150, 195, 235, 0.2), transparent 52%),
+    linear-gradient(180deg, rgba(12, 30, 56, 0.42) 0%, rgba(12, 30, 56, 0.12) 46%, rgba(12, 30, 56, 0.34) 100%);
+}
+
+/* ---------------------------------------------------------------------------
+   Keyframes
+   -------------------------------------------------------------------------- */
+
+@keyframes wn-fall {
+  to {
+    transform: translateY(112vh);
+  }
+}
+
+/* Sway lives on a child so it composes with the fall on the parent instead of
+   overwriting it — two transforms, two elements, no matrix maths. */
+@keyframes wn-sway {
+  from {
+    transform: translateX(-16px) rotate(-10deg);
+  }
+  to {
+    transform: translateX(16px) rotate(10deg);
+  }
+}
+
+@keyframes wn-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes wn-swing {
+  0%,
+  100% {
+    transform: rotate(-7deg);
+  }
+  50% {
+    transform: rotate(7deg);
+  }
+}
+
+@keyframes wn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes wn-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(206, 184, 136, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 6px var(--season-glow);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Snow
+   -------------------------------------------------------------------------- */
+
+.wn-flake {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--flake, #fff);
+}
+
+.wn-flake-fall {
+  animation: wn-fall var(--dur, 18s) linear var(--delay, 0s) infinite;
+}
+
+.wn-flake-sway {
+  animation: wn-sway var(--sway, 4s) ease-in-out var(--sway-delay, 0s) infinite alternate;
+}
+
+/* ---------------------------------------------------------------------------
+   Chrome decoration
+   -------------------------------------------------------------------------- */
+
+/* Snow settling along the bottom edge of the fixed header, and a cap hugging
+   the brand mark. `color` is set explicitly: the strip is a child of the
+   header, so `currentColor` would otherwise inherit the body's ink and paint
+   the snow dark. */
+.wn-edge {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--season-accent-soft);
+  filter: drop-shadow(0 2px 4px rgba(7, 17, 31, 0.35));
+}
+
+/* The cap is sized from the mark rather than hard-coded: the mark shrinks to
+   36px below the mobile breakpoint, and a fixed 54px cap there covered half
+   the badge instead of sitting on top of it. */
+:root[data-season="winter"] .brand {
+  position: relative;
+  --wn-mark: 48px;
+}
+
+.wn-mark-cap {
+  position: absolute;
+  top: calc(var(--wn-mark) * -0.14);
+  left: -3px;
+  width: calc(var(--wn-mark) + 6px);
+  pointer-events: none;
+}
+
+@media (max-width: 620px) {
+  :root[data-season="winter"] .brand {
+    --wn-mark: 36px;
+  }
+}
+
+/* Ornaments hang from the header's edge strip, so they read as attached to
+   the bar rather than floating in the hero. */
+.wn-ornament {
+  position: absolute;
+  top: 0;
+  transform-origin: top center;
+  animation: wn-swing 5s ease-in-out infinite;
+}
+
+.wn-ornament:nth-of-type(even) {
+  animation-duration: 6.4s;
+  animation-direction: reverse;
+}
+
+/* Frost creeping in from the hero's upper corners.
+   Kept small, fine and faint on purpose. An earlier pass drew long spindly
+   ferns, which read as bare winter branches — the Halloween motif — instead of
+   frost, and crossed the logo. Frost is a dense crystal at the very edge of
+   the glass, so it stays in the corner and never reaches the type. */
+.wn-frost {
+  position: absolute;
+  width: min(168px, 18vw);
+  opacity: 0.34;
+  color: var(--season-accent);
+}
+
+.wn-frost-left {
+  left: -26px;
+}
+
+.wn-frost-right {
+  right: -26px;
+  transform: scaleX(-1);
+}
+
+/* A breath of haze behind the crystal, so the corner looks fogged rather than
+   drawn on. */
+.wn-frost::before {
+  position: absolute;
+  inset: -20%;
+  content: "";
+  background: radial-gradient(circle at 30% 30%, rgba(220, 233, 242, 0.5), transparent 62%);
+}
+
+/* Drift along the bottom of the hero and the footer, bleeding into whatever
+   comes next. Two stacked paths: a wider, dimmer bank behind and a bright one
+   in front. A single flat silhouette read as a band of fog rather than snow. */
+.wn-drift {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  color: #f7fbff;
+}
+
+.wn-drift-back {
+  opacity: 0.42;
+}
+
+.wn-treeline {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 132px;
+  /* A touch lighter than the footer's own ground so the silhouette separates
+     from it; any darker and the treeline simply disappears. */
+  color: #0c2138;
+}
+
+.wn-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--cream);
+  animation: wn-twinkle 3s ease-in-out var(--delay, 0s) infinite;
+}
+
+/* ---------------------------------------------------------------------------
+   Components
+   ---------------------------------------------------------------------------
+   Decoration only. No rule below changes a text colour, a background a text
+   sits on, or a focus ring.
+   -------------------------------------------------------------------------- */
+
+/* Frost creeps into the corner of a card on hover. Radial rather than a border
+   so it cannot be mistaken for a focus indicator. */
+:root[data-season="winter"] .feature-card,
+:root[data-season="winter"] .community-card,
+:root[data-season="winter"] .talk-card,
+:root[data-season="winter"] .speaker-directory-card {
+  position: relative;
+}
+
+:root[data-season="winter"] .feature-card::after,
+:root[data-season="winter"] .community-card::after,
+:root[data-season="winter"] .talk-card::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  border-radius: inherit;
+  background: radial-gradient(circle at 100% 0%, rgba(220, 233, 242, 0.55), transparent 42%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-slow) var(--ease-out-soft);
+}
+
+:root[data-season="winter"] .feature-card:hover::after,
+:root[data-season="winter"] .community-card:hover::after,
+:root[data-season="winter"] .talk-card:hover::after,
+:root[data-season="winter"] .feature-card:focus-within::after,
+:root[data-season="winter"] .community-card:focus-within::after,
+:root[data-season="winter"] .talk-card:focus-within::after {
+  opacity: 1;
+}
+
+/* A gold halo on the primary action, on hover only — the button's own colours
+   are untouched so its contrast ratio is unchanged. */
+:root[data-season="winter"] .button-primary:hover {
+  animation: wn-glow 1.8s ease-in-out infinite;
+}
+
+/* The next-seminar card is the one panel over the hero art, so it gets the
+   cap rather than a corner frost. */
+:root[data-season="winter"] .next-seminar {
+  position: relative;
+}
+
+/* ---------------------------------------------------------------------------
+   Scene containers
+   ---------------------------------------------------------------------------
+   Injected by winter.js into chrome that exists on every page. Each is a
+   full-bleed, non-interactive box its artwork positions against.
+   -------------------------------------------------------------------------- */
+
+.wn-hero,
+.wn-footer {
+  inset: 0;
+  overflow: hidden;
+}
+
+/* The hero clips, and its top 74px sit behind the fixed header, so frost is
+   dropped clear of the bar rather than being drawn where nothing can see it. */
+:root[data-season="winter"] .wn-frost {
+  top: 88px;
+}
+
+/* The treeline ends in a white snow bank across the bottom of the footer, and
+   the footer's own links are white. Reserve height for the bank so a stacked
+   column on a narrow screen can never land white-on-white. */
+:root[data-season="winter"] .footer-inner {
+  padding-bottom: 76px;
+}
+
+/* Ornaments hang past the 20px edge strip; nothing between them and the hero
+   may clip. */
+.wn-header-edge {
+  overflow: visible;
+}
