@@ -104,8 +104,12 @@
   pointer-events: none;
 }
 
+/* Snow lies *on* the bar, along its top edge — the strip is prepended so the
+   nav content paints in front of it. Hung below the bar instead, the scalloped
+   underside read as a row of clouds floating under the header rather than as
+   snow settled on it. */
 .site-header .season-edge-strip {
-  top: 100%;
+  top: 0;
 }
 
 .site-footer .season-edge-strip {
@@ -132,6 +136,14 @@
   inset: 0;
   background: var(--season-sky);
   pointer-events: none;
+}
+
+/* The footer's banner photograph fights every seasonal scene put in front of
+   it — a treeline, a graveyard, a sunset all end up sitting on a faint picture
+   of a neural network. Any active season drops it and keeps the footer's own
+   gradient as the ground. */
+:root[data-season] .footer-media {
+  display: none;
 }
 
 /* ---------------------------------------------------------------------------

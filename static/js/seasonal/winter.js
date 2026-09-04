@@ -1,10 +1,15 @@
 /**
  * Winter — December.
  *
- * The simplest of the three: snow is fixed-count DOM particles on CSS
- * keyframes, so there is no canvas and no frame loop. Everything the theme
- * adds is decoration appended to chrome that exists on all five pages, and
- * every node is registered with the disposer so teardown is total.
+ * Snow is fixed-count DOM particles on CSS keyframes, so there is no canvas
+ * and no frame loop. The one thing here that reacts per frame is the light
+ * string, and it is deliberately cheap: a rAF-throttled scroll listener that
+ * only touches the DOM on the frames where the number of lit bulbs actually
+ * changes.
+ *
+ * Everything the theme adds is decoration appended to chrome that exists on
+ * all five pages, and every node and listener is registered with the disposer
+ * so teardown is total.
  */
 
 import { Disposer, buildParticles, make, pick, range, seeded } from "./engine.js";
@@ -25,24 +30,54 @@ const FLAKE_COLORS = ["#ffffff", "#f1f6fa", "#dce9f2"];
    correct as a path than as thirty createElementNS calls.
    -------------------------------------------------------------------------- */
 
-/* Rolling snow edge. One path, no fill rule tricks: the curve is the top of
-   the snow and the shape closes off the bottom of its box. */
+/* Snow ledge for the bottom edge of the header bar.
+ *
+ * Solid across the top with scalloped lumps hanging off the bottom, so it
+ * reads as snow sitting *on* the bar. A plain drift silhouette was tried
+ * first and, squashed into a 26px strip, it rendered as a solid white stripe
+ * floating under the header instead.
+ */
+const snowLedge = (seed, height) => {
+  const W = 1200;
+  const H = 30;
+  const rand = seeded(seed);
+  /* Right to left along the underside: each span dips to its own depth, so no
+     two lumps match and the edge never looks tiled. */
+  let d = `M0 0H${W}V7`;
+  let x = W;
+  while (x > 0) {
+    const span = range(rand, 46, 124);
+    const nx = Math.max(0, x - span);
+    const dip = range(rand, 10, H - 2);
+    d +=
+      `C${(x - span * 0.22).toFixed(1)} ${dip.toFixed(1)} ` +
+      `${(nx + span * 0.22).toFixed(1)} ${dip.toFixed(1)} ${nx.toFixed(1)} 7`;
+    x = nx;
+  }
+  d += "Z";
+  return `
+    <svg class="wn-edge" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"
+         aria-hidden="true" focusable="false" style="height:${height}px">
+      <path fill="currentColor" d="${d}"></path>
+    </svg>`;
+};
+
+/* Rolling snow bank for the bottom of the hero.
+ *
+ * Deliberately a single silhouette in a single colour. Two earlier attempts at
+ * depth both failed the same way: a translucent back layer let the hero art
+ * through and split the bank into two tones, and an opaque one in a darker
+ * blue read as a grey smudge floating above the white. One clean crest in the
+ * exact white that `.section-overview` starts with is what makes the bank look
+ * like that section rising into the hero rather than a shape laid over it.
+ */
 const DRIFT_PATH =
   "M0 30c150-18 260 6 400-6s220-22 340-6 240 24 300 8 120-10 160 2V60H0z";
 
-/* A second, flatter crest for the layer behind, so the two silhouettes do not
-   trace each other. */
-const DRIFT_PATH_BACK =
-  "M0 22c180 14 300-12 460 2s250 18 360 0 200-14 260-4 90 8 120 4V60H0z";
-
-/* `layered` is off for the header's 20px strip. At that height the back path
-   sits almost entirely below the visible band, so all it contributes is a
-   translucent grey patch that reads as a smudge rather than as depth. */
-const driftSvg = (className, height, layered = false) => `
+const driftSvg = (className, height) => `
   <svg class="${className}" viewBox="0 0 1200 60" preserveAspectRatio="none"
        aria-hidden="true" focusable="false" style="height:${height}px">
-    ${layered ? `<path class="wn-drift-back" fill="currentColor" d="${DRIFT_PATH_BACK}"></path>` : ""}
-    <path fill="currentColor" d="${DRIFT_PATH}"></path>
+    <path class="wn-drift-front" d="${DRIFT_PATH}"></path>
   </svg>`;
 
 /* A frost fern: one spine with many short paired barbs, each carrying two
@@ -65,12 +100,12 @@ const frostFern = (rand) => {
       const midX = 60 + dir * len * 0.55;
       const midY = y - rise * 0.55;
       const sub = len * 0.3;
-      strokes.push(`M${midX.toFixed(1)} ${midY.toFixed(1)}l${(dir * sub).toFixed(1)} ${(
-        sub * 0.9
-      ).toFixed(1)}`);
-      strokes.push(`M${midX.toFixed(1)} ${midY.toFixed(1)}l${(dir * sub * 0.7).toFixed(1)} ${(
-        -sub
-      ).toFixed(1)}`);
+      strokes.push(
+        `M${midX.toFixed(1)} ${midY.toFixed(1)}l${(dir * sub).toFixed(1)} ${(sub * 0.9).toFixed(1)}`
+      );
+      strokes.push(
+        `M${midX.toFixed(1)} ${midY.toFixed(1)}l${(dir * sub * 0.7).toFixed(1)} ${(-sub).toFixed(1)}`
+      );
     });
   }
   const tilt = range(rand, -14, 14).toFixed(1);
@@ -80,13 +115,12 @@ const frostFern = (rand) => {
     </g>`;
 };
 
-const frostSvg = (className, seed) => {
+const frostSvg = (seed) => {
   const rand = seeded(seed);
   return `
-    <svg class="${className}" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+    <svg viewBox="0 0 120 120" aria-hidden="true" focusable="false">
       <!-- Rotated so the cluster grows diagonally out of the corner it is
-           pinned to, the way frost actually creeps in from the edge of a
-           pane, rather than standing upright in the middle of its box. -->
+           pinned to, the way frost creeps in from the edge of a pane. -->
       <g fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round"
          transform="rotate(-38 34 18)">
         ${frostFern(rand)}
@@ -97,31 +131,135 @@ const frostSvg = (className, seed) => {
     </svg>`;
 };
 
-/* Snow cap hugging the brand mark: an arc that follows the top of the 48px
-   circle, with two small lumps so it does not read as a crescent. */
-const MARK_CAP = `
-  <svg class="wn-mark-cap" viewBox="0 0 60 30" aria-hidden="true" focusable="false">
-    <path fill="#f7fbff"
-          d="M6 21C6 11 15 4 30 4s24 7 24 17c-4-2-6 1-9-1s-5 2-8 0-5-3-8-1-5-2-8 0-5 3-9 2z"></path>
+/* Holly sprig tucked behind the brand mark.
+   The artboard offers three logo treatments; this is the one that dresses the
+   mark without covering it. The snow cap covered the badge artwork, which is
+   the one thing the mark cannot afford to lose. */
+const HOLLY_LEAF =
+  "M0 7C2 4 4 2 6 2L8 0l2 3c3-2 6-2 9-1L21 0l1 3c3 1 5 2 6 4-1 2-3 3-6 4l-1 3-2-2c-3 1-6 1-9-1l-2 3-2-2c-2 0-4-2-6-5z";
+
+const HOLLY = `
+  <svg class="wn-holly" viewBox="0 0 44 30" aria-hidden="true" focusable="false">
+    <g fill="#2f6b45">
+      <path d="${HOLLY_LEAF}" transform="translate(12 2) rotate(-22)"></path>
+      <path d="${HOLLY_LEAF}" transform="translate(9 12) rotate(18)"></path>
+    </g>
+    <g fill="#c1273b">
+      <circle cx="10" cy="12" r="3.1"></circle>
+      <circle cx="15.6" cy="10.4" r="2.7"></circle>
+      <circle cx="13" cy="16" r="2.5"></circle>
+    </g>
+    <circle cx="9.2" cy="11" r="0.9" fill="rgba(255,255,255,.55)"></circle>
   </svg>`;
 
-const ornament = (x, drop, color) => `
-  <div class="wn-ornament" style="left:${x}">
-    <svg viewBox="0 0 24 ${drop + 22}" width="26" aria-hidden="true" focusable="false">
-      <line x1="12" y1="0" x2="12" y2="${drop}" stroke="#ceb888" stroke-width="1.2"></line>
-      <rect x="9" y="${drop - 1}" width="6" height="4" rx="1" fill="#ceb888"></rect>
-      <circle cx="12" cy="${drop + 11}" r="8" fill="${color}"></circle>
-      <ellipse cx="9" cy="${drop + 8}" rx="2.4" ry="1.6" fill="rgba(255,255,255,.5)"></ellipse>
-    </svg>
-  </div>`;
+/* ---------------------------------------------------------------------------
+   Light string
+   -------------------------------------------------------------------------- */
 
-/* A treeline of overlapping firs. Generated so the silhouette differs from the
-   hero drift rather than mirroring it. */
+const BULBS = 14;
+const WIRE_W = 1200;
+const WIRE_H = 58;
+const WIRE_HOOKS = 4;
+const WIRE_SAG = 16;
+const WIRE_TOP = 2;
+const BULB_COLORS = ["#ceb888", "#c1273b", "#dce9f2", "#3e6b52"];
+
+/* The wire is four parabolic sags between hooks. Both the path and the bulb
+   positions are derived from the same formula, so a bulb always sits on the
+   wire no matter how the strip is scaled. */
+const wireY = (x) => {
+  const seg = WIRE_W / WIRE_HOOKS;
+  const t = (x % seg) / seg;
+  return WIRE_TOP + 4 * WIRE_SAG * t * (1 - t);
+};
+
+const WIRE_D = (() => {
+  const seg = WIRE_W / WIRE_HOOKS;
+  let d = `M0 ${WIRE_TOP}`;
+  for (let k = 0; k < WIRE_HOOKS; k += 1) {
+    d += ` Q${(k + 0.5) * seg} ${WIRE_TOP + 2 * WIRE_SAG} ${(k + 1) * seg} ${WIRE_TOP}`;
+  }
+  return d;
+})();
+
+const lightStringHtml = () => {
+  const bulbs = [];
+  for (let i = 0; i < BULBS; i += 1) {
+    const x = 30 + i * ((WIRE_W - 60) / (BULBS - 1));
+    bulbs.push(
+      `<span class="wn-bulb" style="left:${((x / WIRE_W) * 100).toFixed(3)}%;` +
+        `top:${wireY(x).toFixed(1)}px;--bulb:${BULB_COLORS[i % BULB_COLORS.length]}"></span>`
+    );
+  }
+  return `
+    <svg class="wn-wire" viewBox="0 0 ${WIRE_W} ${WIRE_H}" preserveAspectRatio="none"
+         aria-hidden="true" focusable="false">
+      <path d="${WIRE_D}" fill="none" stroke="#ceb888" stroke-width="1.4" opacity=".7"></path>
+    </svg>
+    ${bulbs.join("")}`;
+};
+
+/**
+ * Lights the string one bulb at a time as the page is scrolled.
+ *
+ * The listener runs on every scroll frame but the DOM is only touched when
+ * the number of lit bulbs changes — fourteen class toggles at most fourteen
+ * times over a whole page, rather than per frame.
+ *
+ * Returns its `update`, which the mounted engine re-exposes as `syncLights()`.
+ * Hidden documents never fire requestAnimationFrame, so without a way to
+ * advance this by hand the string cannot be verified anywhere the page is not
+ * actually on screen — the same reason `Loop` makes `step` and `draw` public.
+ */
+const bindLightString = (disposer, host) => {
+  const bulbs = Array.from(host.querySelectorAll(".wn-bulb"));
+  if (bulbs.length === 0) {
+    return () => {};
+  }
+  let lit = -1;
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const ratio = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 1;
+    /* One bulb is lit from the very top so the string never reads as broken. */
+    const next = Math.max(1, Math.round(ratio * bulbs.length));
+    if (next === lit) {
+      return;
+    }
+    lit = next;
+    bulbs.forEach((bulb, index) => bulb.classList.toggle("is-lit", index < next));
+  };
+
+  const onScroll = () => {
+    if (ticking) {
+      return;
+    }
+    ticking = true;
+    requestAnimationFrame(update);
+  };
+
+  disposer.listen(window, "scroll", onScroll, { passive: true });
+  disposer.listen(window, "resize", onScroll, { passive: true });
+  update();
+  return update;
+};
+
+/* ---------------------------------------------------------------------------
+   Treeline
+   -------------------------------------------------------------------------- */
+
+/* Overlapping firs, generated so the silhouette differs from the hero drift
+   rather than mirroring it. Evergreen, not navy: painted in the footer's own
+   dark blue they read as a jagged shape rather than as trees. */
 const treelineSvg = (seed) => {
   const rand = seeded(seed);
-  const trees = [];
-  for (let x = -20; x < 1240; x += range(rand, 34, 62)) {
-    const h = range(rand, 56, 118);
+  const back = [];
+  const front = [];
+  for (let x = -20; x < 1240; x += range(rand, 32, 58)) {
+    const far = rand() > 0.5;
+    const h = far ? range(rand, 52, 84) : range(rand, 74, 122);
     const w = h * range(rand, 0.42, 0.58);
     /* Three stacked tiers, each narrower, gives a fir rather than a cone. */
     const tiers = [0, 0.3, 0.58]
@@ -134,13 +272,14 @@ const treelineSvg = (seed) => {
         )}L${(x + half).toFixed(1)} ${base.toFixed(1)}Z`;
       })
       .join("");
-    trees.push(tiers);
+    (far ? back : front).push(tiers);
   }
   return `
     <svg class="wn-treeline" viewBox="0 0 1200 132" preserveAspectRatio="none"
          aria-hidden="true" focusable="false">
-      <path fill="currentColor" d="${trees.join("")}"></path>
-      <path fill="#f1f6fa" opacity=".9"
+      <path class="wn-tree-far" d="${back.join("")}"></path>
+      <path class="wn-tree-near" d="${front.join("")}"></path>
+      <path class="wn-tree-snow"
             d="M0 108c140-14 240 8 380-4s210-16 330-2 230 18 290 6 140-8 200 0v24H0z"></path>
     </svg>`;
 };
@@ -153,14 +292,21 @@ const treelineSvg = (seed) => {
  * Appends a decoration container to a host, if the host is on this page.
  * Returns the container so callers can keep decorating it, or null.
  */
-const scene = (disposer, selector, className, html) => {
+const scene = (disposer, selector, className, html, { first = false } = {}) => {
   const host = document.querySelector(selector);
   if (!host) {
     return null;
   }
   const node = make("div", { class: className, "aria-hidden": "true" });
   node.innerHTML = html;
-  host.appendChild(node);
+  /* `first` puts the scene behind the host's own content by tree order, which
+     is how the header snow ends up under the logo and nav rather than over
+     them. Stacking contexts are not involved, so no z-index is needed. */
+  if (first) {
+    host.prepend(node);
+  } else {
+    host.appendChild(node);
+  }
   disposer.node(node);
   return node;
 };
@@ -218,34 +364,32 @@ export const mount = ({ overlay, density, motion }) => {
 
   buildSnow(overlay, density, motion);
 
-  /* Header: snow settling on the bar's bottom edge, a cap on the mark, and two
-     ornaments hanging into the hero below. */
-  scene(
-    disposer,
-    ".site-header",
-    "season-edge-strip wn-header-edge",
-    `${driftSvg("wn-edge", 20)}
-     ${ornament("18%", 26, "#c1273b")}
-     ${ornament("72%", 40, "#ceb888")}`
-  );
+  /* Header: snow lying on the bar, and a string of lights hanging below it
+     that comes on a bulb at a time as the page is scrolled. */
+  scene(disposer, ".site-header", "season-edge-strip wn-header-edge", snowLedge(41, 30), {
+    first: true
+  });
+  const lights = scene(disposer, ".site-header", "season-scene wn-lights", lightStringHtml());
+  const syncLights = lights ? bindLightString(disposer, lights) : () => {};
+
   const brand = document.querySelector(".site-header .brand");
   if (brand) {
-    const cap = make("span", { "aria-hidden": "true" });
-    cap.innerHTML = MARK_CAP;
-    brand.appendChild(cap);
-    disposer.node(cap);
+    const sprig = make("span", { "aria-hidden": "true" });
+    sprig.innerHTML = HOLLY;
+    brand.appendChild(sprig);
+    disposer.node(sprig);
   }
 
-  /* Hero: frost in the upper corners and a drift along the bottom that bleeds
+  /* Hero: frost in the upper corners and a bank along the bottom that bleeds
      into the section below. */
   scene(
     disposer,
     ".hero",
     "season-scene wn-hero",
     `<div class="season-sky"></div>
-     <div class="wn-frost wn-frost-left">${frostSvg("", 3)}</div>
-     <div class="wn-frost wn-frost-right">${frostSvg("", 7)}</div>
-     ${driftSvg("wn-drift", 64, true)}`
+     <div class="wn-frost wn-frost-left">${frostSvg(3)}</div>
+     <div class="wn-frost wn-frost-right">${frostSvg(7)}</div>
+     ${driftSvg("wn-drift", 64)}`
   );
 
   /* Footer: night treeline with snow on the ground. The link columns sit in
@@ -265,6 +409,10 @@ export const mount = ({ overlay, density, motion }) => {
   );
 
   return {
+    /* Applies the current scroll position to the light string immediately,
+       bypassing the rAF throttle. Used to verify the string where rAF is
+       suspended. */
+    syncLights,
     destroy() {
       disposer.dispose();
     }

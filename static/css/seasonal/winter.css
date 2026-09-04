@@ -15,7 +15,7 @@
   --season-deep: #0b1a2e;
   --season-particle: #ffffff;
   --season-glow: rgba(206, 184, 136, 0.45);
-  --season-edge: 20px;
+  --season-edge: 30px;
 
   /* Net-darkening, with the cool tint carried by the lighter top stop only.
      A wash that lifted the hero's mid-tones would eat the contrast the white
@@ -106,32 +106,31 @@
    Chrome decoration
    -------------------------------------------------------------------------- */
 
-/* Snow settling along the bottom edge of the fixed header, and a cap hugging
-   the brand mark. `color` is set explicitly: the strip is a child of the
-   header, so `currentColor` would otherwise inherit the body's ink and paint
-   the snow dark. */
+/* Snow sitting on the bar's bottom edge. `color` is set explicitly: the strip
+   is a child of the header, so `currentColor` would otherwise inherit the
+   body's ink and paint the snow dark. */
 .wn-edge {
   display: block;
   width: 100%;
-  height: 100%;
   color: var(--season-accent-soft);
-  filter: drop-shadow(0 2px 4px rgba(7, 17, 31, 0.35));
+  filter: drop-shadow(0 3px 5px rgba(7, 17, 31, 0.4));
 }
 
-/* The cap is sized from the mark rather than hard-coded: the mark shrinks to
-   36px below the mobile breakpoint, and a fixed 54px cap there covered half
-   the badge instead of sitting on top of it. */
+/* Holly tucked at the mark's shoulder. The artboard's snow cap sat over the
+   badge artwork, and the badge is the one thing the mark cannot afford to
+   lose, so the sprig sits beside it instead of on it. */
 :root[data-season="winter"] .brand {
   position: relative;
   --wn-mark: 48px;
 }
 
-.wn-mark-cap {
+.wn-holly {
   position: absolute;
-  top: calc(var(--wn-mark) * -0.14);
-  left: -3px;
-  width: calc(var(--wn-mark) + 6px);
+  top: calc(var(--wn-mark) * -0.12);
+  left: calc(var(--wn-mark) * 0.58);
+  width: calc(var(--wn-mark) * 0.62);
   pointer-events: none;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45));
 }
 
 @media (max-width: 620px) {
@@ -140,18 +139,58 @@
   }
 }
 
-/* Ornaments hang from the header's edge strip, so they read as attached to
-   the bar rather than floating in the hero. */
-.wn-ornament {
+/* A string of lights hanging under the header, lit one bulb at a time by
+   page scroll (see bindLightString). */
+.wn-lights {
   position: absolute;
-  top: 0;
-  transform-origin: top center;
-  animation: wn-swing 5s ease-in-out infinite;
+  /* Clear of the snow lumps hanging off the bar above. */
+  top: calc(100% + 12px);
+  right: 0;
+  left: 0;
+  height: 58px;
+  pointer-events: none;
 }
 
-.wn-ornament:nth-of-type(even) {
-  animation-duration: 6.4s;
-  animation-direction: reverse;
+.wn-wire {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.wn-bulb {
+  position: absolute;
+  width: 10px;
+  height: 15px;
+  /* Narrow at the cap, round at the base: a bulb, not a pill. */
+  border-radius: 5px 5px 6px 6px;
+  background: var(--bulb);
+  /* Unlit glass is dark and barely tinted; the colour arrives with the light. */
+  filter: brightness(0.32) saturate(0.5);
+  opacity: 0.55;
+  transition:
+    filter var(--dur-slow) var(--ease-out-soft),
+    opacity var(--dur-slow) var(--ease-out-soft),
+    box-shadow var(--dur-slow) var(--ease-out-soft);
+}
+
+/* The brass cap and the drop of wire it hangs from. */
+.wn-bulb::before {
+  position: absolute;
+  top: -6px;
+  left: 4px;
+  width: 2px;
+  height: 6px;
+  content: "";
+  background: #ceb888;
+}
+
+.wn-bulb.is-lit {
+  filter: none;
+  opacity: 1;
+  box-shadow:
+    0 0 8px 2px color-mix(in srgb, var(--bulb) 70%, transparent),
+    0 0 18px 6px color-mix(in srgb, var(--bulb) 34%, transparent);
 }
 
 /* Frost creeping in from the hero's upper corners.
@@ -166,12 +205,14 @@
   color: var(--season-accent);
 }
 
+/* Inset, not hung off the edge. The hero clips its overflow, so a negative
+   offset simply sliced the crystal in half at both corners. */
 .wn-frost-left {
-  left: -26px;
+  left: 4px;
 }
 
 .wn-frost-right {
-  right: -26px;
+  right: 4px;
   transform: scaleX(-1);
 }
 
@@ -184,21 +225,29 @@
   background: radial-gradient(circle at 30% 30%, rgba(220, 233, 242, 0.5), transparent 62%);
 }
 
-/* Drift along the bottom of the hero and the footer, bleeding into whatever
-   comes next. Two stacked paths: a wider, dimmer bank behind and a bright one
-   in front. A single flat silhouette read as a band of fog rather than snow. */
+/* Snow bank along the bottom of the hero, bleeding into the section below.
+   One silhouette, one colour: every attempt at a second layer for depth read
+   as a stain rather than as snow, because whatever tone it took differed from
+   the white it sat against. */
 .wn-drift {
   position: absolute;
   right: 0;
   bottom: -1px;
   left: 0;
+  /* In front of `.hero-inner` (z-index 1). Behind it, the next-seminar card's
+     drop shadow fell across the white bank and dirtied it; snow piled in front
+     of the card's bottom edge is also the more natural reading. `.wn-hero` sets
+     no z-index, so it creates no stacking context and this competes with the
+     hero's own layers directly. */
+  z-index: 2;
   width: 100%;
   height: 64px;
-  color: #f7fbff;
 }
 
-.wn-drift-back {
-  opacity: 0.42;
+/* Exactly the white that `.section-overview` starts with, so the bank reads as
+   that section pushing up into the hero rather than as a shape laid over it. */
+.wn-drift-front {
+  fill: #ffffff;
 }
 
 .wn-treeline {
@@ -208,9 +257,20 @@
   left: 0;
   width: 100%;
   height: 132px;
-  /* A touch lighter than the footer's own ground so the silhouette separates
-     from it; any darker and the treeline simply disappears. */
-  color: #0c2138;
+}
+
+/* Evergreen, in two depths. Painted in the footer's own dark blue these read
+   as a jagged shape rather than as trees; the green is what names them. */
+.wn-tree-far {
+  fill: #14382c;
+}
+
+.wn-tree-near {
+  fill: #1d5340;
+}
+
+.wn-tree-snow {
+  fill: #eef5fb;
 }
 
 .wn-star {
