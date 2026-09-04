@@ -6,8 +6,8 @@
  * `Loop` so it inherits DPR handling, the zero-size guard, the hidden-document
  * pause and hand-steppable frames rather than reimplementing them.
  *
- * Everything else is Tier A — fog, embers and the chrome decorations are CSS
- * keyframes on seeded, built-once elements.
+ * Everything else is Tier A — embers, the drips and the chrome decorations are
+ * CSS keyframes on seeded, built-once elements.
  */
 
 import {
@@ -428,44 +428,52 @@ const moon = (className, id) => `
 
 /* Drip edge.
  *
- * Mounted at the *top of the section below the hero*, not inside the hero.
- * Inside, the hero clips its overflow, so the only way to suggest drips was to
- * cut them out of a white shape — and what that actually renders is white
- * teeth, not dark drips. Hung off the next section they can be the night
- * colour and hang down into the page, which is what the reference shows.
+ * Mounted at the *top of the section below the hero*, not inside it. Inside,
+ * the hero clips its overflow, so the only way to suggest drips was to cut
+ * them out of a white shape — and what that renders is white teeth. Hung off
+ * the next section they can be the night colour and hang down into the page.
  *
- * Narrow fingers of varying length: wide ones read as clouds, and round ones
- * pinched off at the neck read as a row of dots. */
+ * Each finger is its own group with its own clock, slowly lengthening and
+ * shortening on `scaleY` from a transform origin at the shoulder, the way the
+ * artboard draws them. One shared animation on the whole band would just make
+ * the edge breathe; separate clocks make it drip.
+ */
 const dripEdge = (seed) => {
   const W = 1200;
-  const H = 62;
-  const rand = seeded(seed);
+  const H = 64;
   const shoulder = 9;
-  let d = `M0 0H${W}V${shoulder}`;
-  let x = W;
-  while (x > 0) {
-    const gap = range(rand, 14, 46);
-    const w = range(rand, 9, 18);
-    const depth = range(rand, 8, 48);
-    const start = Math.max(0, x - gap);
-    const end = Math.max(0, start - w);
-    d += `H${start.toFixed(1)}`;
-    /* Control points directly below the shoulders, so the sides run down
-       vertically to a rounded tip: a finger, not a bowl. */
-    d += `C${start.toFixed(1)} ${(shoulder + depth).toFixed(1)} ${end.toFixed(1)} ${(
-      shoulder + depth
-    ).toFixed(1)} ${end.toFixed(1)} ${shoulder}`;
-    x = end;
-    if (end <= 0) {
+  const rand = seeded(seed);
+  /* The band the fingers hang from, so the edge is unbroken however far any
+     individual drip has retracted. */
+  const parts = [`<rect x="0" y="0" width="${W}" height="${shoulder}" fill="currentColor"/>`];
+  let x = 0;
+  while (x < W) {
+    x += range(rand, 12, 44);
+    if (x >= W) {
       break;
     }
+    const w = range(rand, 9, 19);
+    const len = range(rand, 12, 50);
+    const half = w / 2;
+    const dur = range(rand, 5, 10);
+    /* Negative delay starts each finger partway through its cycle, so the
+       first frame is already a row of different lengths. */
+    const delay = -rand() * dur;
+    const d =
+      `M${x.toFixed(1)} 0H${(x + w).toFixed(1)}V${len.toFixed(1)}` +
+      `A${half.toFixed(1)} ${half.toFixed(1)} 0 0 1 ${x.toFixed(1)} ${len.toFixed(1)}Z`;
+    parts.push(
+      `<g class="hw-drop" style="transform-origin:${(x + half).toFixed(
+        1
+      )}px 0px;animation-duration:${dur.toFixed(1)}s;animation-delay:${delay.toFixed(1)}s">
+         <path fill="currentColor" d="${d}"/>
+       </g>`
+    );
+    x += w;
   }
-  d += `H0Z`;
   return `
     <svg class="hw-drip" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"
-         aria-hidden="true" focusable="false">
-      <path fill="currentColor" d="${d}"></path>
-    </svg>`;
+         aria-hidden="true" focusable="false">${parts.join("")}</svg>`;
 };
 
 /* Bare tree by recursive branching. Each segment is a round-capped stroke that
@@ -555,19 +563,11 @@ const graveyard = (seed) => {
     </svg>`;
 };
 
-/* Fog banks. Deliberately scoped to the hero and the footer rather than laid
-   across the viewport: in the fixed overlay it drifted over the light content
-   sections too, where a blurred grey ellipse reads as a smudge on the page.
-   A blend mode would have fixed that, but `.season-layer` is `contain: strict`
-   and so blends against its own empty backdrop, not the page. */
-const FOG = `
-  <div class="hw-fog">
-    <span class="hw-fog-a"></span>
-    <span class="hw-fog-b"></span>
-  </div>`;
-
-/* Owl on a footer branch. The eyes blink on their own clocks, so the pair
-   never reads as a single winking light. */
+/* Owl on a footer branch. It lives inside the tree's own box and is placed in
+   percentages, so it stays in the canopy at every footer height instead of
+   being pinned to a pixel offset that only lands correctly at one width.
+   The eyes blink on their own clocks, so the pair never reads as a single
+   winking light. */
 const OWL = `
   <div class="hw-owl">
     <svg viewBox="0 0 44 40" aria-hidden="true" focusable="false">
@@ -665,17 +665,23 @@ export const mount = ({ overlay, density, motion, root }) => {
     `<div class="season-sky"></div>
      ${starfield(3, 46, 74)}
      ${moon("hw-moon", "hero")}
+     <div class="hw-tree hw-tree-far hw-tree-2">${bareTree(21, { H: 240 })}</div>
+     <div class="hw-tree hw-tree-far hw-tree-3">${bareTree(34, { H: 240 })}</div>
+     <div class="hw-tree hw-tree-far hw-tree-4">${bareTree(47, { H: 240 })}</div>
      <div class="hw-tree hw-tree-left">${bareTree(5, { H: 260 })}</div>
      <div class="hw-tree hw-tree-right">${bareTree(12, { H: 300 })}</div>
-     ${FOG}
      <canvas class="hw-canvas" aria-hidden="true"></canvas>`
   );
 
   /* The drips belong to the top of the section below the hero, where they can
      be the night colour hanging into the page. */
-  decorate(disposer, ".section-overview, .subpage-main", "hw-drip-band", dripEdge(17), {
-    first: true
-  });
+  decorate(
+    disposer,
+    ".section-overview, .subpage-main",
+    "season-scene hw-drip-band",
+    dripEdge(17),
+    { first: true }
+  );
 
   /* Footer: the same night, with a graveyard, a bare tree and an owl in it. */
   decorate(
@@ -685,9 +691,10 @@ export const mount = ({ overlay, density, motion, root }) => {
     `<div class="season-sky"></div>
      ${starfield(29, 26, 60)}
      ${moon("hw-moon hw-moon-footer", "footer")}
-     ${FOG}
-     <div class="hw-tree hw-tree-footer">${bareTree(31, { H: 220, trunk: 7 })}</div>
-     ${OWL}
+     <div class="hw-tree hw-tree-footer">
+       ${bareTree(31, { H: 220, trunk: 7 })}
+       ${OWL}
+     </div>
      ${graveyard(9)}`
   );
 
