@@ -1,0 +1,385 @@
+/* ---------------------------------------------------------------------------
+   Halloween — October
+   ---------------------------------------------------------------------------
+   Dusk in October: moonlit and playful rather than gory. The brand garnet
+   already reads as dried blood-red at night, which is why the palette needs
+   only three additions on top of it.
+
+   Keyframes are namespaced `hw-`.
+   -------------------------------------------------------------------------- */
+
+:root[data-season="halloween"] {
+  --season-accent: #e07a2f;
+  --season-accent-soft: #6b4c9a;
+  --season-deep: #1a0b12;
+  --season-particle: #e07a2f;
+  --season-glow: rgba(224, 122, 47, 0.45);
+  --season-edge: 0px;
+
+  /* Net-darkening with a violet cast, so the white and gold type over the hero
+     keeps at least the contrast it was audited at. */
+  --season-sky:
+    radial-gradient(circle at 78% 16%, rgba(107, 76, 154, 0.34), transparent 46%),
+    linear-gradient(180deg, rgba(26, 11, 18, 0.58) 0%, rgba(26, 11, 18, 0.2) 44%, rgba(14, 5, 9, 0.72) 100%);
+}
+
+/* ---------------------------------------------------------------------------
+   Keyframes
+   -------------------------------------------------------------------------- */
+
+@keyframes hw-rise {
+  to {
+    transform: translateY(-115vh);
+  }
+}
+
+@keyframes hw-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  8% {
+    opacity: 0.55;
+  }
+  12% {
+    opacity: 0.95;
+  }
+  30% {
+    opacity: 0.7;
+  }
+  34% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.9;
+  }
+  78% {
+    opacity: 0.75;
+  }
+}
+
+@keyframes hw-fog-a {
+  from {
+    transform: translateX(-18%);
+  }
+  to {
+    transform: translateX(22%);
+  }
+}
+
+@keyframes hw-fog-b {
+  from {
+    transform: translateX(14%);
+  }
+  to {
+    transform: translateX(-20%);
+  }
+}
+
+@keyframes hw-moon {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes hw-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(224, 122, 47, 0);
+  }
+  50% {
+    box-shadow: 0 0 22px 4px var(--season-glow);
+  }
+}
+
+/* One dash animation draws any path, because every path carries
+   pathLength="1" and so has the same nominal length. */
+@keyframes hw-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Blink is 3% of a long cycle: anything longer reads as a slow wink. */
+@keyframes hw-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.08);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Ambient
+   -------------------------------------------------------------------------- */
+
+.hw-canvas {
+  /* The swarm draws over the fog and embers but still under the header. */
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.hw-fog {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 52%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hw-fog span {
+  position: absolute;
+  bottom: -18%;
+  left: -20%;
+  width: 140%;
+  height: 60%;
+  border-radius: 50%;
+  background: rgba(150, 132, 170, 0.26);
+  filter: blur(28px);
+  will-change: transform;
+}
+
+/* Two banks at different speeds so they parallax against each other rather
+   than sliding as one sheet. */
+.hw-fog-a {
+  animation: hw-fog-a 70s ease-in-out infinite alternate;
+}
+
+.hw-fog-b {
+  bottom: -28%;
+  opacity: 0.6;
+  animation: hw-fog-b 110s ease-in-out infinite alternate;
+}
+
+.hw-ember {
+  border-radius: 50%;
+  background: var(--season-accent);
+  box-shadow: 0 0 6px 1px rgba(224, 122, 47, 0.55);
+  animation: hw-flicker var(--flicker, 2s) steps(1) infinite;
+}
+
+.hw-ember-rise {
+  animation:
+    hw-flicker var(--flicker, 2s) steps(1) infinite,
+    hw-rise var(--dur, 18s) linear var(--delay, 0s) infinite;
+}
+
+/* ---------------------------------------------------------------------------
+   Chrome
+   -------------------------------------------------------------------------- */
+
+.hw-header {
+  top: 0;
+  left: 0;
+  width: 96px;
+  height: 96px;
+  opacity: 0.8;
+}
+
+.hw-web path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: hw-draw 1.1s ease-out var(--draw-delay, 0s) forwards;
+}
+
+/* With motion off the base rules cancel the draw-on animation, which would
+   otherwise leave every web permanently invisible at dashoffset 1. */
+:root.season-static .hw-web path {
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-web path {
+    stroke-dashoffset: 0;
+  }
+}
+
+.hw-hero,
+.hw-footer {
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Parked in the gap between the left copy column and the next-seminar card.
+   Top-right is the obvious home for a moon and the wrong one here: the card
+   starts 50px below the header and the moon simply sat behind it. */
+.hw-moon {
+  position: absolute;
+  top: 74px;
+  left: 42%;
+  width: 100px;
+  height: 100px;
+}
+
+.hw-moon svg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 14px rgba(244, 227, 184, 0.55));
+}
+
+.hw-moon-glow {
+  position: absolute;
+  inset: -70%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(244, 227, 184, 0.28), transparent 62%);
+  animation: hw-moon 9s ease-in-out infinite;
+}
+
+/* Bare branches bleeding in from both edges.
+   A near-black silhouette against a near-black hero is not a silhouette, so
+   the branches carry a faint warm rim. That is what separates them from the
+   ground rather than any difference in fill. */
+.hw-tree {
+  position: absolute;
+  bottom: -10px;
+  width: min(230px, 24vw);
+  height: 62%;
+  opacity: 0.95;
+  filter:
+    drop-shadow(0 0 5px rgba(224, 122, 47, 0.4))
+    drop-shadow(0 0 14px rgba(107, 76, 154, 0.35));
+}
+
+.hw-tree svg {
+  width: 100%;
+  height: 100%;
+}
+
+.hw-tree-left {
+  left: -46px;
+}
+
+.hw-tree-right {
+  right: -52px;
+  transform: scaleX(-1);
+}
+
+.hw-tree-footer {
+  right: 4%;
+  bottom: 40px;
+  width: 150px;
+  height: 132px;
+}
+
+/* The night dripping into the section below. Sits in front of `.hero-inner`
+   for the same reason Winter's snow bank does: the next-seminar card's drop
+   shadow would otherwise fall across it. */
+.hw-drip {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+}
+
+.hw-graveyard {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 96px;
+}
+
+.hw-owl {
+  position: absolute;
+  right: calc(4% + 42px);
+  bottom: 128px;
+  width: 34px;
+}
+
+.hw-owl svg {
+  width: 100%;
+  height: auto;
+}
+
+.hw-eye {
+  transform-origin: center;
+  animation: hw-blink 7s ease-in-out infinite;
+}
+
+/* A second clock on the other eye, so the pair never blinks in lockstep. */
+.hw-eye-b {
+  animation-duration: 8.6s;
+  animation-delay: -2.4s;
+}
+
+/* ---------------------------------------------------------------------------
+   Components
+   ---------------------------------------------------------------------------
+   Decoration only. Nothing below changes a text colour, a background a text
+   sits on, or a focus ring.
+   -------------------------------------------------------------------------- */
+
+/* Nav links flicker on like faulty neon. Hover only, so nothing on the page
+   is blinking at rest. */
+:root[data-season="halloween"] .nav-link:hover,
+:root[data-season="halloween"] .nav-link:focus-visible {
+  animation: hw-flicker 0.42s steps(1) 1;
+}
+
+/* A pumpkin-lantern glow on the primary action. The button's own colours are
+   untouched, so its contrast ratio is unchanged. */
+:root[data-season="halloween"] .button-primary:hover {
+  animation: hw-glow 1.6s ease-in-out infinite;
+}
+
+:root[data-season="halloween"] .feature-card,
+:root[data-season="halloween"] .community-card,
+:root[data-season="halloween"] .talk-card {
+  position: relative;
+}
+
+/* Web creeping into a card's top-right corner on hover. */
+:root[data-season="halloween"] .feature-card::after,
+:root[data-season="halloween"] .community-card::after,
+:root[data-season="halloween"] .talk-card::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  border-radius: inherit;
+  background: radial-gradient(circle at 100% 0%, rgba(224, 122, 47, 0.24), transparent 40%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-slow) var(--ease-out-soft);
+}
+
+:root[data-season="halloween"] .feature-card:hover::after,
+:root[data-season="halloween"] .community-card:hover::after,
+:root[data-season="halloween"] .talk-card:hover::after,
+:root[data-season="halloween"] .feature-card:focus-within::after,
+:root[data-season="halloween"] .community-card:focus-within::after,
+:root[data-season="halloween"] .talk-card:focus-within::after {
+  opacity: 1;
+}
+
+@media (max-width: 620px) {
+  .hw-moon {
+    top: 86px;
+    left: auto;
+    right: 8%;
+    width: 78px;
+    height: 78px;
+  }
+
+  .hw-header {
+    width: 68px;
+    height: 68px;
+  }
+}

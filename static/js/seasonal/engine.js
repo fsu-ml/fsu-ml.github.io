@@ -190,6 +190,11 @@ export class Surface {
     this.height = 0;
     this.dpr = 1;
     this.ready = false;
+    /* Called after any measurement that actually changed the size, including
+       the first real one. An engine that paints a single static frame has no
+       loop to notice that it drew into a zero-size canvas, so this is how it
+       gets told to paint again. */
+    this.onChange = null;
     this._observer = new ResizeObserver(() => this.measure());
     this._observer.observe(canvas);
     this.measure();
@@ -212,6 +217,9 @@ export class Surface {
     this.canvas.width = Math.round(width * dpr);
     this.canvas.height = Math.round(height * dpr);
     this.ready = true;
+    if (this.onChange) {
+      this.onChange(this);
+    }
     return true;
   }
 
