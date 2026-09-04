@@ -114,6 +114,26 @@
   }
 }
 
+/* A ghost rises out of the ground, drifts up, and is gone. It fades in fast
+   and out slowly, so it reads as leaving rather than as being switched off,
+   and it never reaches full opacity — a solid ghost is a cartoon. */
+@keyframes hw-ghost {
+  0% {
+    transform: translateY(0) scale(0.86);
+    opacity: 0;
+  }
+  16% {
+    opacity: 0.5;
+  }
+  62% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(calc(var(--rise, 190px) * -1)) scale(1.08);
+    opacity: 0;
+  }
+}
+
 /* Blink is 3% of a long cycle: anything longer reads as a slow wink. */
 @keyframes hw-blink {
   0%,
@@ -287,6 +307,24 @@
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   animation-direction: alternate;
+}
+
+/* Emitted before the graveyard, so the headstones paint over the bottom of
+   each ghost and it appears to rise from behind one. */
+.hw-ghost {
+  position: absolute;
+  bottom: 34px;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  animation: hw-ghost var(--dur, 20s) ease-in-out var(--delay, 0s) infinite;
+}
+
+.hw-ghost svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 10px rgba(233, 224, 244, 0.35));
 }
 
 .hw-graveyard {

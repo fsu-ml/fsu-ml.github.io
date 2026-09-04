@@ -563,6 +563,36 @@ const graveyard = (seed) => {
     </svg>`;
 };
 
+/* Ghosts rising out of the graveyard.
+ *
+ * Spawned behind the headstones — they are emitted before the graveyard in
+ * the scene markup, so the stones paint over them and each ghost appears to
+ * rise from behind one rather than fading in over open ground.
+ *
+ * Deliberately few and slow. Four on cycles of sixteen to twenty-six seconds
+ * means one is usually visible and two rarely are, which is the difference
+ * between a haunted footer and a busy one. */
+const ghosts = (seed, n) => {
+  const rand = seeded(seed);
+  const shape = `
+    <svg viewBox="0 0 40 56" aria-hidden="true" focusable="false">
+      <path fill="rgba(233, 224, 244, .82)"
+            d="M20 2c9 0 15 8 15 18v29c0 3-3 4-5 2l-3-3c-1-1-3-1-4 0l-3 3c-1 1-3 1-4 0l-3-3c-1-1-3-1-4 0l-3 3c-2 2-5 1-5-2V20C5 10 11 2 20 2z"></path>
+      <ellipse cx="15" cy="21" rx="2.6" ry="3.4" fill="#2a1118"></ellipse>
+      <ellipse cx="26" cy="21" rx="2.6" ry="3.4" fill="#2a1118"></ellipse>
+      <path d="M18 30c1.4 1.6 3.4 1.6 5 0" stroke="#2a1118" stroke-width="1.6"
+            fill="none" stroke-linecap="round"></path>
+    </svg>`;
+  return Array.from({ length: n }, () => {
+    const dur = range(rand, 16, 26);
+    return `<span class="hw-ghost" style="left:${range(rand, 8, 88).toFixed(
+      1
+    )}%;width:${range(rand, 26, 40).toFixed(0)}px;--dur:${dur.toFixed(1)}s;--delay:${(
+      -rand() * dur
+    ).toFixed(1)}s;--rise:${range(rand, 150, 230).toFixed(0)}px">${shape}</span>`;
+  }).join("");
+};
+
 /* Owl on a footer branch. It lives inside the tree's own box and is placed in
    percentages, so it stays in the canopy at every footer height instead of
    being pinned to a pixel offset that only lands correctly at one width.
@@ -695,6 +725,7 @@ export const mount = ({ overlay, density, motion, root }) => {
        ${bareTree(31, { H: 220, trunk: 7 })}
        ${OWL}
      </div>
+     ${ghosts(71, 4)}
      ${graveyard(9)}`
   );
 
