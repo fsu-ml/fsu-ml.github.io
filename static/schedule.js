@@ -5,6 +5,7 @@ import { renderFooter, renderFullSchedule, renderNavigation } from "./js/render/
 import { bindNavigation } from "./js/ui/navigation.js";
 import { bindHeaderChrome } from "./js/ui/chrome.js";
 import { activateMotion } from "./js/ui/reveal.js";
+import { bindSeasons } from "./js/seasonal/season.js";
 
 const init = async () => {
   document.title = `Schedule | ${pageData.page.title}`;
@@ -20,6 +21,9 @@ const init = async () => {
   bindNavigation();
   bindHeaderChrome();
   activateMotion();
+  // Mounted after the chrome exists so themes decorate real elements. Not
+  // awaited: the layer is decorative and must never delay the page settling.
+  bindSeasons();
 };
 
 init().catch((error) => {

@@ -1,0 +1,404 @@
+/* ---------------------------------------------------------------------------
+   Seasonal layer — shared scaffolding
+   ---------------------------------------------------------------------------
+   Imported last in styles.css so seasonal rules win on specificity ties
+   without reaching for !important.
+
+   Everything here is inert until `<html>` carries a `data-season`. With no
+   season the only cost is this file's bytes: no element is created, no
+   custom property is set, and no selector matches.
+
+   Three rules the themes are held to:
+
+   1. Additive only. A theme may add decoration and may tint decoration, but it
+      never restyles a text/background pair. Focus rings stay gold everywhere.
+   2. Transform and opacity only. Nothing seasonal animates a property that
+      triggers layout or paint on the main thread.
+   3. Everything decorative is inside `.season-layer` or carries
+      `aria-hidden` and `pointer-events: none`.
+   -------------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------------
+   Token contract
+   ---------------------------------------------------------------------------
+   Each theme file fills these in on `:root[data-season="…"]`. Component
+   decorations below read only these names, never a theme's raw hex, so a
+   fourth season is a matter of one palette block plus one engine.
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Particle count knob, 0–120, written by the controller. */
+  --season-density: 45;
+
+  /* Filled per theme. The fallbacks keep any half-applied state neutral. */
+  --season-accent: transparent;
+  --season-accent-soft: transparent;
+  --season-deep: transparent;
+  --season-particle: transparent;
+  --season-glow: transparent;
+
+  /* Extra wash laid over the hero and footer art. Transparent by default so
+     the existing overlay gradients are untouched. */
+  --season-sky: transparent;
+
+  /* Height of the decorative strip a theme hangs off the header's bottom edge
+     and the top of the footer. */
+  --season-edge: 0px;
+}
+
+/* ---------------------------------------------------------------------------
+   Ambient overlay
+   ---------------------------------------------------------------------------
+   One per page. Sits above page content (z-index <= 3) and below the sticky
+   header (20), the error toast (40) and the skip link (1000), so particles
+   drift behind the navigation and never over a focus ring or an error.
+
+   `contain: strict` isolates it: nothing inside can invalidate layout for the
+   rest of the document, which is what makes forty animated children free.
+   -------------------------------------------------------------------------- */
+
+.season-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+
+.season-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Base for every DOM particle. A theme sets the glyph, size and keyframe;
+   position and compositing hints live here so they cannot be forgotten. */
+.season-particle {
+  position: absolute;
+  top: 0;
+  left: var(--x, 0);
+  will-change: transform, opacity;
+}
+
+/* ---------------------------------------------------------------------------
+   Decoration anchors
+   ---------------------------------------------------------------------------
+   Themes inject scenes into chrome that exists on all five pages. These give
+   the scenes a predictable box; the artwork itself is per theme.
+   -------------------------------------------------------------------------- */
+
+.season-scene {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Strip hanging off the bottom edge of the header, or the top edge of the
+   footer: snow cap, leaf garland, drip edge. Overflows its host deliberately,
+   so hosts that clip must opt out rather than in. */
+.season-edge-strip {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: var(--season-edge);
+  pointer-events: none;
+}
+
+.site-header .season-edge-strip {
+  top: 100%;
+}
+
+.site-footer .season-edge-strip {
+  bottom: 100%;
+}
+
+/* The header clips nothing today; a strip hanging below its border needs the
+   stacking context to allow it. */
+:root[data-season] .site-header {
+  overflow: visible;
+}
+
+/* Seasonal wash over the hero and footer artwork. Painted between the existing
+   overlay and the content, so type keeps the contrast it was audited with. */
+:root[data-season] .hero::after,
+:root[data-season] .site-footer::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  content: "";
+  background: var(--season-sky);
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion
+   ---------------------------------------------------------------------------
+   Two paths, deliberately both:
+
+   `.season-static` is set by the controller and covers the switcher's Motion
+   checkbox. The media query covers the OS preference directly, so the layer is
+   still correct in the moment before the controller has run.
+
+   Neither hides the layer. A reduced-motion visitor gets the same scene,
+   composed and still — canvas engines draw exactly one frame.
+   -------------------------------------------------------------------------- */
+
+:root.season-static .season-layer *,
+:root.season-static .season-scene *,
+:root.season-static .season-edge-strip * {
+  animation: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .season-layer *,
+  .season-scene *,
+  .season-edge-strip * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Switcher
+   ---------------------------------------------------------------------------
+   A review control, pinned to the right edge. Styled from the site's own
+   tokens rather than the active season's, so it stays legible and stays put
+   while the page around it changes character.
+   -------------------------------------------------------------------------- */
+
+.season-switcher {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 45;
+  display: flex;
+  align-items: flex-start;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+}
+
+.season-switcher-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 10px 12px 12px;
+  border: 1px solid rgba(206, 184, 136, 0.55);
+  border-right: 0;
+  border-radius: 10px 0 0 10px;
+  background: linear-gradient(180deg, rgba(23, 3, 10, 0.94), rgba(54, 8, 20, 0.94));
+  color: var(--white);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32);
+  /* Reads as an edge tab rather than a floating pill, and costs no width. */
+  writing-mode: vertical-rl;
+  transition:
+    border-color var(--dur-base) var(--ease-out-soft),
+    background-color var(--dur-base) var(--ease-out-soft);
+}
+
+.season-switcher-toggle:hover {
+  border-color: var(--fsu-gold);
+}
+
+.season-switcher-toggle:focus-visible {
+  outline: 2px solid var(--fsu-gold);
+  outline-offset: 2px;
+}
+
+.season-switcher-dot {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 10px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 50%;
+  background: var(--swatch, #5f6673);
+}
+
+.season-switcher-toggle-text {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+
+.season-switcher-panel {
+  width: 264px;
+  margin-right: 0;
+  padding: 16px;
+  border: 1px solid rgba(206, 184, 136, 0.45);
+  border-right: 0;
+  border-radius: 12px 0 0 12px;
+  background: rgba(12, 6, 14, 0.97);
+  color: var(--white);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(14px);
+}
+
+.season-switcher-group {
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+}
+
+.season-switcher-group legend {
+  padding: 0;
+  margin-bottom: 8px;
+  color: var(--fsu-gold);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.season-switcher-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 8px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out-soft);
+}
+
+.season-switcher-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.season-switcher-option:has(input:checked) {
+  background: rgba(206, 184, 136, 0.16);
+}
+
+.season-switcher-option:has(input:focus-visible) {
+  outline: 2px solid var(--fsu-gold);
+  outline-offset: 1px;
+}
+
+.season-switcher-option input {
+  /* The label row carries the focus ring, so the native dot would be a second
+     redundant indicator in a very small box. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.season-switcher-swatch {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  background: var(--swatch);
+}
+
+.season-switcher-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.season-switcher-label {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.season-switcher-note {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.season-switcher-control {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.season-switcher-control label {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.season-switcher-control output {
+  color: var(--fsu-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.season-switcher-control input[type="range"] {
+  width: 100%;
+  accent-color: var(--fsu-gold);
+}
+
+.season-switcher-check {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.season-switcher-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--fsu-gold);
+}
+
+.season-switcher-check label {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.85rem;
+}
+
+.season-switcher-panel :focus-visible {
+  outline: 2px solid var(--fsu-gold);
+  outline-offset: 2px;
+}
+
+.season-switcher-hint {
+  margin: 0 0 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.season-switcher-auto {
+  width: 100%;
+  min-height: 34px;
+  border: 1px solid rgba(206, 184, 136, 0.5);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--fsu-gold);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out-soft);
+}
+
+.season-switcher-auto:hover {
+  background: rgba(206, 184, 136, 0.14);
+}
+
+/* Below the mobile breakpoint the panel would crowd the content column, so it
+   spans the viewport width minus the tab and drops the descriptive notes. */
+@media (max-width: 620px) {
+  .season-switcher-panel {
+    width: min(248px, calc(100vw - 72px));
+  }
+
+  .season-switcher-note {
+    display: none;
+  }
+}
+
+@media print {
+  .season-switcher,
+  .season-layer {
+    display: none;
+  }
+}
