@@ -265,8 +265,12 @@ class BatSwarm {
     ctx.translate(b.x, b.y);
     ctx.rotate(heading);
     ctx.scale(b.s * 1.1, b.s * 1.1);
-    ctx.globalAlpha = (0.35 + (0.5 * (b.s - 0.6)) / 0.8) * clamp(b.a, 0, 1);
-    ctx.fillStyle = "#2a1118";
+    /* Pitch black rather than the brand's night garnet, and opaque enough that
+       the far ones still read as black: at 35% over a plum sky the small bats
+       came out the colour of the sky rather than as silhouettes. Depth is
+       still carried by alpha, just over a narrower range. */
+    ctx.globalAlpha = (0.6 + (0.4 * (b.s - 0.6)) / 0.8) * clamp(b.a, 0, 1);
+    ctx.fillStyle = "#000000";
     for (const side of [1, -1]) {
       ctx.save();
       ctx.scale(1, side * wing);
