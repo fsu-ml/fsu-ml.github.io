@@ -149,12 +149,6 @@
   overflow: hidden;
 }
 
-/* The table occupies the bottom 230px of the footer. Reserve it, so a stacked
-   column on a narrow screen never lands on the plank. */
-:root[data-season="thanksgiving"] .footer-inner {
-  padding-bottom: 238px;
-}
-
 .tg-geese {
   position: absolute;
   top: 16%;
@@ -238,91 +232,6 @@
   background: linear-gradient(90deg, var(--fsu-gold), var(--season-accent));
 }
 
-@media (max-width: 620px) {
-  .tg-table {
-    height: 178px;
-  }
-
-  :root[data-season="thanksgiving"] .footer-inner {
-    padding-bottom: 186px;
-  }
-}
-
-/* ---------------------------------------------------------------------------
-   Footer: the table after dinner
-   -------------------------------------------------------------------------- */
-
-.tg-table {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 230px;
-  pointer-events: none;
-}
-
-/* Plank surface. The lit top edge and the darkened underside are what give it
-   thickness; the repeating hairlines are the grain. */
-.tg-plank {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 96px;
-  box-shadow:
-    inset 0 5px 0 #8c4d2e,
-    inset 0 -24px 30px rgba(0, 0, 0, 0.22);
-}
-
-.tg-plank span {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.09) 0 1px, transparent 1px 9px);
-  opacity: 0.6;
-}
-
-.tg-item {
-  position: absolute;
-  bottom: 88px;
-  display: block;
-  filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.45));
-}
-
-.tg-item svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-/* A pool of candlelight on the plank. */
-.tg-candleglow {
-  position: absolute;
-  bottom: 70px;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(242, 166, 90, 0.35) 0%, rgba(242, 166, 90, 0) 70%);
-}
-
-.tg-flame {
-  transform-box: fill-box;
-  transform-origin: 50% 100%;
-  animation: tg-flicker 1.7s steps(1) infinite;
-}
-
-/* Two flames on different clocks never look synced; a single duration reads as
-   one light source blinking. */
-.tg-item:nth-of-type(even) .tg-flame {
-  animation-duration: 2.3s;
-}
-
-.tg-table-leaf {
-  position: absolute;
-  display: block;
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.35));
-}
-
 .tg-star {
   position: absolute;
   width: 2px;
@@ -357,27 +266,6 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Speaker photographs: the leaf wreath
-   -------------------------------------------------------------------------- */
-
-.tg-wreath {
-  position: absolute;
-  inset: -9%;
-}
-
-/* Each leaf is rotated out to the rim, then given its own tilt. Two rotations
-   with a translate between them puts a leaf on a circle without any
-   per-leaf trigonometry. */
-.tg-wreath-leaf {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: block;
-  margin: -8px 0 0 -8px;
-  transform-origin: 50% 50%;
-}
-
-/* ---------------------------------------------------------------------------
    Scroll: the sunset
    -------------------------------------------------------------------------- */
 
@@ -394,31 +282,113 @@
   pointer-events: none;
 }
 
+
 /* ---------------------------------------------------------------------------
-   Card artwork: leaves sliding into the corner
+   Card frames
    -------------------------------------------------------------------------- */
 
-.tg-card-leaves span {
+/* Both frames put artwork outside the card, so their hosts stop clipping. */
+:root[data-season="thanksgiving"] .speaker-directory-card,
+:root[data-season="thanksgiving"] .feature-card,
+:root[data-season="thanksgiving"] .talk-card,
+:root[data-season="thanksgiving"] .community-card {
+  position: relative;
+  overflow: visible;
+}
+
+/* Leaves blow in and settle on the card's top edge — one at the left corner,
+   two at the right. They rest above the edge, which is what makes them read as
+   having landed on the card rather than being printed on it. */
+.tg-leaf-frame span {
   position: absolute;
   display: block;
   opacity: 0;
-  transform: translate(18px, -20px) rotate(calc(var(--turn) - 60deg));
+  transform: translate(var(--from, 20px), -22px) rotate(calc(var(--turn) - 70deg));
   transition:
     opacity var(--dur-slow) var(--ease-out-soft) var(--wait),
     transform var(--dur-reveal) var(--ease-spring) var(--wait);
 }
 
-.tg-card-leaves svg {
+.tg-leaf-frame svg {
   display: block;
   filter: drop-shadow(0 2px 3px rgba(42, 17, 24, 0.32));
 }
 
-:is(.speaker-directory-card, .feature-card, .community-card, .talk-card):hover
-  .tg-card-leaves
-  span,
-:is(.speaker-directory-card, .feature-card, .community-card, .talk-card):focus-within
-  .tg-card-leaves
-  span {
+:is(.speaker-directory-card, .feature-card, .talk-card):hover .tg-leaf-frame span,
+:is(.speaker-directory-card, .feature-card, .talk-card):focus-within .tg-leaf-frame span {
   opacity: 1;
   transform: translate(0, 0) rotate(var(--turn));
+}
+
+/* The artboard's leaf-scatter border: leaves set round all four edges. A frame
+   rather than a reaction, so it does not wait on hover. */
+.tg-edge-leaf {
+  position: absolute;
+  display: block;
+}
+
+.tg-edge-leaf svg {
+  display: block;
+  filter: drop-shadow(0 1px 2px rgba(42, 17, 24, 0.28));
+}
+
+/* Room round the community card for the border to sit in. */
+:root[data-season="thanksgiving"] .community-card {
+  margin: 14px 12px;
+}
+
+/* ---------------------------------------------------------------------------
+   Portraits: the acorn-and-berry ring
+   ---------------------------------------------------------------------------
+   Appears on hover: the dashed circle draws itself on, then the acorns and
+   berries pop in around it, each one a beat after the last.
+   -------------------------------------------------------------------------- */
+
+.tg-ring {
+  inset: -26%;
+}
+
+.tg-acorn-ring {
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out-soft);
+}
+
+/* One dash pattern draws the whole circle because `pathLength` normalises it,
+   so the offset does not have to be computed from the radius. */
+.tg-ring-circle {
+  stroke-dasharray: 4 3;
+  stroke-dashoffset: 40;
+  transition: stroke-dashoffset var(--dur-reveal) var(--ease-out-soft);
+}
+
+.tg-ring-item {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  transition:
+    opacity var(--dur-base) var(--ease-out-soft),
+    scale var(--dur-base) var(--ease-spring);
+  scale: 0.4;
+}
+
+:is(.speaker-directory-card, .talk-card, .next-seminar):hover .tg-acorn-ring,
+:is(.speaker-directory-card, .talk-card, .next-seminar):focus-within .tg-acorn-ring,
+.speaker-directory-photo:hover .tg-acorn-ring {
+  opacity: 1;
+}
+
+:is(.speaker-directory-card, .talk-card, .next-seminar):hover .tg-ring-circle,
+:is(.speaker-directory-card, .talk-card, .next-seminar):focus-within .tg-ring-circle,
+.speaker-directory-photo:hover .tg-ring-circle {
+  stroke-dashoffset: 0;
+}
+
+:is(.speaker-directory-card, .talk-card, .next-seminar):hover .tg-ring-item,
+:is(.speaker-directory-card, .talk-card, .next-seminar):focus-within .tg-ring-item,
+.speaker-directory-photo:hover .tg-ring-item {
+  opacity: 1;
+  scale: 1;
+  /* Staggered off the item's position round the ring, so it fills in rather
+     than switching on. */
+  transition-delay: calc(var(--i, 0) * 45ms);
 }

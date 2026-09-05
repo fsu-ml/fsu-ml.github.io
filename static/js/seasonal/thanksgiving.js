@@ -351,88 +351,6 @@ const garland = (seed, count = 26) => {
   return parts.join("");
 };
 
-/* The table after dinner: a plank surface, produce, a pie, two candles and a
-   few leaves that drifted in, under a night sky. Straight from the artboard's
-   footer, which is the composition the whole theme was designed around. */
-const PLANK_BG =
-  "repeating-linear-gradient(90deg,#6e3a22 0 160px,#7a4228 160px 300px,#63341f 300px 460px)";
-
-const produce = {
-  pumpkin: `<svg viewBox="0 0 60 52" aria-hidden="true"><path d="M28 8c-1-4 0-7 4-8 1 3 0 6-1 8z" fill="#3e6b52"/><path d="M8 16C2 20 0 34 6 44s16 8 24 8 18 2 24-8 4-24-2-28c-8-4-14-4-22-4S16 12 8 16z" fill="#e07a2f"/><path d="M30 12c-8 0-12 10-12 20s4 20 12 20 12-10 12-20-4-20-12-20z" fill="none" stroke="#b4562c" stroke-width="1.2"/></svg>`,
-  apple: `<svg viewBox="0 0 34 36" aria-hidden="true"><path d="M17 8C8 4 2 12 4 22s8 14 13 12c5 2 11-2 13-12s-4-18-13-14z" fill="#a32638"/><path d="M17 9c0-4 2-7 5-8" stroke="#4a1c27" stroke-width="1.6" fill="none"/><path d="M18 7c3-3 6-3 8-1-3 2-6 2-8 1z" fill="#3e6b52"/></svg>`,
-  pear: `<svg viewBox="0 0 32 40" aria-hidden="true"><path d="M16 6c-2 8-12 12-12 22 0 7 6 11 12 11s12-4 12-11c0-10-10-14-12-22z" fill="#ceb888"/><path d="M16 7c0-3 1-5 3-6" stroke="#4a1c27" stroke-width="1.4" fill="none"/></svg>`,
-  grapes: `<svg viewBox="0 0 36 42" aria-hidden="true">${[
-    [18, 8],
-    [12, 14],
-    [24, 14],
-    [8, 22],
-    [18, 22],
-    [28, 22],
-    [12, 30],
-    [24, 30],
-    [18, 37]
-  ]
-    .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5.5" fill="#6b4c9a" stroke="#4a2f6e" stroke-width=".8"/>`)
-    .join("")}<path d="M18 4v-4" stroke="#3e6b52" stroke-width="1.6"/></svg>`,
-  corn: `<svg viewBox="0 0 30 48" aria-hidden="true"><path d="M15 2c6 0 9 10 9 24s-3 20-9 20-9-6-9-20S9 2 15 2z" fill="#e8c55a"/><path d="M9 10h12M8 18h14M8 26h14M9 34h12M11 41h8" stroke="#c9a63a" stroke-width="1"/><path d="M6 20c-4 8-4 18 0 26 3-8 3-18 0-26zM24 20c4 8 4 18 0 26-3-8-3-18 0-26z" fill="#3e6b52"/></svg>`,
-  squash: `<svg viewBox="0 0 46 34" aria-hidden="true"><path d="M4 20c0-10 8-16 19-16s19 6 19 16-8 12-19 12S4 30 4 20z" fill="#5b7a3a"/><path d="M12 8c0 8 0 16 2 22M23 4v28M34 8c0 8 0 16-2 22" stroke="#e8d5a8" stroke-width="1.6" fill="none"/><path d="M22 6c0-3 1-5 3-6" stroke="#4a1c27" stroke-width="1.4" fill="none"/></svg>`,
-  pie: `<svg viewBox="0 0 80 40" aria-hidden="true"><ellipse cx="40" cy="30" rx="37" ry="8" fill="#8c4d2e"/><ellipse cx="40" cy="24" rx="34" ry="10" fill="#b4562c"/><path d="M12 20l16 10M22 16l22 14M34 14l20 14M46 14l14 12M8 26l14-12M18 32l22-18M32 34l24-20M48 32l14-14" stroke="#e8c55a" stroke-width="2.6" stroke-linecap="round"/><ellipse cx="40" cy="24" rx="36" ry="10" fill="none" stroke="#d9a65a" stroke-width="4"/></svg>`,
-  candle: `<svg viewBox="0 0 24 60" aria-hidden="true" style="overflow:visible"><g class="tg-flame"><path d="M12 4c4 6 6 10 6 14a6 6 0 0 1-12 0c0-4 2-8 6-14z" fill="#f2a65a"/><path d="M12 11c2 3 3 5 3 7.5a3 3 0 0 1-6 0c0-2.5 1-4.5 3-7.5z" fill="#ffe39a"/></g><rect x="11.2" y="22" width="1.6" height="5" fill="#2a1118"/><rect x="6" y="26" width="12" height="32" rx="2" fill="#f7f2e8"/><ellipse cx="12" cy="58" rx="9" ry="2.5" fill="#ceb888"/></svg>`
-};
-
-const scatterLeaves = (seed, n, b0, bh) => {
-  const rand = seeded(seed);
-  const out = [];
-  for (let i = 0; i < n; i += 1) {
-    const size = 14 + rand() * 10;
-    out.push(
-      `<span class="tg-table-leaf" style="left:${(rand() * 92).toFixed(1)}%;bottom:${(
-        b0 +
-        rand() * bh
-      ).toFixed(0)}px;transform:rotate(${(rand() * 360).toFixed(0)}deg)">${leafSvg(
-        LEAF_KINDS[Math.floor(rand() * 4)],
-        LEAF_COLORS[Math.floor(rand() * 4)],
-        size
-      )}</span>`
-    );
-  }
-  return out.join("");
-};
-
-const harvestTable = () => {
-  const items = [
-    ["pumpkin", 74, 5],
-    ["squash", 58, 14],
-    ["pie", 84, 25],
-    ["candle", 18, 38],
-    ["apple", 30, 44],
-    ["grapes", 34, 50],
-    ["pear", 30, 58],
-    ["candle", 18, 66],
-    ["corn", 30, 72],
-    ["pumpkin", 56, 79],
-    ["apple", 26, 88],
-    ["squash", 44, 92]
-  ]
-    .map(
-      ([id, w, x]) =>
-        `<span class="tg-item" style="left:${x}%;width:${w}px">${produce[id]}</span>`
-    )
-    .join("");
-  /* Warm pools under the two candles, so the flames actually light the table
-     rather than floating on it. */
-  const glow = [38, 66]
-    .map((x) => `<span class="tg-candleglow" style="left:calc(${x}% - 60px)"></span>`)
-    .join("");
-  return `
-    <div class="tg-table">
-      ${glow}
-      <div class="tg-plank" style="background:${PLANK_BG}"><span></span></div>
-      ${items}
-      ${scatterLeaves(41, 9, 14, 60)}
-    </div>`;
-};
-
 const starfield = (seed, n) => {
   const rand = seeded(seed);
   return Array.from(
@@ -482,51 +400,93 @@ const DIVIDER = `
   <span class="tg-rule-mark">${ACORN}</span>
   <span class="tg-rule"></span>`;
 
-/* Logo treatment for the circular speaker photographs: the artboard's leaf
-   wreath. Leaves are laid around the rim at even angles with a seeded tilt, so
-   nothing lands on a face. */
-const leafWreath = (seed) => {
+/* Card treatment: leaves slide in on hover and settle on the card's top edge —
+   one at the left corner and two at the right. They rest above the edge, which
+   is what makes them read as having landed on the card rather than being
+   printed on it. */
+const cardLeaves = (seed) => {
   const rand = seeded(seed);
-  const n = 14;
-  const parts = [];
-  for (let i = 0; i < n; i += 1) {
-    const a = (i / n) * 360 + range(rand, -7, 7);
-    const size = 15 + rand() * 6;
-    parts.push(
-      `<span class="tg-wreath-leaf" style="transform:rotate(${a.toFixed(
-        1
-      )}deg) translateY(-50%) rotate(${(90 + range(rand, -22, 22)).toFixed(0)}deg)">${leafSvg(
+  /* [side, offset from that side, top, resting angle] */
+  const spots = [
+    ["left", 10, -16, -24],
+    ["right", 34, -18, 20],
+    ["right", 8, -8, -12]
+  ];
+  return `<div class="tg-card-leaves">${spots
+    .map(
+      ([side, offset, top, rot], i) =>
+        `<span style="${side}:${offset}px;top:${top}px;--turn:${rot}deg;--from:${
+          side === "left" ? "-22px" : "22px"
+        };--wait:${i * 80}ms">${leafSvg(
+          LEAF_KINDS[Math.floor(rand() * 4)],
+          LEAF_COLORS[Math.floor(rand() * 4)],
+          22 + rand() * 8
+        )}</span>`
+    )
+    .join("")}</div>`;
+};
+
+/* Leaf-scatter border: leaves set all the way round the edge of a card, from
+   the artboard's card-outline set. A frame, not a reaction, so it does not
+   wait on hover. */
+const leafScatter = (seed) => {
+  const rand = seeded(seed);
+  const out = [];
+  const put = (css) => {
+    const size = 14 + rand() * 8;
+    out.push(
+      `<span class="tg-edge-leaf" style="${css};width:${size.toFixed(1)}px;margin:${(
+        -size / 2
+      ).toFixed(1)}px 0 0 ${(-size / 2).toFixed(1)}px;transform:rotate(${(rand() * 360).toFixed(
+        0
+      )}deg)">${leafSvg(
         LEAF_KINDS[Math.floor(rand() * 4)],
         LEAF_COLORS[Math.floor(rand() * 4)],
         size
       )}</span>`
     );
+  };
+  for (let i = 0; i < 9; i += 1) {
+    put(`left:${(4 + i * 11.5).toFixed(1)}%;top:0`);
+    put(`left:${(9 + i * 11.5).toFixed(1)}%;top:100%`);
   }
-  return `<div class="tg-wreath">${parts.join("")}</div>`;
+  for (let i = 0; i < 4; i += 1) {
+    put(`left:0;top:${18 + i * 22}%`);
+    put(`left:100%;top:${12 + i * 24}%`);
+  }
+  return `<div class="tg-scatter">${out.join("")}</div>`;
 };
 
-/* Card treatment: three leaves slide into the top corners on hover, each from
-   a slightly different angle and on its own delay. */
-const cardLeaves = (seed) => {
-  const rand = seeded(seed);
-  const spots = [
-    [4, -6, -28],
-    [16, 2, 22],
-    [30, -3, -8]
-  ];
-  return `<div class="tg-card-leaves">${spots
-    .map(
-      ([right, top, rot], i) =>
-        `<span style="right:${right}px;top:${top}px;--turn:${rot}deg;--wait:${(i * 70).toFixed(
-          0
-        )}ms">${leafSvg(
-          LEAF_KINDS[Math.floor(rand() * 4)],
-          LEAF_COLORS[Math.floor(rand() * 4)],
-          20 + rand() * 8
-        )}</span>`
-    )
-    .join("")}</div>`;
-};
+/* Acorn-and-berry ring for the portraits: a dashed circle with eight acorns on
+   it and eight berries between them. On hover the circle draws itself on and
+   the acorns and berries pop in around it, each a beat after the last. */
+const ACORN_RING = (() => {
+  const acorn = (a) => `
+    <g class="tg-ring-item" style="--i:${a / 45}"
+       transform="rotate(${a} 65 65) translate(65 15) rotate(${-a})">
+      <g transform="translate(-6 -7.5) scale(.5)">
+        <path d="M5 12h14c0 8-4 14-7 16-3-2-7-8-7-16z" fill="#b4562c"></path>
+        <path d="M4 12c0-6 4-9 8-9s8 3 8 9z" fill="#8e3b2a"></path>
+        <path d="M12 3V0" stroke="#8e3b2a" stroke-width="1.6" stroke-linecap="round"></path>
+      </g>
+    </g>`;
+  const berry = (a) => `
+    <g class="tg-ring-item" style="--i:${((a - 22.5) / 45 + 0.5).toFixed(1)}"
+       transform="rotate(${a} 65 65)">
+      <circle cx="65" cy="15" r="3.5" fill="#8e1f31"></circle>
+    </g>`;
+  const items = [];
+  for (let i = 0; i < 8; i += 1) {
+    items.push(acorn(i * 45));
+    items.push(berry(i * 45 + 22.5));
+  }
+  return `
+    <svg class="tg-acorn-ring" viewBox="0 0 130 130" aria-hidden="true" focusable="false">
+      <circle class="tg-ring-circle" cx="65" cy="65" r="50" fill="none" stroke="#8e3b2a"
+              stroke-width="1.6"></circle>
+      ${items.join("")}
+    </svg>`;
+})();
 
 /* ---------------------------------------------------------------------------
    Mount
@@ -590,8 +550,7 @@ export const mount = ({ overlay, density, motion, root }) => {
     "season-scene tg-footer",
     `<div class="season-sky"></div>
      ${starfield(63, 16)}
-     ${GEESE}
-     ${harvestTable()}`
+     ${GEESE}`
   );
 
   /* Drives the hero's sunset: the sky deepens from gold to dusk as the page
@@ -608,21 +567,24 @@ export const mount = ({ overlay, density, motion, root }) => {
      every one of them. */
   decorate(disposer, ".section-overview + .section-dashboard", "season-divider tg-divider", DIVIDER, { first: true });
 
-  /* Every circular speaker photograph gets the leaf wreath. */
+  /* Every circular speaker photograph gets the acorn-and-berry ring, on hover. */
   decorate(
     disposer,
     ".speaker-directory-photo, .seminar-speaker-photo",
-    "season-ring",
-    leafWreath(43)
+    "season-ring tg-ring",
+    ACORN_RING
   );
 
-  /* Cards get leaves sliding into the corner on hover. */
+  /* Speaker and talk cards get leaves sliding onto their top edge on hover. */
   decorate(
     disposer,
-    ".speaker-directory-card, .feature-card, .community-card, .talk-card",
-    "season-card-art",
+    ".speaker-directory-card, .feature-card, .talk-card",
+    "season-frame tg-frame tg-leaf-frame",
     cardLeaves(87)
   );
+
+  /* Community cards get the artboard's leaf-scatter border. */
+  decorate(disposer, ".community-card", "season-frame tg-frame tg-scatter-frame", leafScatter(61));
 
   return {
     /* Exposed for tuning and for verification: hidden documents never fire

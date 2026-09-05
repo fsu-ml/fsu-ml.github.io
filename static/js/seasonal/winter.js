@@ -376,7 +376,7 @@ export const mount = ({ overlay, density, motion }) => {
   decorate(
     disposer,
     ".community-card",
-    "wn-frame wn-frame-icicles",
+    "season-frame wn-frame wn-frame-icicles",
     `${CARD_SNOW}${icicles(31)}`
   );
 

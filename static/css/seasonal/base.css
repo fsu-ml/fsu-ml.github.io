@@ -229,6 +229,18 @@
   pointer-events: none;
 }
 
+/* The same contract without the clip, for artwork that deliberately sits
+   outside its host — leaves resting on a card's top edge, a scatter border,
+   icicles hanging off the bottom. Kept separate from `.season-card-art` rather
+   than dropping its `overflow: hidden`, because the treatments that clip rely
+   on it to round off against the card's own corners. */
+.season-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
 /* ---------------------------------------------------------------------------
    Reduced motion
    ---------------------------------------------------------------------------
@@ -247,7 +259,8 @@
 :root.season-static .season-edge-strip *,
 :root.season-static .season-divider *,
 :root.season-static .season-ring *,
-:root.season-static .season-card-art * {
+:root.season-static .season-card-art *,
+:root.season-static .season-frame * {
   animation: none !important;
   transition: none !important;
 }
@@ -258,7 +271,8 @@
   .season-edge-strip *,
   .season-divider *,
   .season-ring *,
-  .season-card-art * {
+  .season-card-art *,
+  .season-frame * {
     animation: none !important;
     transition: none !important;
   }

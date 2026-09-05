@@ -340,13 +340,6 @@
    interior untouched.
    -------------------------------------------------------------------------- */
 
-/* Spans the host so a frame can hang decoration off any of its edges. */
-.wn-frame {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
 /* The icicles hang below the community card, so it has to stop clipping. */
 :root[data-season="winter"] .community-card {
   position: relative;
