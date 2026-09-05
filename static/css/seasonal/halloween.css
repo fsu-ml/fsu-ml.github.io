@@ -154,24 +154,6 @@
   }
 }
 
-/* Startled out of existence: a quick lift and a fade, with a beat at the top
-   of the curve so the O-mouth is actually legible before it goes. */
-@keyframes hw-ghost-gasp {
-  0% {
-    opacity: var(--gasp-from, 0.5);
-    scale: 1;
-  }
-  30% {
-    opacity: 0.72;
-    scale: 1.12;
-  }
-  100% {
-    opacity: 0;
-    scale: 1.3;
-    translate: 0 -46px;
-  }
-}
-
 /* A ghost rises out of the ground, drifts up, and is gone. It fades in fast
    and out slowly, so it reads as leaving rather than as being switched off,
    and it never reaches full opacity — a solid ghost is a cartoon. */
@@ -391,12 +373,12 @@
   animation: hw-ghost var(--dur, 20s) ease-in-out var(--delay, 0s) infinite;
 }
 
-/* Startled: the smile becomes an O, the eyes widen, and it shoots up and out.
-   The vanish replaces the rise animation outright; when it ends, halloween.js
-   drops the class and the rise starts over, so the ghost returns on its next
-   pass rather than being spent. */
+/* Startled: the smile becomes an O and the eyes widen. The lift and fade are
+   driven from halloween.js, because they have to start from wherever the rise
+   had got to — a class carrying its own animation resets the element to its
+   base style first, which snapped the ghost back to the ground at zero
+   opacity before it gasped. */
 .hw-ghost.is-spooked {
-  animation: hw-ghost-gasp 620ms var(--ease-out-expo) forwards;
   pointer-events: none;
 }
 

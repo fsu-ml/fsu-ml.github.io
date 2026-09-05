@@ -772,21 +772,55 @@ export const mount = ({ overlay, density, motion, root }) => {
   );
 
   /* Startle a ghost and it gasps and vanishes, then rises again on its next
-     cycle. One listener on the layer rather than one per ghost, and the reset
-     rides `animationend` rather than a timer — the rise animation is infinite,
-     so the only thing that can end here is the vanish. */
+     cycle. One listener on the layer rather than one per ghost.
+     
+     The vanish has to start from wherever the ghost currently is. A CSS class
+     carrying its own animation cannot do that: replacing the rise drops the
+     element back to its base style first, so the ghost snapped to the ground
+     at zero opacity and gasped from there. So the live transform and opacity
+     are read at click time, pinned inline, and the vanish is composed on top
+     of that matrix through the animation API. */
   const ghostLayer = document.querySelector(".hw-ghosts");
   if (ghostLayer) {
     disposer.listen(ghostLayer, "click", (event) => {
       const ghost = event.target.closest(".hw-ghost");
-      if (ghost) {
-        ghost.classList.add("is-spooked");
+      if (!ghost || ghost.dataset.spooked) {
+        return;
       }
-    });
-    disposer.listen(ghostLayer, "animationend", (event) => {
-      if (event.target.classList && event.target.classList.contains("is-spooked")) {
-        event.target.classList.remove("is-spooked");
-      }
+      const current = getComputedStyle(ghost);
+      /* The rise animation's matrix at this instant — it already carries both
+         the travel and the scale, so the vanish multiplies onto it rather
+         than replacing it. */
+      const at = current.transform === "none" ? "" : `${current.transform} `;
+      const opacity = Number(current.opacity) || 0.4;
+
+      ghost.dataset.spooked = "1";
+      ghost.classList.add("is-spooked");
+      /* Stop the rise and hold the pose it was in. */
+      ghost.style.animation = "none";
+      ghost.style.transform = current.transform;
+      ghost.style.opacity = String(opacity);
+
+      const vanish = ghost.animate(
+        [
+          { transform: `${at}scale(1)`, opacity },
+          /* A beat brighter and bigger, so the O-mouth registers before it
+             goes. */
+          { transform: `${at}scale(1.14)`, opacity: Math.min(1, opacity + 0.3), offset: 0.3 },
+          { transform: `${at}translateY(-46px) scale(1.3)`, opacity: 0 }
+        ],
+        { duration: 620, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }
+      );
+
+      /* onfinish rather than the finished promise: a cancel on teardown
+         rejects that promise, and there is nothing useful to do with it. */
+      vanish.onfinish = () => {
+        ghost.classList.remove("is-spooked");
+        ghost.style.removeProperty("animation");
+        ghost.style.removeProperty("transform");
+        ghost.style.removeProperty("opacity");
+        delete ghost.dataset.spooked;
+      };
     });
   }
 
