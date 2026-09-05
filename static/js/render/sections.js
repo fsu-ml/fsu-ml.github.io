@@ -732,7 +732,18 @@ export const renderFooter = () => {
   qs("[data-footer]").innerHTML = `
     <div class="footer-block" data-reveal="up">
       <div class="footer-brand">
-        <img class="footer-logo" src="${escapeHtml(footerLogoUrl)}" alt="Florida State University Scientific Computing">
+        <!-- Doubles as the seasonal-theme easter egg: the panel is mounted by
+             the seasonal layer, which listens for [data-season-trigger]. -->
+        <button
+          class="footer-logo-button"
+          type="button"
+          data-season-trigger
+          aria-haspopup="dialog"
+          aria-expanded="false"
+          aria-controls="season-switcher-panel"
+        >
+          <img class="footer-logo" src="${escapeHtml(footerLogoUrl)}" alt="Florida State University Scientific Computing">
+        </button>
       </div>
       <p class="footer-description">${escapeHtml(footer.description)}</p>
     </div>

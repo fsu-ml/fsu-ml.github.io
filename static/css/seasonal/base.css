@@ -1,0 +1,548 @@
+/* ---------------------------------------------------------------------------
+   Seasonal layer — shared scaffolding
+   ---------------------------------------------------------------------------
+   Imported last in styles.css so seasonal rules win on specificity ties
+   without reaching for !important.
+
+   Everything here is inert until `<html>` carries a `data-season`. With no
+   season the only cost is this file's bytes: no element is created, no
+   custom property is set, and no selector matches.
+
+   Three rules the themes are held to:
+
+   1. Additive only. A theme may add decoration and may tint decoration, but it
+      never restyles a text/background pair. Focus rings stay gold everywhere.
+   2. Transform and opacity only. Nothing seasonal animates a property that
+      triggers layout or paint on the main thread.
+   3. Everything decorative is inside `.season-layer` or carries
+      `aria-hidden` and `pointer-events: none`.
+   -------------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------------
+   Token contract
+   ---------------------------------------------------------------------------
+   Each theme file fills these in on `:root[data-season="…"]`. Component
+   decorations below read only these names, never a theme's raw hex, so a
+   fourth season is a matter of one palette block plus one engine.
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Particle count knob, 0–120, written by the controller. */
+  --season-density: 45;
+
+  /* Filled per theme. The fallbacks keep any half-applied state neutral. */
+  --season-accent: transparent;
+  --season-accent-soft: transparent;
+  --season-deep: transparent;
+  --season-particle: transparent;
+  --season-glow: transparent;
+
+  /* Extra wash laid over the hero and footer art. Transparent by default so
+     the existing overlay gradients are untouched. */
+  --season-sky: transparent;
+
+  /* Height of the decorative strip a theme hangs off the header's bottom edge
+     and the top of the footer. */
+  --season-edge: 0px;
+}
+
+/* ---------------------------------------------------------------------------
+   Ambient overlay
+   ---------------------------------------------------------------------------
+   One per page. Sits above page content (z-index <= 3) and below the sticky
+   header (20), the error toast (40) and the skip link (1000), so particles
+   drift behind the navigation and never over a focus ring or an error.
+
+   `contain: strict` isolates it: nothing inside can invalidate layout for the
+   rest of the document, which is what makes forty animated children free.
+   -------------------------------------------------------------------------- */
+
+.season-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+
+.season-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Base for every DOM particle. A theme sets the glyph, size, placement and
+   keyframe; only the compositing hints live here, so they cannot be forgotten
+   on a new theme. */
+.season-particle {
+  position: absolute;
+  will-change: transform, opacity;
+}
+
+/* ---------------------------------------------------------------------------
+   Decoration anchors
+   ---------------------------------------------------------------------------
+   Themes inject scenes into chrome that exists on all five pages. These give
+   the scenes a predictable box; the artwork itself is per theme.
+   -------------------------------------------------------------------------- */
+
+.season-scene {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* A decorative strip pinned across the full width of its host: snow lying on
+   the bar, a leaf garland hanging under it. Whether it sits at the host's top
+   or bottom edge is the theme's call, so only the width and the height token
+   are set here. */
+.season-edge-strip {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: var(--season-edge);
+  pointer-events: none;
+}
+
+.site-footer .season-edge-strip {
+  bottom: 100%;
+}
+
+/* The header clips nothing today; a strip hanging below its border needs the
+   stacking context to allow it. */
+:root[data-season] .site-header {
+  overflow: visible;
+}
+
+/* Seasonal wash over the hero and footer artwork.
+   A real node, placed first inside the theme's own scene container, rather
+   than a pseudo-element on the host. A `::after` on `.hero` is painted as its
+   last child, so it landed on top of the theme's own snow drift and greyed it
+   out. Inside the scene the order is explicit: wash, then artwork.
+
+   The scene itself carries no z-index, so it sits above `.hero-media` and
+   `.hero-overlay` (earlier in tree order) and below `.hero-inner` (z-index 1).
+   Type therefore keeps the contrast it was audited with. */
+.season-sky {
+  position: absolute;
+  inset: 0;
+  background: var(--season-sky);
+  pointer-events: none;
+}
+
+/* The footer's banner photograph fights every seasonal scene put in front of
+   it — a treeline, a graveyard, a sunset all end up sitting on a faint picture
+   of a neural network. Any active season drops it and keeps the footer's own
+   gradient as the ground. */
+:root[data-season] .footer-media {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Section dividers
+   ---------------------------------------------------------------------------
+   A rule across the seam between two sections with a seasonal mark at its
+   centre. Positioned by the host section, drawn by the theme.
+   -------------------------------------------------------------------------- */
+
+:root[data-season] .section-dashboard {
+  position: relative;
+}
+
+.season-divider {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  width: min(100% - 32px, 1360px);
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Speaker photographs
+   ---------------------------------------------------------------------------
+   The artboards' logo treatments, applied to the circular portraits. All three
+   are rings rather than caps or hats: these are photographs of people, and
+   anything that sits on top of one covers a face.
+   -------------------------------------------------------------------------- */
+
+:root[data-season] .speaker-directory-photo,
+:root[data-season] .seminar-speaker-photo {
+  position: relative;
+  /* The ring sits proud of the portrait, so the photo must stop clipping it. */
+  overflow: visible;
+}
+
+/* ...but the portrait was round *because* of that clip, so the circle has to
+   be restored on the contents themselves. Without this the photographs go
+   square the moment a season is active. */
+:root[data-season] .speaker-directory-photo > img,
+:root[data-season] .speaker-directory-photo > .speaker-directory-initials,
+:root[data-season] .seminar-speaker-photo > img {
+  border-radius: 50%;
+}
+
+.season-ring {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.season-ring svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ---------------------------------------------------------------------------
+   Card artwork
+   ---------------------------------------------------------------------------
+   The artboards' card treatments. Each theme supplies the drawing; this gives
+   it a box and the reveal-on-hover contract.
+
+   Deliberately clipped to the card and never interactive, so a decoration can
+   never intercept a click meant for the link inside.
+   -------------------------------------------------------------------------- */
+
+:root[data-season] .speaker-directory-card,
+:root[data-season] .feature-card,
+:root[data-season] .community-card,
+:root[data-season] .talk-card,
+:root[data-season] .next-seminar {
+  position: relative;
+}
+
+.season-card-art {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* The same contract without the clip, for artwork that deliberately sits
+   outside its host — leaves resting on a card's top edge, a scatter border,
+   icicles hanging off the bottom. Kept separate from `.season-card-art` rather
+   than dropping its `overflow: hidden`, because the treatments that clip rely
+   on it to round off against the card's own corners. */
+.season-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion
+   ---------------------------------------------------------------------------
+   Two paths, deliberately both:
+
+   `.season-static` is set by the controller and covers the switcher's Motion
+   checkbox. The media query covers the OS preference directly, so the layer is
+   still correct in the moment before the controller has run.
+
+   Neither hides the layer. A reduced-motion visitor gets the same scene,
+   composed and still — canvas engines draw exactly one frame.
+   -------------------------------------------------------------------------- */
+
+:root.season-static .season-layer *,
+:root.season-static .season-scene *,
+:root.season-static .season-edge-strip *,
+:root.season-static .season-divider *,
+:root.season-static .season-ring *,
+:root.season-static .season-card-art *,
+:root.season-static .season-frame * {
+  animation: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .season-layer *,
+  .season-scene *,
+  .season-edge-strip *,
+  .season-divider *,
+  .season-ring *,
+  .season-card-art *,
+  .season-frame * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Switcher
+   ---------------------------------------------------------------------------
+   An easter egg, not advertised chrome: the panel only exists on screen once
+   the department wordmark in the footer is clicked. Styled from the site's own
+   tokens rather than the active season's, so it stays legible while the page
+   around it changes character.
+   -------------------------------------------------------------------------- */
+
+.season-switcher {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 45;
+  display: flex;
+  align-items: flex-start;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+  /* The wrapper is only a positioning frame; the panel inside takes the
+     pointer. Without this it would swallow clicks along the right edge even
+     while hidden. */
+  pointer-events: none;
+}
+
+/* The panel arrives from the edge it is anchored to, which reads as "this came
+   from over here" rather than as a box blinking into being. */
+.season-switcher.is-open .season-switcher-panel {
+  animation: season-switcher-in var(--dur-base, 220ms) var(--ease-out-soft) both;
+}
+
+@keyframes season-switcher-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .season-switcher.is-open .season-switcher-panel {
+    animation: none;
+  }
+}
+
+.season-switcher-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.season-switcher-title {
+  margin: 0;
+  color: var(--fsu-gold);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.season-switcher-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border: 1px solid rgba(206, 184, 136, 0.4);
+  border-radius: 7px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  font: inherit;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out-soft),
+    color var(--dur-fast) var(--ease-out-soft);
+}
+
+.season-switcher-close:hover {
+  background: rgba(206, 184, 136, 0.16);
+  color: var(--white);
+}
+
+.season-switcher-panel {
+  /* The wrapper above is inert, so the panel takes the pointer back. */
+  pointer-events: auto;
+  width: 264px;
+  padding: 16px;
+  border: 1px solid rgba(206, 184, 136, 0.45);
+  border-right: 0;
+  border-radius: 12px 0 0 12px;
+  background: rgba(12, 6, 14, 0.97);
+  color: var(--white);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(14px);
+}
+
+.season-switcher-group {
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+}
+
+.season-switcher-group legend {
+  padding: 0;
+  margin-bottom: 8px;
+  color: var(--fsu-gold);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.season-switcher-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 8px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out-soft);
+}
+
+.season-switcher-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.season-switcher-option:has(input:checked) {
+  background: rgba(206, 184, 136, 0.16);
+}
+
+.season-switcher-option:has(input:focus-visible) {
+  outline: 2px solid var(--fsu-gold);
+  outline-offset: 1px;
+}
+
+.season-switcher-option input {
+  /* The label row carries the focus ring, so the native dot would be a second
+     redundant indicator in a very small box. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.season-switcher-swatch {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  background: var(--swatch);
+}
+
+.season-switcher-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.season-switcher-label {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.season-switcher-note {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.season-switcher-control {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.season-switcher-control label {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.season-switcher-control output {
+  color: var(--fsu-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.season-switcher-control input[type="range"] {
+  width: 100%;
+  accent-color: var(--fsu-gold);
+}
+
+.season-switcher-check {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.season-switcher-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--fsu-gold);
+}
+
+.season-switcher-check label {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.85rem;
+}
+
+.season-switcher-panel :focus-visible {
+  outline: 2px solid var(--fsu-gold);
+  outline-offset: 2px;
+}
+
+.season-switcher-hint {
+  margin: 0 0 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.season-switcher-auto {
+  width: 100%;
+  min-height: 34px;
+  border: 1px solid rgba(206, 184, 136, 0.5);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--fsu-gold);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out-soft);
+}
+
+.season-switcher-auto:hover {
+  background: rgba(206, 184, 136, 0.14);
+}
+
+/* Below the mobile breakpoint the panel would crowd the content column, so it
+   gives back some width and drops the descriptive notes. */
+@media (max-width: 620px) {
+  .season-switcher-panel {
+    width: min(264px, calc(100vw - 32px));
+  }
+
+  .season-switcher-note {
+    display: none;
+  }
+}
+
+@media print {
+  .season-switcher,
+  .season-layer {
+    display: none;
+  }
+}

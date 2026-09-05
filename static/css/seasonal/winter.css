@@ -1,0 +1,458 @@
+/* ---------------------------------------------------------------------------
+   Winter — December
+   ---------------------------------------------------------------------------
+   Snow, frost and a night treeline. The artboard's own note is that smaller
+   and slower reads more elegant than dense, so the flakes stay 3-9px and take
+   12-26s to cross the viewport.
+
+   Keyframes are namespaced `wn-`.
+   -------------------------------------------------------------------------- */
+
+:root[data-season="winter"] {
+  --season-accent: #dce9f2;
+  --season-accent-soft: #f4f9ff;
+  --season-deep: #2a1118;
+  --season-particle: #ffffff;
+  --season-glow: rgba(206, 184, 136, 0.45);
+  --season-edge: 0px;
+
+  /* Fully opaque: the night has to replace the hero art, not tint it.
+     Anything translucent leaves the banner's navy showing through and the
+     result reads as a filter rather than a scene. Garnet rather than blue,
+     because that is the artboard's winter night and it keeps the brand in the
+     picture. */
+  --season-sky:
+    radial-gradient(ellipse 120% 60% at 50% 6%, rgba(206, 184, 136, 0.16), transparent 62%),
+    linear-gradient(180deg, #2a1118 0%, #351720 42%, #4a1c27 78%, #5b2533 100%);
+}
+
+/* The banner photograph and the hero's own overlay are tuned to each other;
+   either left visible under the night sky puts the site's navy back into it. */
+:root[data-season="winter"] .hero-media,
+:root[data-season="winter"] .hero-overlay {
+  display: none;
+}
+
+/* Matches the top of the sky gradient, so there is no flash of the site's deep
+   navy before the scene mounts. */
+:root[data-season="winter"] .hero,
+:root[data-season="winter"] .site-footer {
+  background: #2a1118;
+}
+
+/* ---------------------------------------------------------------------------
+   Keyframes
+   -------------------------------------------------------------------------- */
+
+@keyframes wn-fall {
+  to {
+    transform: translateY(112vh);
+  }
+}
+
+/* Sway lives on a child so it composes with the fall on the parent instead of
+   overwriting it — two transforms, two elements, no matrix maths. */
+@keyframes wn-sway {
+  from {
+    transform: translateX(-16px) rotate(-10deg);
+  }
+  to {
+    transform: translateX(16px) rotate(10deg);
+  }
+}
+
+@keyframes wn-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes wn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Snow
+   -------------------------------------------------------------------------- */
+
+.wn-flake {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--flake, #fff);
+}
+
+.wn-flake-fall {
+  animation: wn-fall var(--dur, 18s) linear var(--delay, 0s) infinite;
+}
+
+.wn-flake-sway {
+  animation: wn-sway var(--sway, 4s) ease-in-out var(--sway-delay, 0s) infinite alternate;
+}
+
+/* ---------------------------------------------------------------------------
+   Header
+   -------------------------------------------------------------------------- */
+
+/* The string hangs off the bar's bottom edge — the wire's hooks meet it, so
+   the lights are attached to the header rather than floating below it. */
+.wn-lights {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 58px;
+  pointer-events: none;
+}
+
+.wn-wire {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.wn-bulb {
+  position: absolute;
+  width: 10px;
+  height: 15px;
+  /* Narrow at the cap, round at the base: a bulb, not a pill. */
+  border-radius: 5px 5px 6px 6px;
+  background: var(--bulb);
+  /* Unlit glass is dark and barely tinted; the colour arrives with the light. */
+  filter: brightness(0.32) saturate(0.5);
+  opacity: 0.55;
+  transition:
+    filter var(--dur-slow) var(--ease-out-soft),
+    opacity var(--dur-slow) var(--ease-out-soft),
+    box-shadow var(--dur-slow) var(--ease-out-soft);
+}
+
+/* The brass cap and the drop of wire it hangs from. */
+.wn-bulb::before {
+  position: absolute;
+  top: -6px;
+  left: 4px;
+  width: 2px;
+  height: 6px;
+  content: "";
+  background: #ceb888;
+}
+
+.wn-bulb.is-lit {
+  filter: none;
+  opacity: 1;
+  box-shadow:
+    0 0 8px 2px color-mix(in srgb, var(--bulb) 70%, transparent),
+    0 0 18px 6px color-mix(in srgb, var(--bulb) 34%, transparent);
+}
+
+/* Snow cap on the brand mark. The mark shrinks to 36px below the mobile
+   breakpoint, so the cap is sized from it rather than hard-coded. */
+:root[data-season="winter"] .brand {
+  position: relative;
+  --wn-mark: 48px;
+}
+
+.wn-cap-host {
+  position: absolute;
+  top: calc(var(--wn-mark) * -0.06);
+  left: 0;
+  width: var(--wn-mark);
+  pointer-events: none;
+}
+
+.wn-mark-cap {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
+}
+
+@media (max-width: 620px) {
+  :root[data-season="winter"] .brand {
+    --wn-mark: 36px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Scenes
+   -------------------------------------------------------------------------- */
+
+.wn-hero,
+.wn-footer {
+  inset: 0;
+  overflow: hidden;
+}
+
+.wn-star {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--cream);
+  animation: wn-twinkle 3s ease-in-out var(--delay, 0s) infinite;
+}
+
+/* Frost creeping in from the hero's upper corners.
+   Masked so it dissolves toward the inside instead of ending on the hard edge
+   of its own box — an unmasked corner is visibly cut off along two straight
+   lines wherever the artwork stops. */
+.wn-frost {
+  position: absolute;
+  top: 84px;
+  /* The artboard draws this lattice at 96px. Scaled up to 190 the strokes
+     spread far enough apart that it stops reading as frost on a pane and
+     starts reading as graph paper. */
+  width: min(124px, 14vw);
+  height: min(124px, 14vw);
+  color: var(--season-accent);
+  opacity: 0.34;
+  -webkit-mask-image: radial-gradient(circle at 0% 0%, #000 32%, transparent 78%);
+  mask-image: radial-gradient(circle at 0% 0%, #000 32%, transparent 78%);
+}
+
+.wn-frost svg {
+  width: 100%;
+  height: 100%;
+}
+
+.wn-frost-left {
+  left: 0;
+}
+
+.wn-frost-right {
+  right: 0;
+  transform: scaleX(-1);
+}
+
+/* Snow bank along the bottom of the hero, bleeding into the section below.
+   One silhouette, one colour: every attempt at a second layer for depth read
+   as a stain rather than as snow, because whatever tone it took differed from
+   the white it sat against. */
+.wn-drift {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  /* In front of `.hero-inner` (z-index 1). Behind it, the next-seminar card's
+     drop shadow fell across the white bank and dirtied it. */
+  z-index: 2;
+  width: 100%;
+  height: 64px;
+}
+
+/* Exactly the white that `.section-overview` starts with. */
+.wn-drift-front {
+  fill: #ffffff;
+}
+
+.wn-treeline {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 96px;
+}
+
+/* The treeline ends in a white snow ground and the footer's own links are
+   white. Reserve the height so a stacked column on a narrow screen can never
+   land white-on-white. */
+:root[data-season="winter"] .footer-inner {
+  padding-bottom: 108px;
+}
+
+/* ---------------------------------------------------------------------------
+   Section divider
+   -------------------------------------------------------------------------- */
+
+.wn-rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(120, 47, 64, 0.34), transparent);
+}
+
+.wn-rule-mark {
+  display: block;
+  width: 24px;
+  color: var(--fsu-garnet);
+}
+
+.wn-rule-mark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   Portraits and cards
+   -------------------------------------------------------------------------- */
+
+/* The frost ring, on hover only. A ring permanently around every portrait is
+   decoration the reader cannot switch off. */
+.wn-ring {
+  inset: -20%;
+}
+
+.wn-frost-ring {
+  opacity: 0;
+  transform: scale(0.9) rotate(-8deg);
+  transition:
+    opacity var(--dur-slow) var(--ease-out-soft),
+    transform var(--dur-reveal) var(--ease-out-soft);
+}
+
+:is(.speaker-directory-card, .talk-card, .next-seminar):hover .wn-frost-ring,
+:is(.speaker-directory-card, .talk-card, .next-seminar):focus-within .wn-frost-ring,
+.speaker-directory-photo:hover .wn-frost-ring {
+  opacity: 0.85;
+  transform: scale(1) rotate(0deg);
+}
+
+/* A snowflake resting in the card's corner. Very faint on purpose — it is a
+   watermark, not a badge. */
+.wn-corner-flake {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: block;
+  width: 26px;
+  color: #9fbfd6;
+  opacity: 0.22;
+}
+
+.wn-corner-flake svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   Card frames
+   ---------------------------------------------------------------------------
+   The artboard's exteriors. Each is injected into a host that keeps its own
+   interior untouched.
+   -------------------------------------------------------------------------- */
+
+/* The icicles hang below the community card, so it has to stop clipping. */
+:root[data-season="winter"] .community-card {
+  position: relative;
+  overflow: visible;
+}
+
+/* The talk card's frost stays inside it, so this one keeps its clip — that is
+   what rounds the lattice off against the card's own corners. */
+:root[data-season="winter"] .talk-card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* "Snow and icicles": snow settled on the top edge, icicles hanging off the
+   bottom one. The card's own content is pushed down to clear the snow, and
+   room is left below for the ice. */
+:root[data-season="winter"] .community-card {
+  margin-top: 14px;
+  margin-bottom: 34px;
+  padding-top: 26px;
+}
+
+.wn-card-snow {
+  position: absolute;
+  top: -12px;
+  right: -2px;
+  left: -2px;
+  width: calc(100% + 4px);
+  height: 30px;
+}
+
+/* Hanging off the bottom edge. A near-white fill on a near-white card is
+   invisible, so the ice is carried by its outline rather than its fill. */
+.wn-icicles {
+  position: absolute;
+  top: calc(100% - 1px);
+  right: 0;
+  left: 0;
+  width: 100%;
+  height: 34px;
+}
+
+.wn-icicles path {
+  fill: #f2f8fd;
+  stroke: rgba(140, 178, 206, 0.85);
+  stroke-width: 1;
+}
+
+/* Frost creeping into a talk card's opposite corners on hover. */
+.wn-card-frost {
+  opacity: 0;
+  transition: opacity var(--dur-reveal) var(--ease-out-soft);
+}
+
+.wn-frost-corner {
+  position: absolute;
+  display: block;
+  width: 126px;
+  height: 126px;
+  color: #9fc4e0;
+}
+
+.wn-frost-corner svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* The lattice is drawn anchored to a top-left corner, so the other two are
+   the same artwork reflected into place. */
+.wn-frost-corner-tr {
+  top: -10px;
+  right: -10px;
+  transform: scaleX(-1);
+}
+
+.wn-frost-corner-bl {
+  bottom: -10px;
+  left: -10px;
+  transform: scaleY(-1);
+}
+
+:root[data-season="winter"] .talk-card:hover .wn-card-frost,
+:root[data-season="winter"] .talk-card:focus-within .wn-card-frost {
+  opacity: 0.55;
+}
+
+/* ---------------------------------------------------------------------------
+   Components
+   ---------------------------------------------------------------------------
+   Decoration only. No rule below changes a text colour, a background a text
+   sits on, or a focus ring.
+   -------------------------------------------------------------------------- */
+
+/* The artboard's "gold halo" container, on the About cards. Border and halo
+   only — the card keeps its own background and type, so nothing here touches a
+   contrast pair. */
+:root[data-season="winter"] .feature-card {
+  position: relative;
+  border-color: rgba(206, 184, 136, 0.85);
+}
+
+:root[data-season="winter"] .feature-card:hover,
+:root[data-season="winter"] .feature-card:focus-within {
+  border-color: #ceb888;
+  box-shadow: 0 0 0 6px rgba(206, 184, 136, 0.22);
+  transform: translateY(-4px);
+}
+
+/* A steady gold halo on hover. It replaces a pulsing glow and a snow ridge
+   that grew out of the top edge — between them the button had two things
+   moving on a plain mouseover, which is a lot of event for a link. The
+   button's own colours are untouched, so its contrast ratio is unchanged. */
+:root[data-season="winter"] .button-primary:hover {
+  box-shadow: 0 0 18px 3px var(--season-glow);
+}

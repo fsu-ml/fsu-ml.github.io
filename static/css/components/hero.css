@@ -69,6 +69,20 @@
   white-space: nowrap;
 }
 
+/* The wordmark links to the department it names. Kept as a bare wrapper so it
+   inherits the logo's own sizing rather than adding a second box. */
+.hero-logo-link {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+}
+
+.hero-logo-link:focus-visible {
+  outline: 2px solid var(--fsu-gold);
+  outline-offset: 6px;
+  border-radius: 6px;
+}
+
 .hero-logo {
   width: 100%;
   max-width: 560px;

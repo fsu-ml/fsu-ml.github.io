@@ -1,0 +1,675 @@
+/* ---------------------------------------------------------------------------
+   Halloween — October
+   ---------------------------------------------------------------------------
+   Dusk in October: moonlit and playful rather than gory. Plum night sky,
+   bare trees, a crescent moon, ground mist.
+
+   Motion is deliberately sparse here. The only things that move at rest are
+   the mist drifting, the embers rising, and the bats in the hero. Stars are
+   static, webs are static, and every card and portrait treatment is gated on
+   hover — ambient motion under body copy makes a page tiring to read.
+
+   Keyframes are namespaced `hw-`.
+   -------------------------------------------------------------------------- */
+
+:root[data-season="halloween"] {
+  --season-accent: #e07a2f;
+  --season-accent-soft: #6b4c9a;
+  --season-deep: #1a0b12;
+  --season-particle: #e07a2f;
+  --season-glow: rgba(224, 122, 47, 0.45);
+  --season-edge: 0px;
+
+  /* Fully opaque. The night sky has to replace the hero art, not tint it —
+     anything translucent leaves the garnet-and-navy of the banner showing
+     through and the result reads as a filter rather than a scene. */
+  /* Ends on exactly the drip colour, so the hero's bottom edge and the drips
+     hanging off it read as one continuous mass rather than two shapes that
+     happen to touch. The horizon glow sits above that, at 78%, which is what
+     the tree silhouettes read against. */
+  --season-sky:
+    radial-gradient(ellipse 120% 34% at 50% 82%, rgba(146, 82, 96, 0.6), transparent 72%),
+    linear-gradient(
+      180deg,
+      #1a0a17 0%,
+      #210e1c 28%,
+      #2e1426 54%,
+      #401b31 74%,
+      #4a2038 84%,
+      #38152c 94%,
+      #2d1226 100%
+    );
+}
+
+/* The banner photograph and the hero's own overlay gradients are both tuned
+   to each other; either one left visible under the night sky puts the site's
+   navy and garnet back into a plum October scene. */
+:root[data-season="halloween"] .hero-media,
+:root[data-season="halloween"] .hero-overlay {
+  display: none;
+}
+
+/* Matches the top of the sky gradient, so there is no flash of the site's
+   deep navy before the scene mounts. */
+:root[data-season="halloween"] .hero,
+:root[data-season="halloween"] .site-footer {
+  background: #1a0a17;
+}
+
+/* The lanterns sit on the footer's top edge and so have to escape it. Nothing
+   else in the footer reaches its bounds — the scene, the graveyard and the
+   tree are all inset — so lifting the clip costs nothing. Overflow above an
+   element cannot extend the document, so this adds no scrollbar. */
+:root[data-season="halloween"] .site-footer {
+  overflow: visible;
+}
+
+/* ---------------------------------------------------------------------------
+   Keyframes
+   -------------------------------------------------------------------------- */
+
+@keyframes hw-rise {
+  to {
+    transform: translateY(-115vh);
+  }
+}
+
+@keyframes hw-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  8% {
+    opacity: 0.55;
+  }
+  12% {
+    opacity: 0.95;
+  }
+  30% {
+    opacity: 0.7;
+  }
+  34% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.9;
+  }
+  78% {
+    opacity: 0.75;
+  }
+}
+
+/* One dash animation draws any path, because every path carries
+   pathLength="1" and so has the same nominal length. */
+@keyframes hw-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Each drip lengthens and shortens on its own clock. Scaling from a transform
+   origin at the shoulder keeps the top of every finger welded to the band it
+   hangs from, however far it has retracted. */
+@keyframes hw-drip {
+  from {
+    transform: scaleY(0.5);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* Lanterns breathe rather than blink: the lit face never goes fully dark,
+   because a jack-o-lantern that switches off reads as a bug. */
+@keyframes hw-lantern {
+  0%,
+  100% {
+    opacity: 0.34;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* The light it casts, as a filter rather than an oversized element.
+   A halo drawn as an absolutely-positioned child at `inset: -70%` reaches past
+   the viewport edge on the right-hand pair and adds twelve pixels of
+   horizontal scroll to every page. Filter effects paint outside the box
+   without contributing to scrollable overflow, so this cannot. */
+@keyframes hw-lantern-cast {
+  0%,
+  100% {
+    filter:
+      drop-shadow(0 4px 6px rgba(26, 9, 18, 0.45))
+      drop-shadow(0 0 6px rgba(255, 170, 70, 0.25));
+  }
+  50% {
+    filter:
+      drop-shadow(0 4px 6px rgba(26, 9, 18, 0.45))
+      drop-shadow(0 0 14px rgba(255, 170, 70, 0.6))
+      drop-shadow(0 0 30px rgba(255, 150, 50, 0.4));
+  }
+}
+
+/* A ghost rises out of the ground, drifts up, and is gone. It fades in fast
+   and out slowly, so it reads as leaving rather than as being switched off,
+   and it never reaches full opacity — a solid ghost is a cartoon. */
+@keyframes hw-ghost {
+  0% {
+    transform: translateY(0) scale(0.86);
+    opacity: 0;
+  }
+  16% {
+    opacity: 0.5;
+  }
+  62% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(calc(var(--rise, 190px) * -1)) scale(1.08);
+    opacity: 0;
+  }
+}
+
+/* Blink is 3% of a long cycle: anything longer reads as a slow wink. */
+@keyframes hw-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.08);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Scenes
+   -------------------------------------------------------------------------- */
+
+.hw-hero,
+.hw-footer {
+  inset: 0;
+  overflow: hidden;
+}
+
+.hw-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fdf7ea;
+}
+
+/* The reference puts the moon top-right in open sky; on this hero the
+   next-seminar card owns that corner, so it goes in the gap between the copy
+   column and the card — the one region clear at every breakpoint. */
+.hw-moon {
+  position: absolute;
+  top: 76px;
+  left: 42%;
+  width: 104px;
+  height: 104px;
+}
+
+.hw-moon svg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.hw-moon-glow {
+  position: absolute;
+  inset: -85%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(253, 247, 234, 0.34) 0%, rgba(253, 247, 234, 0) 62%);
+}
+
+/* Tucked into the corner above the last link column. Further in, the halo
+   washes across the column heading and the moon reads as a smudge behind the
+   type rather than as sky. */
+.hw-moon-footer {
+  top: 10px;
+  left: auto;
+  right: 2.5%;
+  width: 58px;
+  height: 58px;
+}
+
+/* A smaller halo in the footer: the hero's fills open sky, but here it would
+   wash out the link column beside it. */
+.hw-moon-footer .hw-moon-glow {
+  inset: -55%;
+}
+
+/* The treeline. Two near trees anchor the edges and three shorter ones stand
+   further back between them, which is what stops the hero reading as two
+   props at the margins.
+   Darker than the sky, which is what makes a silhouette — they read because
+   the horizon glow sits behind their lower half, not because they are lighter
+   than the night. */
+.hw-tree {
+  position: absolute;
+  bottom: -8px;
+  width: min(260px, 28vw);
+  height: 74%;
+  color: #150819;
+}
+
+/* Distance is carried by height and tone: further back is shorter and a shade
+   closer to the sky, which is how night air actually behaves. Kept short
+   enough to stand below the copy rather than behind it. */
+.hw-tree-far {
+  width: min(180px, 17vw);
+  height: 38%;
+  color: #23102255;
+}
+
+.hw-tree-2 {
+  left: 17%;
+  height: 34%;
+}
+
+.hw-tree-3 {
+  left: 40%;
+  height: 42%;
+}
+
+.hw-tree-4 {
+  left: 63%;
+  height: 30%;
+}
+
+.hw-tree svg {
+  width: 100%;
+  height: 100%;
+}
+
+.hw-tree-left {
+  left: -40px;
+}
+
+.hw-tree-right {
+  right: -44px;
+  transform: scaleX(-1);
+}
+
+/* Its base sits on the graveyard's ground line — the ground path tops out
+   12px above the footer's bottom edge, so anything higher leaves the tree
+   hanging in the air.
+
+   Sized against the footer rather than in fixed pixels: the footer runs from
+   about 180px tall at three columns to 500px stacked, and a fixed 228px tree
+   is either cropped to a stump or towering depending on which you get. */
+.hw-tree-footer {
+  left: 2%;
+  bottom: 12px;
+  width: clamp(160px, 24%, 272px);
+  height: clamp(120px, 58%, 240px);
+  color: #140718;
+}
+
+/* The swarm's canvas is a child of the hero, so bats stay in the hero and
+   scroll away with it. Above the trees and mist, below the copy. */
+.hw-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The night dripping into the page. Lives at the top of the section *below*
+   the hero, so the drips are the night colour hanging down rather than white
+   teeth cut out of the section. */
+.hw-drip-band {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  left: 0;
+  z-index: 3;
+  height: 62px;
+  color: #2d1226;
+  pointer-events: none;
+}
+
+.hw-drip {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hw-drop {
+  /* The origin is set per drip in the markup, in viewBox units. */
+  transform-box: view-box;
+  animation-name: hw-drip;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+/* Emitted before the graveyard, so the headstones paint over the bottom of
+   each ghost and it appears to rise from behind one. */
+/* The ghosts are clickable, so the layer has to sit above `.footer-inner`
+   (z-index 1) — a click on empty footer space would otherwise be swallowed by
+   the column that owns that box. The graveyard is lifted above them in turn,
+   so they still rise from behind the headstones. */
+.hw-ghosts {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hw-ghost {
+  position: absolute;
+  bottom: 34px;
+  display: block;
+  opacity: 0;
+  /* Re-enabled against the scene's `pointer-events: none`. */
+  pointer-events: auto;
+  cursor: pointer;
+  animation: hw-ghost var(--dur, 20s) ease-in-out var(--delay, 0s) infinite;
+}
+
+/* Startled: the smile becomes an O and the eyes widen. The lift and fade are
+   driven from halloween.js, because they have to start from wherever the rise
+   had got to — a class carrying its own animation resets the element to its
+   base style first, which snapped the ghost back to the ground at zero
+   opacity before it gasped. */
+.hw-ghost.is-spooked {
+  pointer-events: none;
+}
+
+.hw-ghost-o {
+  opacity: 0;
+}
+
+.hw-ghost.is-spooked .hw-ghost-smile {
+  opacity: 0;
+}
+
+.hw-ghost.is-spooked .hw-ghost-o {
+  opacity: 1;
+}
+
+.hw-ghost.is-spooked .hw-ghost-eye {
+  /* A gasp is as much the eyes as the mouth. */
+  ry: 4.4;
+}
+
+/* Invisible with motion off, so there is nothing to click at. */
+:root.season-static .hw-ghost {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-ghost {
+    pointer-events: none;
+  }
+}
+
+.hw-ghost svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 10px rgba(233, 224, 244, 0.35));
+}
+
+/* Lanterns sitting on the footer's top edge.
+   The row is pinned to that edge and its contents are lifted fully above it,
+   so they read as set down on the footer rather than sunk into it. */
+.hw-lantern-row {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.hw-lanterns {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.hw-lanterns-left {
+  left: 2.5%;
+}
+
+.hw-lanterns-right {
+  right: 2.5%;
+}
+
+.hw-lantern {
+  position: relative;
+  display: block;
+  /* A couple of pixels of overlap with the edge, so the base is seated on the
+     footer instead of balanced on it. */
+  margin-bottom: -3px;
+}
+
+.hw-lantern svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 4px 6px rgba(26, 9, 18, 0.45));
+  animation: hw-lantern-cast var(--dur, 5s) ease-in-out var(--delay, 0s) infinite;
+}
+
+/* Same clock as the cast light, so the face brightens as the glow swells. */
+.hw-lantern-face {
+  animation: hw-lantern var(--dur, 5s) ease-in-out var(--delay, 0s) infinite;
+}
+
+.hw-graveyard {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  /* Above the ghost layer, which had to be raised over the footer's columns to
+     be clickable — the stones still have to stand in front of them. */
+  z-index: 3;
+  width: 100%;
+  height: 96px;
+  color: #150819;
+}
+
+/* Positioned inside the tree's own box, so it perches in the canopy at every
+   footer height instead of at one pixel offset that only lands right at a
+   single width. */
+.hw-owl {
+  position: absolute;
+  top: 26%;
+  left: 56%;
+  width: 22%;
+  max-width: 34px;
+}
+
+.hw-owl svg {
+  width: 100%;
+  height: auto;
+}
+
+.hw-eye {
+  transform-origin: center;
+  animation: hw-blink 7s ease-in-out infinite;
+}
+
+/* A second clock on the other eye, so the pair never blinks in lockstep. */
+.hw-eye-b {
+  animation-duration: 8.6s;
+  animation-delay: -2.4s;
+}
+
+.hw-ember {
+  border-radius: 50%;
+  background: var(--season-accent);
+  box-shadow: 0 0 6px 1px rgba(224, 122, 47, 0.55);
+}
+
+.hw-ember-rise {
+  animation:
+    hw-flicker var(--flicker, 2s) steps(1) infinite,
+    hw-rise var(--dur, 18s) linear var(--delay, 0s) infinite;
+}
+
+/* ---------------------------------------------------------------------------
+   Components
+   ---------------------------------------------------------------------------
+   Decoration only. Nothing below changes a text colour, a background a text
+   sits on, or a focus ring.
+   -------------------------------------------------------------------------- */
+
+/* Nav links glow rather than flicker. The flicker was a neon-sign effect
+   firing on every pointer pass across the navigation, which is the last place
+   on a page that should be attracting attention to itself. */
+:root[data-season="halloween"] .nav-link:hover,
+:root[data-season="halloween"] .nav-link:focus-visible {
+  color: var(--season-accent);
+  text-shadow: 0 0 12px rgba(224, 122, 47, 0.85);
+}
+
+:root[data-season="halloween"] .nav-link::after {
+  background: var(--season-accent);
+}
+
+/* The artboard's lantern glow: a steady halo on hover, not a pulse. The
+   button's own colours are untouched, so its contrast ratio is unchanged.
+   Clicking one releases three bats into the hero swarm (halloween.js). */
+:root[data-season="halloween"] .button-primary:hover {
+  box-shadow: 0 0 22px 4px var(--season-glow);
+}
+
+/* ---------------------------------------------------------------------------
+   Webs
+   -------------------------------------------------------------------------- */
+
+.hw-web {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Static everywhere by default. Only the card and portrait treatments animate,
+   and only on hover. */
+.hw-web path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+/* Card corner web, in black rather than orange so it reads as a web on a
+   light card instead of a graphic. */
+.hw-card-web {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 128px;
+  height: 128px;
+  /* Mirrored, because a corner web anchors to its top-left. */
+  transform: scaleX(-1);
+}
+
+.hw-card-web path {
+  stroke-dashoffset: 1;
+  opacity: 0;
+  transition:
+    stroke-dashoffset 0.3s var(--ease-out-soft),
+    opacity 0.3s var(--ease-out-soft);
+}
+
+:is(.speaker-directory-card, .feature-card, .community-card, .talk-card):hover
+  .hw-card-web
+  path,
+:is(.speaker-directory-card, .feature-card, .community-card, .talk-card):focus-within
+  .hw-card-web
+  path {
+  stroke-dashoffset: 0;
+  opacity: 1;
+  transition:
+    stroke-dashoffset 0.9s var(--ease-out-soft) var(--draw-delay, 0s),
+    opacity 0.2s var(--ease-out-soft);
+}
+
+/* The next-seminar card is the page's focal panel, so its web is simply
+   there rather than waiting on a hover. */
+.hw-seminar-web .hw-card-web path {
+  stroke-dashoffset: 0;
+  opacity: 0.55;
+}
+
+/* The artboard's cobweb ring, around each circular portrait. Hover only. */
+.hw-photo-web {
+  position: absolute;
+  inset: -22%;
+}
+
+.hw-photo-web path {
+  stroke-dashoffset: 1;
+  opacity: 0;
+  transition:
+    stroke-dashoffset 0.3s var(--ease-out-soft),
+    opacity 0.3s var(--ease-out-soft);
+}
+
+:is(.speaker-directory-card, .talk-card, .next-seminar):hover .hw-photo-web path,
+:is(.speaker-directory-card, .talk-card, .next-seminar):focus-within .hw-photo-web path,
+.speaker-directory-photo:hover .hw-photo-web path {
+  stroke-dashoffset: 0;
+  opacity: 1;
+  transition:
+    stroke-dashoffset 0.8s var(--ease-out-soft) var(--draw-delay, 0s),
+    opacity 0.2s var(--ease-out-soft);
+}
+
+/* ---------------------------------------------------------------------------
+   Section divider
+   -------------------------------------------------------------------------- */
+
+.hw-rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(42, 17, 24, 0.34), transparent);
+}
+
+/* The spider hangs from the rule. Static: one bobbing element in the middle of
+   the page is a distraction, not atmosphere. */
+.hw-rule-mark {
+  display: block;
+  width: 14px;
+}
+
+.hw-rule-mark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The graveyard and the tree occupy the footer's bottom band, and the footer's
+   own links are light. Reserve the height so a stacked column on a narrow
+   screen never lands in the headstones. */
+:root[data-season="halloween"] .footer-inner {
+  padding-bottom: 116px;
+}
+
+@media (max-width: 620px) {
+  .hw-moon {
+    top: 86px;
+    left: auto;
+    right: 9%;
+    width: 74px;
+    height: 74px;
+  }
+
+  .hw-tree {
+    width: 42vw;
+    height: 46%;
+  }
+}

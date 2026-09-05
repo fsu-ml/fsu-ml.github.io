@@ -37,6 +37,29 @@
   margin-bottom: 16px;
 }
 
+/* The wordmark is also the seasonal-theme easter egg, so it is a real button.
+   Stripped back to the bare image: nothing should hint that it is clickable
+   until the pointer is actually on it. */
+.footer-logo-button {
+  display: block;
+  width: min(100%, 360px);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: transform var(--dur-base) var(--ease-out-soft);
+}
+
+.footer-logo-button:hover {
+  transform: translateY(-2px);
+}
+
+.footer-logo-button:focus-visible {
+  outline: 2px solid var(--fsu-gold);
+  outline-offset: 6px;
+  border-radius: 6px;
+}
+
 .footer-logo {
   width: min(100%, 360px);
   max-height: 76px;

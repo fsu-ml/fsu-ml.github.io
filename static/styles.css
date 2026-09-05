@@ -9,3 +9,7 @@
 @import url("css/components/footer.css");
 @import url("css/responsive.css");
 @import url("css/components/motion.css");
+@import url("css/seasonal/base.css");
+@import url("css/seasonal/halloween.css");
+@import url("css/seasonal/thanksgiving.css");
+@import url("css/seasonal/winter.css");
