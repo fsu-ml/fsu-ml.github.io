@@ -819,6 +819,16 @@ export const mount = ({ overlay, density, motion, root }) => {
         ghost.style.removeProperty("animation");
         ghost.style.removeProperty("transform");
         ghost.style.removeProperty("opacity");
+        /* Every ghost carries a *negative* animation-delay so the four of them
+           are spread through the cycle at load. Restoring the CSS animation
+           therefore resumes it mid-rise, and a startled ghost popped straight
+           back into view. A positive delay instead: it stays away for a few
+           seconds and then climbs from the ground.
+
+           Delay only applies before the first iteration, so the loop after
+           that is unaffected. During it the element falls back to its base
+           style, which is opacity 0 — so it is genuinely gone, not lurking. */
+        ghost.style.animationDelay = `${range(Math.random, 4, 11).toFixed(1)}s`;
         delete ghost.dataset.spooked;
       };
     });
