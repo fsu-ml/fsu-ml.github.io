@@ -563,6 +563,38 @@ const graveyard = (seed) => {
     </svg>`;
 };
 
+/* Jack-o-lanterns sitting on the footer's top edge.
+ *
+ * The carved face is drawn twice: once dark, which is always there, and once
+ * lit on top of it, whose opacity pulses. So an unlit lantern still reads as
+ * carved rather than as a plain pumpkin, which is what happens if you simply
+ * fade the whole face out. */
+const FACE =
+  "M17 26l8-4 1 8zM43 26l-8-4-1 8zM30 30l3.5 6h-7zM15 39c4 8 26 8 30 0l-4.5 0-2 4-3-4-2.5 5-3-5-2.5 4-3-4-2.5 4-3-4z";
+
+const lantern = (size, dur, delay) => `
+  <span class="hw-lantern" style="width:${size}px;--dur:${dur}s;--delay:${delay}s">
+    <svg viewBox="0 0 60 54" aria-hidden="true" focusable="false">
+      <path d="M28 10c-1-4 0-7 4-8 1 3 0 6-1 8z" fill="#3e6b52"></path>
+      <path d="M8 18C2 22 0 36 6 46s16 8 24 8 18 2 24-8 4-24-2-28c-8-4-14-4-22-4S16 14 8 18z"
+            fill="#e07a2f"></path>
+      <path d="M30 14c-8 0-12 10-12 20s4 20 12 20 12-10 12-20-4-20-12-20z" fill="none"
+            stroke="#b4562c" stroke-width="1.2"></path>
+      <path d="${FACE}" fill="#3a1508"></path>
+      <path class="hw-lantern-face" d="${FACE}" fill="#ffd27a"></path>
+    </svg>
+  </span>`;
+
+/* Two per side, one large and one small, so each side reads as a pair set
+   down rather than a single ornament centred on nothing. */
+const LANTERNS = `
+  <div class="hw-lanterns hw-lanterns-left">
+    ${lantern(58, 5.2, -1.1)}${lantern(38, 6.8, -3.4)}
+  </div>
+  <div class="hw-lanterns hw-lanterns-right">
+    ${lantern(42, 6.1, -2.2)}${lantern(54, 4.6, -0.4)}
+  </div>`;
+
 /* Ghosts rising out of the graveyard.
  *
  * Spawned behind the headstones — they are emitted before the graveyard in
@@ -728,6 +760,11 @@ export const mount = ({ overlay, density, motion, root }) => {
      ${ghosts(71, 4)}
      ${graveyard(9)}`
   );
+
+  /* The lanterns sit on the footer's top edge, so they need to escape it —
+     they live in their own decoration rather than inside `.hw-footer`, which
+     clips. */
+  decorate(disposer, ".site-footer", "season-scene hw-lantern-row", LANTERNS, { first: true });
 
   /* The swarm's canvas is a child of the hero, not of the fixed overlay: bats
      fly in the hero and scroll away with it instead of following the reader

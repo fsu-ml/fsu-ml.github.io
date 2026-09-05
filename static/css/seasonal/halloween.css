@@ -53,7 +53,15 @@
    deep navy before the scene mounts. */
 :root[data-season="halloween"] .hero,
 :root[data-season="halloween"] .site-footer {
-  background: #1d0c1a;
+  background: #1a0a17;
+}
+
+/* The lanterns sit on the footer's top edge and so have to escape it. Nothing
+   else in the footer reaches its bounds — the scene, the graveyard and the
+   tree are all inset — so lifting the clip costs nothing. Overflow above an
+   element cannot extend the document, so this adds no scrollbar. */
+:root[data-season="halloween"] .site-footer {
+  overflow: visible;
 }
 
 /* ---------------------------------------------------------------------------
@@ -111,6 +119,38 @@
   }
   to {
     transform: scaleY(1);
+  }
+}
+
+/* Lanterns breathe rather than blink: the lit face never goes fully dark,
+   because a jack-o-lantern that switches off reads as a bug. */
+@keyframes hw-lantern {
+  0%,
+  100% {
+    opacity: 0.34;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* The light it casts, as a filter rather than an oversized element.
+   A halo drawn as an absolutely-positioned child at `inset: -70%` reaches past
+   the viewport edge on the right-hand pair and adds twelve pixels of
+   horizontal scroll to every page. Filter effects paint outside the box
+   without contributing to scrollable overflow, so this cannot. */
+@keyframes hw-lantern-cast {
+  0%,
+  100% {
+    filter:
+      drop-shadow(0 4px 6px rgba(26, 9, 18, 0.45))
+      drop-shadow(0 0 6px rgba(255, 170, 70, 0.25));
+  }
+  50% {
+    filter:
+      drop-shadow(0 4px 6px rgba(26, 9, 18, 0.45))
+      drop-shadow(0 0 14px rgba(255, 170, 70, 0.6))
+      drop-shadow(0 0 30px rgba(255, 150, 50, 0.4));
   }
 }
 
@@ -325,6 +365,58 @@
   width: 100%;
   height: auto;
   filter: drop-shadow(0 0 10px rgba(233, 224, 244, 0.35));
+}
+
+/* Lanterns sitting on the footer's top edge.
+   The row is pinned to that edge and its contents are lifted fully above it,
+   so they read as set down on the footer rather than sunk into it. */
+.hw-lantern-row {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.hw-lanterns {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.hw-lanterns-left {
+  left: 2.5%;
+}
+
+.hw-lanterns-right {
+  right: 2.5%;
+}
+
+.hw-lantern {
+  position: relative;
+  display: block;
+  /* A couple of pixels of overlap with the edge, so the base is seated on the
+     footer instead of balanced on it. */
+  margin-bottom: -3px;
+}
+
+.hw-lantern svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 4px 6px rgba(26, 9, 18, 0.45));
+  animation: hw-lantern-cast var(--dur, 5s) ease-in-out var(--delay, 0s) infinite;
+}
+
+/* Same clock as the cast light, so the face brightens as the glow swells. */
+.hw-lantern-face {
+  animation: hw-lantern var(--dur, 5s) ease-in-out var(--delay, 0s) infinite;
 }
 
 .hw-graveyard {
