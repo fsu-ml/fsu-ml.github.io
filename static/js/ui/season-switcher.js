@@ -1,11 +1,14 @@
 /**
- * Floating seasonal switcher.
+ * Seasonal theme panel.
  *
- * A review tool: a tab pinned to the right edge that opens a small panel for
- * flipping between the three holiday themes and tuning the two knobs each of
- * them takes. It writes through the SeasonController, so it holds no state of
- * its own and stays correct if the season is changed from the console or by a
- * `?season=` link.
+ * An easter egg rather than a visible control: nothing on the page advertises
+ * it. The panel slides in from the right edge when something marked
+ * `data-season-trigger` is activated — today that is the department wordmark
+ * in the footer — and closes on its own button, Escape, or a click outside.
+ *
+ * It writes through the SeasonController, so it holds no state of its own and
+ * stays correct if the season is changed from the console or by a `?season=`
+ * link.
  *
  * Built from native controls on purpose. A fieldset of radios gives arrow-key
  * navigation, grouping and announcement for free; hand-rolled `role="radio"`
@@ -15,6 +18,7 @@
 import { DENSITY_MAX, DENSITY_MIN, SEASONS } from "../seasonal/season.js";
 
 const ID = "season-switcher";
+const TRIGGER_SELECTOR = "[data-season-trigger]";
 
 export const mountSeasonSwitcher = (controller) => {
   if (document.getElementById(ID)) {
@@ -26,14 +30,25 @@ export const mountSeasonSwitcher = (controller) => {
   root.id = ID;
 
   const panelId = `${ID}-panel`;
+  const titleId = `${ID}-title`;
   root.innerHTML = `
-    <button class="season-switcher-toggle" type="button" aria-expanded="false" aria-controls="${panelId}">
-      <span class="season-switcher-dot" aria-hidden="true"></span>
-      <span class="season-switcher-toggle-text">Season</span>
-    </button>
-    <div class="season-switcher-panel" id="${panelId}" hidden>
+    <div
+      class="season-switcher-panel"
+      id="${panelId}"
+      role="dialog"
+      aria-modal="false"
+      aria-labelledby="${titleId}"
+      hidden
+    >
+      <div class="season-switcher-head">
+        <h2 class="season-switcher-title" id="${titleId}">Seasonal theme</h2>
+        <button class="season-switcher-close" type="button" data-close aria-label="Close theme switcher">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
       <fieldset class="season-switcher-group">
-        <legend>Seasonal theme</legend>
+        <legend class="sr-only">Seasonal theme</legend>
         ${SEASONS.map(
           (season) => `
           <label class="season-switcher-option">
@@ -72,52 +87,80 @@ export const mountSeasonSwitcher = (controller) => {
 
   document.body.appendChild(root);
 
-  const toggle = root.querySelector(".season-switcher-toggle");
   const panel = root.querySelector(".season-switcher-panel");
+  const closeButton = root.querySelector("[data-close]");
   const radios = Array.from(root.querySelectorAll('input[name="season-choice"]'));
   const density = root.querySelector("[data-density]");
   const densityOut = root.querySelector("[data-density-output]");
   const motion = root.querySelector("[data-motion]");
   const auto = root.querySelector("[data-auto]");
   const hint = root.querySelector("[data-hint]");
-  const dot = root.querySelector(".season-switcher-dot");
 
   /* ---- open / close ---- */
 
-  const setOpen = (open) => {
-    toggle.setAttribute("aria-expanded", String(open));
-    panel.hidden = !open;
-    root.classList.toggle("is-open", open);
+  /* Remembered so Escape and the close button hand focus back to whatever
+     opened the panel, which may be a different trigger on each page. */
+  let opener = null;
+
+  const markTriggers = (open) => {
+    document.querySelectorAll(TRIGGER_SELECTOR).forEach((trigger) => {
+      trigger.setAttribute("aria-expanded", String(open));
+    });
+  };
+
+  const isOpen = () => !panel.hidden;
+
+  const open = (trigger = null) => {
+    if (isOpen()) {
+      return;
+    }
+    opener = trigger;
+    panel.hidden = false;
+    root.classList.add("is-open");
+    markTriggers(true);
+    const checked = radios.find((radio) => radio.checked) || radios[0];
+    checked.focus();
   };
 
   const close = ({ restoreFocus = false } = {}) => {
-    if (panel.hidden) {
+    if (!isOpen()) {
       return;
     }
-    setOpen(false);
-    if (restoreFocus) {
-      toggle.focus();
+    panel.hidden = true;
+    root.classList.remove("is-open");
+    markTriggers(false);
+    if (restoreFocus && opener && document.contains(opener)) {
+      opener.focus();
     }
+    opener = null;
   };
 
-  toggle.addEventListener("click", () => {
-    const open = toggle.getAttribute("aria-expanded") === "true";
-    setOpen(!open);
-    if (!open) {
-      const checked = radios.find((radio) => radio.checked) || radios[0];
-      checked.focus();
+  closeButton.addEventListener("click", () => close({ restoreFocus: true }));
+
+  /* Delegated so triggers can be rendered before or after this mount, and so a
+     re-rendered footer keeps working without re-binding. */
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest?.(TRIGGER_SELECTOR);
+    if (!trigger) {
+      return;
+    }
+    event.preventDefault();
+    if (isOpen()) {
+      close({ restoreFocus: true });
+    } else {
+      open(trigger);
     }
   });
 
-  root.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !panel.hidden) {
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && isOpen()) {
       event.stopPropagation();
       close({ restoreFocus: true });
     }
   });
 
   document.addEventListener("pointerdown", (event) => {
-    if (!panel.hidden && !root.contains(event.target)) {
+    if (isOpen() && !root.contains(event.target) && !event.target.closest?.(TRIGGER_SELECTOR)) {
       close();
     }
   });
@@ -125,7 +168,7 @@ export const mountSeasonSwitcher = (controller) => {
   /* Closing on focus loss keeps the panel from lingering behind the page once
      the user tabs back into content. */
   document.addEventListener("focusin", (event) => {
-    if (!panel.hidden && !root.contains(event.target)) {
+    if (isOpen() && !root.contains(event.target) && !event.target.closest?.(TRIGGER_SELECTOR)) {
       close();
     }
   });
@@ -163,13 +206,6 @@ export const mountSeasonSwitcher = (controller) => {
     densityOut.textContent = String(state.density);
     motion.checked = state.motion;
 
-    const active = SEASONS.find((season) => season.id === state.season);
-    dot.style.setProperty("--swatch", active ? active.swatch : "#5f6673");
-    toggle.setAttribute(
-      "aria-label",
-      `Seasonal theme: ${active ? active.label : "Off"}. Open theme switcher`
-    );
-
     auto.hidden = state.auto;
 
     /* The OS preference overrides the checkbox, so say so rather than letting
@@ -188,5 +224,5 @@ export const mountSeasonSwitcher = (controller) => {
     }
   });
 
-  return root;
+  return { root, open, close, isOpen };
 };

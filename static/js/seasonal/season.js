@@ -12,8 +12,9 @@
 
 import { Disposer, make, onMotionPreferenceChange, prefersReducedMotion } from "./engine.js";
 
-/* Flip to false to hide the floating switcher from visitors while leaving the
-   date-driven selection running. The control is a review tool, not a feature. */
+/* Flip to false to drop the theme panel entirely while leaving the date-driven
+   selection running. Nothing advertises the panel: it only opens from the
+   department wordmark in the footer, so it costs the page no visible chrome. */
 const SHOW_SWITCHER = true;
 
 const STORE_SEASON = "scaiSeason";

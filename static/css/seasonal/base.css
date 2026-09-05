@@ -281,9 +281,10 @@
 /* ---------------------------------------------------------------------------
    Switcher
    ---------------------------------------------------------------------------
-   A review control, pinned to the right edge. Styled from the site's own
-   tokens rather than the active season's, so it stays legible and stays put
-   while the page around it changes character.
+   An easter egg, not advertised chrome: the panel only exists on screen once
+   the department wordmark in the footer is clicked. Styled from the site's own
+   tokens rather than the active season's, so it stays legible while the page
+   around it changes character.
    -------------------------------------------------------------------------- */
 
 .season-switcher {
@@ -295,56 +296,81 @@
   align-items: flex-start;
   transform: translateY(-50%);
   font-size: 0.85rem;
+  /* The wrapper is only a positioning frame; the panel inside takes the
+     pointer. Without this it would swallow clicks along the right edge even
+     while hidden. */
+  pointer-events: none;
 }
 
-.season-switcher-toggle {
-  display: inline-flex;
+/* The panel arrives from the edge it is anchored to, which reads as "this came
+   from over here" rather than as a box blinking into being. */
+.season-switcher.is-open .season-switcher-panel {
+  animation: season-switcher-in var(--dur-base, 220ms) var(--ease-out-soft) both;
+}
+
+@keyframes season-switcher-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .season-switcher.is-open .season-switcher-panel {
+    animation: none;
+  }
+}
+
+.season-switcher-head {
+  display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 10px 12px 12px;
-  border: 1px solid rgba(206, 184, 136, 0.55);
-  border-right: 0;
-  border-radius: 10px 0 0 10px;
-  background: linear-gradient(180deg, rgba(23, 3, 10, 0.94), rgba(54, 8, 20, 0.94));
-  color: var(--white);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32);
-  /* Reads as an edge tab rather than a floating pill, and costs no width. */
-  writing-mode: vertical-rl;
-  transition:
-    border-color var(--dur-base) var(--ease-out-soft),
-    background-color var(--dur-base) var(--ease-out-soft);
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.season-switcher-toggle:hover {
-  border-color: var(--fsu-gold);
-}
-
-.season-switcher-toggle:focus-visible {
-  outline: 2px solid var(--fsu-gold);
-  outline-offset: 2px;
-}
-
-.season-switcher-dot {
-  width: 10px;
-  height: 10px;
-  flex: 0 0 10px;
-  border: 1px solid rgba(0, 0, 0, 0.25);
-  border-radius: 50%;
-  background: var(--swatch, #5f6673);
-}
-
-.season-switcher-toggle-text {
+.season-switcher-title {
+  margin: 0;
+  color: var(--fsu-gold);
+  font-size: 0.7rem;
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-size: 0.72rem;
+}
+
+.season-switcher-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border: 1px solid rgba(206, 184, 136, 0.4);
+  border-radius: 7px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  font: inherit;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out-soft),
+    color var(--dur-fast) var(--ease-out-soft);
+}
+
+.season-switcher-close:hover {
+  background: rgba(206, 184, 136, 0.16);
+  color: var(--white);
 }
 
 .season-switcher-panel {
+  /* The wrapper above is inert, so the panel takes the pointer back. */
+  pointer-events: auto;
   width: 264px;
-  margin-right: 0;
   padding: 16px;
   border: 1px solid rgba(206, 184, 136, 0.45);
   border-right: 0;
@@ -503,10 +529,10 @@
 }
 
 /* Below the mobile breakpoint the panel would crowd the content column, so it
-   spans the viewport width minus the tab and drops the descriptive notes. */
+   gives back some width and drops the descriptive notes. */
 @media (max-width: 620px) {
   .season-switcher-panel {
-    width: min(248px, calc(100vw - 72px));
+    width: min(264px, calc(100vw - 32px));
   }
 
   .season-switcher-note {
