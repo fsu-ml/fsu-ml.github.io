@@ -77,16 +77,6 @@
   }
 }
 
-@keyframes wn-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(206, 184, 136, 0);
-  }
-  50% {
-    box-shadow: 0 0 0 6px var(--season-glow);
-  }
-}
-
 /* ---------------------------------------------------------------------------
    Snow
    -------------------------------------------------------------------------- */
@@ -357,16 +347,17 @@
   pointer-events: none;
 }
 
-/* Hosts have to stop clipping, because both frames sit outside their box. */
-:root[data-season="winter"] .community-card,
-:root[data-season="winter"] .talk-card {
+/* The icicles hang below the community card, so it has to stop clipping. */
+:root[data-season="winter"] .community-card {
   position: relative;
   overflow: visible;
 }
 
-/* Room above the card for the string to hang in. */
+/* The talk card's frost stays inside it, so this one keeps its clip — that is
+   what rounds the lattice off against the card's own corners. */
 :root[data-season="winter"] .talk-card {
-  margin-top: 22px;
+  position: relative;
+  overflow: hidden;
 }
 
 /* "Snow and icicles": snow settled on the top edge, icicles hanging off the
@@ -404,31 +395,43 @@
   stroke-width: 1;
 }
 
-/* "Seminar speakers": a light string across the container's top edge that
-   switches on bulb by bulb when the container is hovered. */
-.wn-frame-lights {
-  inset: -22px 0 auto 0;
-  height: 40px;
+/* Frost creeping into a talk card's opposite corners on hover. */
+.wn-card-frost {
+  opacity: 0;
+  transition: opacity var(--dur-reveal) var(--ease-out-soft);
 }
 
-.wn-wire-card {
+.wn-frost-corner {
+  position: absolute;
+  display: block;
+  width: 126px;
+  height: 126px;
+  color: #9fc4e0;
+}
+
+.wn-frost-corner svg {
+  display: block;
+  width: 100%;
   height: 100%;
 }
 
-.wn-frame-lights .wn-bulb {
-  /* Sequenced off the bulb's index, so the string lights left to right rather
-     than all at once. */
-  transition-delay: 0ms;
+/* The lattice is drawn anchored to a top-left corner, so the other two are
+   the same artwork reflected into place. */
+.wn-frost-corner-tr {
+  top: -10px;
+  right: -10px;
+  transform: scaleX(-1);
 }
 
-:root[data-season="winter"] .talk-card:hover .wn-frame-lights .wn-bulb,
-:root[data-season="winter"] .talk-card:focus-within .wn-frame-lights .wn-bulb {
-  filter: none;
-  opacity: 1;
-  box-shadow:
-    0 0 8px 2px color-mix(in srgb, var(--bulb) 70%, transparent),
-    0 0 18px 6px color-mix(in srgb, var(--bulb) 34%, transparent);
-  transition-delay: calc(var(--order, 0) * 60ms);
+.wn-frost-corner-bl {
+  bottom: -10px;
+  left: -10px;
+  transform: scaleY(-1);
+}
+
+:root[data-season="winter"] .talk-card:hover .wn-card-frost,
+:root[data-season="winter"] .talk-card:focus-within .wn-card-frost {
+  opacity: 0.55;
 }
 
 /* ---------------------------------------------------------------------------
@@ -438,34 +441,25 @@
    sits on, or a focus ring.
    -------------------------------------------------------------------------- */
 
-:root[data-season="winter"] .feature-card,
-:root[data-season="winter"] .talk-card {
+/* The artboard's "gold halo" container, on the About cards. Border and halo
+   only — the card keeps its own background and type, so nothing here touches a
+   contrast pair. */
+:root[data-season="winter"] .feature-card {
   position: relative;
+  border-color: rgba(206, 184, 136, 0.85);
 }
 
-/* A gold halo on the primary action, on hover only — the button's own colours
-   are untouched so its contrast ratio is unchanged. */
+:root[data-season="winter"] .feature-card:hover,
+:root[data-season="winter"] .feature-card:focus-within {
+  border-color: #ceb888;
+  box-shadow: 0 0 0 6px rgba(206, 184, 136, 0.22);
+  transform: translateY(-4px);
+}
+
+/* A steady gold halo on hover. It replaces a pulsing glow and a snow ridge
+   that grew out of the top edge — between them the button had two things
+   moving on a plain mouseover, which is a lot of event for a link. The
+   button's own colours are untouched, so its contrast ratio is unchanged. */
 :root[data-season="winter"] .button-primary:hover {
-  animation: wn-glow 1.8s ease-in-out infinite;
-}
-
-/* Snow settles along the button's top edge on hover. A repeating radial
-   gradient gives the scalloped ridge with one declaration and no artwork. */
-:root[data-season="winter"] .button-primary::before {
-  position: absolute;
-  top: -5px;
-  right: -1px;
-  left: -1px;
-  height: 10px;
-  content: "";
-  background: radial-gradient(circle at 6px 9px, #f7fbff 5.4px, transparent 5.8px) 0 0 / 12px 10px
-    repeat-x;
-  transform: scaleY(0);
-  transform-origin: 50% 100%;
-  pointer-events: none;
-  transition: transform var(--dur-slow) var(--ease-spring);
-}
-
-:root[data-season="winter"] .button-primary:hover::before {
-  transform: scaleY(1);
+  box-shadow: 0 0 18px 3px var(--season-glow);
 }

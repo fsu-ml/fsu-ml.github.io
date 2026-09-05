@@ -175,10 +175,10 @@ const WIRE_D = (() => {
   return d;
 })();
 
-const lightStringHtml = (count = BULBS, cls = "") => {
+const lightStringHtml = () => {
   const bulbs = [];
-  for (let i = 0; i < count; i += 1) {
-    const x = 30 + i * ((WIRE_W - 60) / (count - 1));
+  for (let i = 0; i < BULBS; i += 1) {
+    const x = 30 + i * ((WIRE_W - 60) / (BULBS - 1));
     bulbs.push(
       `<span class="wn-bulb" style="left:${((x / WIRE_W) * 100).toFixed(3)}%;` +
         `top:${wireY(x).toFixed(1)}px;--bulb:${BULB_COLORS[i % BULB_COLORS.length]};` +
@@ -186,7 +186,7 @@ const lightStringHtml = (count = BULBS, cls = "") => {
     );
   }
   return `
-    <svg class="wn-wire ${cls}" viewBox="0 0 ${WIRE_W} ${WIRE_H}" preserveAspectRatio="none"
+    <svg class="wn-wire" viewBox="0 0 ${WIRE_W} ${WIRE_H}" preserveAspectRatio="none"
          aria-hidden="true" focusable="false">
       <path d="${WIRE_D}" fill="none" stroke="#ceb888" stroke-width="1.4" opacity=".7"></path>
     </svg>
@@ -380,15 +380,14 @@ export const mount = ({ overlay, density, motion }) => {
     `${CARD_SNOW}${icicles(31)}`
   );
 
-  /* Each talk card gets the artboard's "Seminar speakers" container: a light
-     string across its top edge that switches on bulb by bulb when the card is
-     hovered. This is the card the schedule page is built from — it has no
-     table wrapper to hang a single string off. */
+  /* Talk cards get the artboard's first card treatment: frost creeping into
+     opposite corners on hover. */
   decorate(
     disposer,
     ".talk-card",
-    "wn-frame wn-frame-lights",
-    lightStringHtml(9, "wn-wire-card")
+    "season-card-art wn-card-frost",
+    `<span class="wn-frost-corner wn-frost-corner-tr">${FROST_CORNER}</span>
+     <span class="wn-frost-corner wn-frost-corner-bl">${FROST_CORNER}</span>`
   );
 
   return {
