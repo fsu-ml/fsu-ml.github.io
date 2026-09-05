@@ -61,31 +61,6 @@
   }
 }
 
-/* A leaf blows in and settles on the button's top edge. */
-@keyframes tg-land {
-  from {
-    transform: translate(-14px, -26px) rotate(-120deg);
-    opacity: 0;
-  }
-  70% {
-    opacity: 1;
-  }
-  to {
-    transform: translate(0, 0) rotate(-14deg);
-    opacity: 1;
-  }
-}
-
-@keyframes tg-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(217, 142, 63, 0);
-  }
-  50% {
-    box-shadow: 0 0 0 6px var(--season-glow);
-  }
-}
-
 @keyframes tg-cross {
   from {
     transform: translateX(-220px);
@@ -175,12 +150,21 @@
    sits on, or a focus ring.
    -------------------------------------------------------------------------- */
 
+/* A steady halo, set through box-shadow rather than a keyframe animation.
+   `animation` on :hover replaces the whole animation property — including the
+   site's own `motion-slide-in` entrance on hero buttons. Releasing the hover
+   reverts the property, which restarts that entrance from its opacity-0
+   keyframe, so the button blinked out of existence and slid back in. */
 :root[data-season="thanksgiving"] .button-primary:hover {
-  animation: tg-glow 1.8s ease-in-out infinite;
+  box-shadow: 0 0 18px 3px var(--season-glow);
 }
 
 /* A leaf blows in and settles on the button's top edge on hover, and a
-   handful tumble out of it on click (thanksgiving.js). */
+   handful tumble out of it on click (thanksgiving.js).
+
+   A transition, not an animation. `animation: … forwards` has nothing to run
+   backwards when the pointer leaves, so the leaf vanished between frames
+   instead of drifting back off. */
 :root[data-season="thanksgiving"] .button-primary::before {
   position: absolute;
   top: -9px;
@@ -191,11 +175,16 @@
   background: no-repeat center/contain
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23d98e3f' d='M12 2l2 5 5-1-3 4 4 3-5 1 1 5-4-3-4 3 1-5-5-1 4-3-3-4 5 1z'/%3E%3C/svg%3E");
   opacity: 0;
+  transform: translate(-10px, -14px) rotate(-70deg);
   pointer-events: none;
+  transition:
+    opacity var(--dur-slow) var(--ease-out-soft),
+    transform var(--dur-reveal) var(--ease-out-soft);
 }
 
 :root[data-season="thanksgiving"] .button-primary:hover::before {
-  animation: tg-land 0.5s var(--ease-out-soft) forwards;
+  opacity: 1;
+  transform: translate(0, 0) rotate(-14deg);
 }
 
 :root[data-season="thanksgiving"] .feature-card,
@@ -299,14 +288,17 @@
 /* Leaves blow in and settle on the card's top edge — one at the left corner,
    two at the right. They rest above the edge, which is what makes them read as
    having landed on the card rather than being printed on it. */
+/* A short drift in on the site's own entrance curve, the same one every
+   revealed element uses. It was a spring with a 70-degree spin over a 22px
+   drop, which on three leaves at once reads as violent rather than seasonal. */
 .tg-leaf-frame span {
   position: absolute;
   display: block;
   opacity: 0;
-  transform: translate(var(--from, 20px), -22px) rotate(calc(var(--turn) - 70deg));
+  transform: translate(var(--from, 10px), -10px) rotate(calc(var(--turn) - 16deg));
   transition:
-    opacity var(--dur-slow) var(--ease-out-soft) var(--wait),
-    transform var(--dur-reveal) var(--ease-spring) var(--wait);
+    opacity var(--dur-reveal) var(--ease-out-soft) var(--wait),
+    transform var(--dur-reveal) var(--ease-out-soft) var(--wait);
 }
 
 .tg-leaf-frame svg {
@@ -350,7 +342,7 @@
 
 .tg-acorn-ring {
   opacity: 0;
-  transition: opacity var(--dur-base) var(--ease-out-soft);
+  transition: opacity var(--dur-slow) var(--ease-out-soft);
 }
 
 /* One dash pattern draws the whole circle because `pathLength` normalises it,
@@ -358,37 +350,43 @@
 .tg-ring-circle {
   stroke-dasharray: 4 3;
   stroke-dashoffset: 40;
-  transition: stroke-dashoffset var(--dur-reveal) var(--ease-out-soft);
+  transition: stroke-dashoffset 900ms var(--ease-out-soft);
 }
 
 .tg-ring-item {
   opacity: 0;
   transform-box: fill-box;
   transform-origin: 50% 50%;
+  /* Grows in rather than popping: no overshoot, and it starts from two thirds
+     rather than from nothing. */
+  scale: 0.65;
   transition:
-    opacity var(--dur-base) var(--ease-out-soft),
-    scale var(--dur-base) var(--ease-spring);
-  scale: 0.4;
+    opacity var(--dur-slow) var(--ease-out-soft),
+    scale var(--dur-slow) var(--ease-out-soft);
 }
 
-:is(.speaker-directory-card, .talk-card, .next-seminar):hover .tg-acorn-ring,
-:is(.speaker-directory-card, .talk-card, .next-seminar):focus-within .tg-acorn-ring,
-.speaker-directory-photo:hover .tg-acorn-ring {
+/* The ring answers the portrait, and the leaves answer the card. Two separate
+   interactions rather than one hover firing both at once — together they were
+   four things starting on the same frame. */
+.speaker-directory-photo:hover .tg-acorn-ring,
+.speaker-directory-photo:focus-within .tg-acorn-ring,
+.seminar-speaker-photo:hover .tg-acorn-ring {
   opacity: 1;
 }
 
-:is(.speaker-directory-card, .talk-card, .next-seminar):hover .tg-ring-circle,
-:is(.speaker-directory-card, .talk-card, .next-seminar):focus-within .tg-ring-circle,
-.speaker-directory-photo:hover .tg-ring-circle {
+.speaker-directory-photo:hover .tg-ring-circle,
+.speaker-directory-photo:focus-within .tg-ring-circle,
+.seminar-speaker-photo:hover .tg-ring-circle {
   stroke-dashoffset: 0;
 }
 
-:is(.speaker-directory-card, .talk-card, .next-seminar):hover .tg-ring-item,
-:is(.speaker-directory-card, .talk-card, .next-seminar):focus-within .tg-ring-item,
-.speaker-directory-photo:hover .tg-ring-item {
+.speaker-directory-photo:hover .tg-ring-item,
+.speaker-directory-photo:focus-within .tg-ring-item,
+.seminar-speaker-photo:hover .tg-ring-item {
   opacity: 1;
   scale: 1;
-  /* Staggered off the item's position round the ring, so it fills in rather
-     than switching on. */
-  transition-delay: calc(var(--i, 0) * 45ms);
+  /* Walks once round the circle: acorn, berry, acorn, berry. Sixteen items at
+     55ms is a shade under a second to close the ring, which is slow enough to
+     watch it travel. */
+  transition-delay: calc(var(--i, 0) * 55ms);
 }

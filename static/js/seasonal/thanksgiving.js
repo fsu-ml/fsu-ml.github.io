@@ -416,8 +416,8 @@ const cardLeaves = (seed) => {
     .map(
       ([side, offset, top, rot], i) =>
         `<span style="${side}:${offset}px;top:${top}px;--turn:${rot}deg;--from:${
-          side === "left" ? "-22px" : "22px"
-        };--wait:${i * 80}ms">${leafSvg(
+          side === "left" ? "-10px" : "10px"
+        };--wait:${i * 90}ms">${leafSvg(
           LEAF_KINDS[Math.floor(rand() * 4)],
           LEAF_COLORS[Math.floor(rand() * 4)],
           22 + rand() * 8
@@ -461,29 +461,36 @@ const leafScatter = (seed) => {
    it and eight berries between them. On hover the circle draws itself on and
    the acorns and berries pop in around it, each a beat after the last. */
 const ACORN_RING = (() => {
-  const acorn = (a) => `
-    <g class="tg-ring-item" style="--i:${a / 45}"
+  /* Acorn and berry alternate every 22.5 degrees. `order` counts round the
+     circle rather than per kind, so the stagger walks the ring once instead of
+     laying down all eight acorns and then all eight berries. */
+  const acorn = (a, order) => `
+    <g class="tg-ring-item" style="--i:${order}"
        transform="rotate(${a} 65 65) translate(65 15) rotate(${-a})">
-      <g transform="translate(-6 -7.5) scale(.5)">
-        <path d="M5 12h14c0 8-4 14-7 16-3-2-7-8-7-16z" fill="#b4562c"></path>
+      <g transform="translate(-8 -10) scale(.68)">
+        <path d="M5 12h14c0 8-4 14-7 16-3-2-7-8-7-16z" fill="#c4632f"></path>
         <path d="M4 12c0-6 4-9 8-9s8 3 8 9z" fill="#8e3b2a"></path>
+        <path d="M4 12h16" stroke="#7a3122" stroke-width="1.1"></path>
         <path d="M12 3V0" stroke="#8e3b2a" stroke-width="1.6" stroke-linecap="round"></path>
       </g>
     </g>`;
-  const berry = (a) => `
-    <g class="tg-ring-item" style="--i:${((a - 22.5) / 45 + 0.5).toFixed(1)}"
-       transform="rotate(${a} 65 65)">
-      <circle cx="65" cy="15" r="3.5" fill="#8e1f31"></circle>
+  /* Small, and shaded rather than flat: a plain saturated circle at this size
+     reads as a stray red dot, not as a berry. */
+  const berry = (a, order) => `
+    <g class="tg-ring-item" style="--i:${order}" transform="rotate(${a} 65 65)">
+      <circle cx="65" cy="15" r="2.9" fill="#7e1c2c"></circle>
+      <circle cx="64.2" cy="14.1" r="1.5" fill="#a8324a"></circle>
+      <circle cx="63.7" cy="13.6" r="0.6" fill="rgba(255,255,255,.5)"></circle>
     </g>`;
   const items = [];
   for (let i = 0; i < 8; i += 1) {
-    items.push(acorn(i * 45));
-    items.push(berry(i * 45 + 22.5));
+    items.push(acorn(i * 45, i * 2));
+    items.push(berry(i * 45 + 22.5, i * 2 + 1));
   }
   return `
     <svg class="tg-acorn-ring" viewBox="0 0 130 130" aria-hidden="true" focusable="false">
       <circle class="tg-ring-circle" cx="65" cy="65" r="50" fill="none" stroke="#8e3b2a"
-              stroke-width="1.6"></circle>
+              stroke-width="1.4"></circle>
       ${items.join("")}
     </svg>`;
 })();
