@@ -601,8 +601,12 @@ export const mount = ({ overlay, density, motion, root }) => {
   /* Click a primary action and a handful of leaves tumble out of it. */
   onButtonPress(disposer, ".button-primary", (x, y) => leaves.burst(x, y, 9));
 
-  /* Section seam between the overview and the dashboard. */
-  decorate(disposer, ".section-dashboard", "season-divider tg-divider", DIVIDER, { first: true });
+  /* Section seam between the overview and the dashboard.
+     The adjacent-sibling selector matters: the subpages reuse
+     `.section-dashboard` as their only section, with no overview before it, so
+     a bare class selector hangs a seam divider directly under the header on
+     every one of them. */
+  decorate(disposer, ".section-overview + .section-dashboard", "season-divider tg-divider", DIVIDER, { first: true });
 
   /* Every circular speaker photograph gets the leaf wreath. */
   decorate(

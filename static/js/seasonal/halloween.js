@@ -822,8 +822,12 @@ export const mount = ({ overlay, density, motion, root }) => {
     swarm.release(clamp(x - c.left, 10, surface.width - 10), clamp(y - c.top, 10, surface.height - 10), 3);
   });
 
-  /* Section seam between the overview and the dashboard. */
-  decorate(disposer, ".section-dashboard", "season-divider hw-divider", DIVIDER, { first: true });
+  /* Section seam between the overview and the dashboard.
+     The adjacent-sibling selector matters: the subpages reuse
+     `.section-dashboard` as their only section, with no overview before it, so
+     a bare class selector hangs a seam divider directly under the header on
+     every one of them. */
+  decorate(disposer, ".section-overview + .section-dashboard", "season-divider hw-divider", DIVIDER, { first: true });
 
   /* Every circular speaker photograph gets a web across one corner of its rim. */
   decorate(disposer, ".speaker-directory-photo, .seminar-speaker-photo", "season-ring", PHOTO_WEB);
