@@ -154,6 +154,24 @@
   }
 }
 
+/* Startled out of existence: a quick lift and a fade, with a beat at the top
+   of the curve so the O-mouth is actually legible before it goes. */
+@keyframes hw-ghost-gasp {
+  0% {
+    opacity: var(--gasp-from, 0.5);
+    scale: 1;
+  }
+  30% {
+    opacity: 0.72;
+    scale: 1.12;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.3;
+    translate: 0 -46px;
+  }
+}
+
 /* A ghost rises out of the ground, drifts up, and is gone. It fades in fast
    and out slowly, so it reads as leaving rather than as being switched off,
    and it never reaches full opacity — a solid ghost is a cartoon. */
@@ -351,13 +369,63 @@
 
 /* Emitted before the graveyard, so the headstones paint over the bottom of
    each ghost and it appears to rise from behind one. */
+/* The ghosts are clickable, so the layer has to sit above `.footer-inner`
+   (z-index 1) — a click on empty footer space would otherwise be swallowed by
+   the column that owns that box. The graveyard is lifted above them in turn,
+   so they still rise from behind the headstones. */
+.hw-ghosts {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
 .hw-ghost {
   position: absolute;
   bottom: 34px;
   display: block;
   opacity: 0;
-  pointer-events: none;
+  /* Re-enabled against the scene's `pointer-events: none`. */
+  pointer-events: auto;
+  cursor: pointer;
   animation: hw-ghost var(--dur, 20s) ease-in-out var(--delay, 0s) infinite;
+}
+
+/* Startled: the smile becomes an O, the eyes widen, and it shoots up and out.
+   The vanish replaces the rise animation outright; when it ends, halloween.js
+   drops the class and the rise starts over, so the ghost returns on its next
+   pass rather than being spent. */
+.hw-ghost.is-spooked {
+  animation: hw-ghost-gasp 620ms var(--ease-out-expo) forwards;
+  pointer-events: none;
+}
+
+.hw-ghost-o {
+  opacity: 0;
+}
+
+.hw-ghost.is-spooked .hw-ghost-smile {
+  opacity: 0;
+}
+
+.hw-ghost.is-spooked .hw-ghost-o {
+  opacity: 1;
+}
+
+.hw-ghost.is-spooked .hw-ghost-eye {
+  /* A gasp is as much the eyes as the mouth. */
+  ry: 4.4;
+}
+
+/* Invisible with motion off, so there is nothing to click at. */
+:root.season-static .hw-ghost {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-ghost {
+    pointer-events: none;
+  }
 }
 
 .hw-ghost svg {
@@ -424,6 +492,9 @@
   right: 0;
   bottom: 0;
   left: 0;
+  /* Above the ghost layer, which had to be raised over the footer's columns to
+     be clickable — the stones still have to stand in front of them. */
+  z-index: 3;
   width: 100%;
   height: 96px;
   color: #150819;

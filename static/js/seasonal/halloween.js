@@ -607,17 +607,23 @@ const LANTERNS = `
  *
  * Deliberately few and slow. Four on cycles of sixteen to twenty-six seconds
  * means one is usually visible and two rarely are, which is the difference
- * between a haunted footer and a busy one. */
+ * between a haunted footer and a busy one.
+ *
+ * They are clickable: startle one and it gasps and vanishes, then rises again
+ * on its next cycle. */
 const ghosts = (seed, n) => {
   const rand = seeded(seed);
   const shape = `
     <svg viewBox="0 0 40 56" aria-hidden="true" focusable="false">
       <path fill="rgba(233, 224, 244, .82)"
             d="M20 2c9 0 15 8 15 18v29c0 3-3 4-5 2l-3-3c-1-1-3-1-4 0l-3 3c-1 1-3 1-4 0l-3-3c-1-1-3-1-4 0l-3 3c-2 2-5 1-5-2V20C5 10 11 2 20 2z"></path>
-      <ellipse cx="15" cy="21" rx="2.6" ry="3.4" fill="#2a1118"></ellipse>
-      <ellipse cx="26" cy="21" rx="2.6" ry="3.4" fill="#2a1118"></ellipse>
-      <path d="M18 30c1.4 1.6 3.4 1.6 5 0" stroke="#2a1118" stroke-width="1.6"
-            fill="none" stroke-linecap="round"></path>
+      <ellipse class="hw-ghost-eye" cx="15" cy="21" rx="2.6" ry="3.4" fill="#2a1118"></ellipse>
+      <ellipse class="hw-ghost-eye" cx="26" cy="21" rx="2.6" ry="3.4" fill="#2a1118"></ellipse>
+      <!-- Both mouths are always in the markup; the spooked class swaps which
+           one is shown, so there is no re-render to do on click. -->
+      <path class="hw-ghost-smile" d="M18 30c1.4 1.6 3.4 1.6 5 0" stroke="#2a1118"
+            stroke-width="1.6" fill="none" stroke-linecap="round"></path>
+      <ellipse class="hw-ghost-o" cx="20.5" cy="31.5" rx="2.6" ry="3.4" fill="#2a1118"></ellipse>
     </svg>`;
   return Array.from({ length: n }, () => {
     const dur = range(rand, 16, 26);
@@ -761,9 +767,28 @@ export const mount = ({ overlay, density, motion, root }) => {
        ${bareTree(31, { H: 220, trunk: 7 })}
        ${OWL}
      </div>
-     ${ghosts(71, 4)}
+     <div class="hw-ghosts">${ghosts(71, 4)}</div>
      ${graveyard(9)}`
   );
+
+  /* Startle a ghost and it gasps and vanishes, then rises again on its next
+     cycle. One listener on the layer rather than one per ghost, and the reset
+     rides `animationend` rather than a timer — the rise animation is infinite,
+     so the only thing that can end here is the vanish. */
+  const ghostLayer = document.querySelector(".hw-ghosts");
+  if (ghostLayer) {
+    disposer.listen(ghostLayer, "click", (event) => {
+      const ghost = event.target.closest(".hw-ghost");
+      if (ghost) {
+        ghost.classList.add("is-spooked");
+      }
+    });
+    disposer.listen(ghostLayer, "animationend", (event) => {
+      if (event.target.classList && event.target.classList.contains("is-spooked")) {
+        event.target.classList.remove("is-spooked");
+      }
+    });
+  }
 
   /* The lanterns sit on the footer's top edge, so they need to escape it —
      they live in their own decoration rather than inside `.hw-footer`, which
