@@ -1,7 +1,7 @@
 import { pageData } from "./js/data/page-data.js";
-import { loadTemplates } from "./js/data/templates.js";
+import { renderFlyers } from "./js/render/flyers.js";
+import { renderFooter, renderNavigation } from "./js/render/sections.js";
 import { qs } from "./js/utils/dom.js";
-import { renderFooter, renderFullSchedule, renderNavigation } from "./js/render/sections.js";
 import { bindNavigation } from "./js/ui/navigation.js";
 import { bindHeaderChrome } from "./js/ui/chrome.js";
 import { bindFlyerLightbox } from "./js/ui/lightbox.js";
@@ -9,15 +9,14 @@ import { activateMotion } from "./js/ui/reveal.js";
 import { bindSeasons } from "./js/seasonal/season.js";
 
 const init = async () => {
-  document.title = `Schedule | ${pageData.page.title}`;
+  document.title = `Flyers | ${pageData.page.title}`;
   qs('meta[name="description"]').setAttribute(
     "content",
-    "Upcoming FSU SC Artificial Intelligence Seminar talks, dates, speakers, and topics."
+    "Flyers and announcement artwork for FSU SC Artificial Intelligence Seminar talks, by semester."
   );
 
-  await loadTemplates();
-  renderNavigation("schedule");
-  await renderFullSchedule();
+  renderNavigation("flyers");
+  await renderFlyers();
   renderFooter();
   bindNavigation();
   bindHeaderChrome();
@@ -32,6 +31,6 @@ init().catch((error) => {
   console.error(error);
   document.body.insertAdjacentHTML(
     "afterbegin",
-    '<div class="render-error">The schedule could not load. Please serve this folder with a local web server.</div>'
+    '<div class="render-error">The flyers could not load. Please serve this folder with a local web server.</div>'
   );
 });

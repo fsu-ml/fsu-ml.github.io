@@ -3,50 +3,9 @@ import { loadSpeakersFromCsv } from "../data/speakers.js";
 import { renderArchiveSpeakerLine } from "./speaker-links.js";
 import { qs } from "../utils/dom.js";
 import { escapeHtml } from "../utils/html.js";
+import { dateBadge, readableDate } from "../utils/dates.js";
 import { parseMaterialLinks } from "../utils/materials.js";
-
-const monthLabels = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
-];
-
-const parseIsoDate = (value = "") => {
-  const [year, month, day] = value.split("-").map(Number);
-  if (!year || !month || !day) {
-    return null;
-  }
-  return { year, month, day };
-};
-
-const dateBadge = (value = "") => {
-  const parsed = parseIsoDate(value);
-  if (!parsed) {
-    return { month: "TBA", day: "" };
-  }
-  return {
-    month: monthLabels[parsed.month - 1],
-    day: String(parsed.day).padStart(2, "0")
-  };
-};
-
-const readableDate = (value = "") => {
-  const parsed = parseIsoDate(value);
-  if (!parsed) {
-    return "Date TBA";
-  }
-  return `${monthNames[parsed.month - 1]} ${parsed.day}, ${parsed.year}`;
-};
+import { flyerTriggerAttrs, parseFlyerList } from "../utils/flyers.js";
 
 const formatTalkCount = (count = 0) => {
   if (count === 1) {
@@ -55,14 +14,22 @@ const formatTalkCount = (count = 0) => {
   return `${count} talks`;
 };
 
-const renderMaterials = (materials = "") => {
-  const links = parseMaterialLinks(materials);
-  if (!links.length) {
+// Flyers ride in the same chip row as slides and video: from a reader's point
+// of view a poster is one more thing the talk left behind.
+const renderMaterials = (talk = {}) => {
+  const links = parseMaterialLinks(talk.materials);
+  const flyers = parseFlyerList(talk.flyers, talk.talkTitle);
+  if (!links.length && !flyers.length) {
     return "";
   }
+  const flyerItem = flyers.length
+    ? `<li><button class="flyer-chip" type="button" data-flyer-set="${escapeHtml(
+        flyerTriggerAttrs(flyers, talk.talkTitle)
+      )}">${escapeHtml(flyers.length > 1 ? `Flyers (${flyers.length})` : "Flyer")}</button></li>`
+    : "";
   return `
     <ul class="archive-materials">
-      ${links
+      ${flyerItem}${links
         .map(
           (link) =>
             `<li><a class="archive-material-link" href="${escapeHtml(link.href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.label)}</a></li>`
@@ -91,7 +58,7 @@ const renderArchiveTalk = (talk) => {
       </div>
       <div class="archive-talk-meta">
         <p class="archive-talk-speaker-line">${renderArchiveSpeakerLine(talk)}</p>
-        ${renderMaterials(talk.materials)}
+        ${renderMaterials(talk)}
       </div>
     </article>
   `;

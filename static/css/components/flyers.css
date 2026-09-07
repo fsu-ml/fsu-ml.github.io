@@ -1,0 +1,209 @@
+/* ---------------------------------------------------------------------------
+   Flyers
+   ---------------------------------------------------------------------------
+   Two pieces: the chip that opens the lightbox from a talk elsewhere on the
+   site, and the poster grid on /flyers/.
+
+   The flyers page reuses the archive's semester nav and section chrome
+   (.archive-semester-nav, .archive-semester-pill, .archive-semester,
+   .archive-semester-header) rather than restating them, so the two "browse by
+   semester" pages stay identical by construction.
+   -------------------------------------------------------------------------- */
+
+/* ---- chip: opens the lightbox from a talk card, archive row or the hero ---- */
+
+.flyer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border: 1px solid rgba(120, 47, 64, 0.28);
+  border-radius: 999px;
+  background: rgba(120, 47, 64, 0.08);
+  color: var(--fsu-garnet);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-base) var(--ease-out-soft),
+    border-color var(--dur-base) var(--ease-out-soft),
+    color var(--dur-base) var(--ease-out-soft);
+}
+
+.flyer-chip:hover,
+.flyer-chip:focus-visible {
+  background: var(--fsu-garnet);
+  border-color: var(--fsu-garnet);
+  color: var(--white);
+}
+
+.flyer-chip svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* On the dark hero card the garnet-on-cream chip has nothing to sit against. */
+.seminar-card-body .flyer-chip {
+  border-color: rgba(206, 184, 136, 0.45);
+  background: rgba(206, 184, 136, 0.14);
+  color: var(--cream);
+}
+
+.seminar-card-body .flyer-chip:hover,
+.seminar-card-body .flyer-chip:focus-visible {
+  background: var(--fsu-gold);
+  border-color: var(--fsu-gold);
+  color: var(--fsu-garnet-deep);
+}
+
+/* The talk card's chip sits on the title row rather than in the body flow, so
+   the card's four-row grid is unchanged whether or not a flyer exists. */
+.talk-card-flyer {
+  display: flex;
+  flex-wrap: wrap;
+  /* Without this the chip stretches to whatever height the card's grid row
+     happens to be, since a flex item defaults to `align-self: stretch`. */
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---- /flyers/ grid ---- */
+
+.flyer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.flyer-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition:
+    box-shadow var(--dur-slow) var(--ease-out-soft),
+    transform var(--dur-slow) var(--ease-out-soft),
+    border-color var(--dur-slow) var(--ease-out-soft);
+}
+
+/* A flyer card is about a talk, not a person, so it takes the standard lift.
+   :focus-within carries the hover state when the stretched trigger is reached
+   by keyboard, matching how every other card here pairs the two. */
+.flyer-card:hover,
+.flyer-card:focus-within {
+  transform: translateY(var(--lift));
+  border-color: rgba(120, 47, 64, 0.24);
+  box-shadow: 0 2px 4px rgba(7, 17, 31, 0.05), 0 18px 36px -18px rgba(7, 17, 31, 0.26);
+}
+
+/* The trigger is a real button carrying the talk title, stretched over the
+   whole tile so the art is clickable too. A single <button> wrapping the card
+   was not an option: buttons take phrasing content only, which would have cost
+   the title its <h3>. */
+.flyer-card-trigger {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.flyer-card-trigger::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.flyer-card-trigger:focus-visible {
+  outline: none;
+}
+
+.flyer-card:focus-within {
+  outline: 2px solid var(--fsu-gold);
+  outline-offset: 2px;
+}
+
+.flyer-card-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  padding: 14px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(206, 184, 136, 0.18), transparent 60%),
+    rgba(20, 32, 51, 0.04);
+  border-bottom: 1px solid var(--line);
+}
+
+.flyer-card-art img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 16px rgba(55, 24, 29, 0.18));
+}
+
+.flyer-card-count {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(7, 17, 31, 0.72);
+  color: var(--cream);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.flyer-card-body {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  padding: 14px 16px 16px;
+}
+
+.flyer-card-title {
+  margin: 0;
+  color: var(--fsu-garnet-deep);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.flyer-card-meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.flyer-card-speaker {
+  margin: 0;
+  color: var(--fsu-garnet);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.flyers-empty {
+  margin: 0;
+  padding: 2rem 1rem;
+  color: var(--muted);
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: center;
+}

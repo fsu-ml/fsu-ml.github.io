@@ -18,25 +18,12 @@ import { icon } from "../ui/icons.js";
 import { activateMotion } from "../ui/reveal.js";
 import { qs } from "../utils/dom.js";
 import { escapeHtml, renderTemplate } from "../utils/html.js";
+import { dateBadge, readableDate } from "../utils/dates.js";
+import { flyerTriggerAttrs, parseFlyerList } from "../utils/flyers.js";
 import { renderButton } from "./buttons.js";
 
 const footerLogoUrl = new URL("../../../images/FSU-Scientific-Computing.svg", import.meta.url).href;
 const findSection = (id) => pageData.sections.find((section) => section.id === id);
-const monthLabels = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
-];
 
 const speakerInitials = (name = "") => {
   if (/\bTBA\b/i.test(name)) {
@@ -66,33 +53,6 @@ const formatSpecialties = (topic = "") =>
     .map(titleCase)
     .filter(Boolean)
     .join(", ");
-
-const parseIsoDate = (value = "") => {
-  const [year, month, day] = value.split("-").map(Number);
-  if (!year || !month || !day) {
-    return null;
-  }
-  return { year, month, day };
-};
-
-const dateBadge = (value = "") => {
-  const parsed = parseIsoDate(value);
-  if (!parsed) {
-    return { month: "TBA", day: "" };
-  }
-  return {
-    month: monthLabels[parsed.month - 1],
-    day: String(parsed.day).padStart(2, "0")
-  };
-};
-
-const readableDate = (value = "") => {
-  const parsed = parseIsoDate(value);
-  if (!parsed) {
-    return "Date TBA";
-  }
-  return `${monthNames[parsed.month - 1]} ${parsed.day}, ${parsed.year}`;
-};
 
 const topicTag = (topic = "") => titleCase(topic.split(";").find(Boolean) || "AI Seminar");
 
@@ -191,6 +151,19 @@ const sessionRegistration = (talk = {}) => (talk.registrationUrl || "").trim();
 // nothing renders nothing here, exactly as before these columns existed.
 const sessionSummary = (talk = {}) =>
   [sessionTime(talk), sessionLocation(talk), locationNote(talk)].filter(Boolean).join(" · ");
+
+// The chip that opens the flyer lightbox. Renders nothing for a talk with no
+// artwork, so every card is unchanged until a flyer is added to the CSV.
+const flyerChipMarkup = (talk = {}) => {
+  const flyers = parseFlyerList(talk.flyers, talk.talkTitle);
+  if (!flyers.length) {
+    return "";
+  }
+  const label = flyers.length > 1 ? `View flyers (${flyers.length})` : "View flyer";
+  return `<button class="flyer-chip" type="button" data-flyer-set="${escapeHtml(
+    flyerTriggerAttrs(flyers, talk.talkTitle)
+  )}">${icon("image")}<span>${escapeHtml(label)}</span></button>`;
+};
 
 const sessionSummaryMarkup = (talk, tag = "span") => {
   const summary = sessionSummary(talk);
@@ -337,6 +310,7 @@ const renderTalkCard = (speaker, details = {}) => {
   const speakerRowAttrs = multiSpeaker
     ? ""
     : ` href="${escapeHtml(speakerWebsite(primarySpeaker))}"`;
+  const talkFlyerMarkup = flyerChipMarkup(speaker);
 
   return `
     <article class="talk-card" data-reveal="up">
@@ -351,6 +325,7 @@ const renderTalkCard = (speaker, details = {}) => {
       ${sessionSummaryMarkup(speaker, "p")}
       <p class="talk-description">${escapeHtml(description)}</p>
       <div class="talk-card-spacer" aria-hidden="true"></div>
+      ${talkFlyerMarkup ? `<div class="talk-card-flyer">${talkFlyerMarkup}</div>` : ""}
       <${speakerRowTag} class="talk-speaker-row"${speakerRowAttrs}>
         <span class="speaker-media" aria-hidden="true">
           ${imageMarkup}
@@ -519,6 +494,7 @@ export const renderHero = async (templates) => {
     showProfileDetails && speakerSpecialties
       ? `<p class="seminar-specialties">${escapeHtml(speakerSpecialties)}</p>`
       : "";
+  const heroFlyerMarkup = flyerChipMarkup(speaker);
 
   swapSeminarCard(`
     <div class="seminar-card-body">
@@ -541,6 +517,7 @@ export const renderHero = async (templates) => {
       <div class="seminar-meta seminar-meta-secondary">
         ${metaRowsMarkup}
       </div>
+      ${heroFlyerMarkup ? `<div class="talk-card-flyer">${heroFlyerMarkup}</div>` : ""}
     </div>
   `);
 };

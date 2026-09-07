@@ -22,6 +22,8 @@ const icons = {
   mic: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><path d="M12 19v3"></path></svg>',
   globe:
     '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3c2.8 3.1 4.2 6.4 4.2 9s-1.4 5.9-4.2 9c-2.8-3.1-4.2-6.4-4.2-9s1.4-5.9 4.2-9z"></path></svg>',
+  image:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="8.5" cy="9.5" r="1.5"></circle><path d="m4 18 5-5 3 3 3-3 5 5"></path></svg>',
   linkedin: brandIcons.linkedin,
   discord: brandIcons.discord
 };

@@ -12,6 +12,7 @@ file. You should not need to touch HTML for normal content changes.
   - [What to collect before adding a speaker](#what-to-collect-before-adding-a-speaker)
   - [Writing a speaker bio](#writing-a-speaker-bio)
 - [Images](#images)
+- [Flyers](#flyers)
 - [Site text, links, and navigation](#site-text-links-and-navigation)
 - [How the schedule decides what to show](#how-the-schedule-decides-what-to-show)
 - [File and directory reference](#file-and-directory-reference)
@@ -29,6 +30,7 @@ file. You should not need to touch HTML for normal content changes.
 | Add a new speaker's bio, photo, or links | `data/speaker-profiles.csv` (+ `data/speaker-images/`) |
 | Find out what to ask a new speaker for | [Intake checklist](#what-to-collect-before-adding-a-speaker) |
 | Add a holiday or break row to the schedule | `data/speakers.csv` (see [Break rows](#break-and-no-seminar-rows)) |
+| Add a flyer / poster for a talk | `flyers` column in `data/speakers.csv` (+ `data/flyers/`) — see [Flyers](#flyers) |
 | Add slides / video links to a past talk | `materials` column in `data/speakers.csv` |
 | Change the Discord, Zoom, mailing list, or room link | `static/js/data/page-data.js` |
 | Change hero text, nav items, or homepage cards | `static/js/data/page-data.js` |
@@ -67,7 +69,7 @@ All talks — upcoming, past, and holiday placeholders — live in one file:
 Header row:
 
 ```csv
-season,name,talk_title,talk_date,description,materials,event_image,location_note,start_time,location,registration_url
+season,name,talk_title,talk_date,description,materials,event_image,location_note,start_time,location,registration_url,flyers
 ```
 
 | Column | Required | Meaning |
@@ -83,6 +85,7 @@ season,name,talk_title,talk_date,description,materials,event_image,location_note
 | `start_time` | no | Start time when it is not the standing 12:00, written how it should read (`1:20 p.m.`). |
 | `location` | no | Room when it is not the standing DSL/SC-499 (`Love 106`). |
 | `registration_url` | no | Where to go to attend online when the standing Zoom room is not the way in. Renders as **Register to join** instead of the Zoom link. |
+| `flyers` | no | Semicolon-separated filenames from `data/flyers/`, each with an optional `\|Label`. See [Flyers](#flyers). |
 
 ### Sessions that move
 
@@ -380,6 +383,7 @@ asks for one.
 | --- | --- | --- |
 | `data/speaker-images/` | Speaker headshots | `image` column of `speaker-profiles.csv` |
 | `data/event-images/` | Holiday and break artwork | `event_image` column of `speakers.csv` |
+| `data/flyers/` | Talk posters and announcement artwork | `flyers` column of `speakers.csv` |
 | `images/` | General page artwork (hero and footer use `images/banner-wide-half-dark.webp`) | CSS and `page-data.js` |
 
 Use lowercase, underscore-separated filenames (`jane_doe.webp`). Headshots look best
@@ -461,7 +465,7 @@ everything else, but nothing references it. Keep it 1200 px wide.
 Before committing new artwork, check nothing is orphaned, mismatched, or oversized:
 
 ```bash
-for d in images data/speaker-images data/event-images; do
+for d in images data/speaker-images data/event-images data/flyers; do
   for f in "$d"/*.webp "$d"/*.jpg; do
     b="${f%.*}"
     [ -e "$b.webp" ] && [ -e "$b.jpg" ] || echo "UNPAIRED: $b"
@@ -469,10 +473,97 @@ for d in images data/speaker-images data/event-images; do
       || echo "DIMENSION MISMATCH: $b"
   done
 done | sort -u
-find images data/speaker-images data/event-images -type f \( -name '*.jpg' -o -name '*.webp' \) -size +500k
+find images data/speaker-images data/event-images data/flyers -type f \( -name '*.jpg' -o -name '*.webp' \) -size +500k
 ```
 
 Silence from both commands means every image is paired, matched, and within budget.
+
+---
+
+## Flyers
+
+A **flyer** is the poster or announcement graphic made for a single talk — the image
+that goes out on Discord, in the mailing list, and on the screens outside the
+department. Flyers live in `data/flyers/`, are attached to a talk by the `flyers`
+column of `data/speakers.csv`, and open full size in a lightbox when clicked.
+
+They show up in four places, all from that one column:
+
+- **`/flyers/`** — every flyer, grouped by semester, newest semester first.
+- **The talk card on `/schedule/`** — a *View flyer* chip.
+- **The talk on `/archive/`** — a *Flyer* chip beside the slides and video chips.
+- **The homepage hero card** — a *View flyer* chip, when the next talk has one.
+
+Add nothing anywhere else. A talk with no flyer renders exactly as it did before.
+
+### Naming
+
+```
+data/flyers/2026-09-18_jackie_ye.webp
+data/flyers/2026-09-18_jackie_ye_vertical.webp
+```
+
+`YYYY-MM-DD_speaker_slug[_variant]`, lowercase and underscore-separated, dated with the
+**talk date**. Unlike headshots, flyers belong to an event rather than to a person, so
+the date leads: it sorts the directory chronologically and keeps a speaker's fourth
+visit from colliding with their first.
+
+### Attaching them to a talk
+
+The `flyers` column is a semicolon-separated list, exactly like `materials`. Each entry
+is a filename, optionally followed by `|` and a label:
+
+```csv
+2026-Fall,Jackie Ye,From Sensing to Generative Intelligence,2026-09-18,"…",,,,,,,2026-09-18_jackie_ye.webp|Wide; 2026-09-18_jackie_ye_vertical.webp|Vertical
+```
+
+- **The first flyer listed is the thumbnail** shown on `/flyers/` and the one the
+  lightbox opens on. Lead with whichever reads best small.
+- **Labels are only needed when a talk has more than one.** They name the variant —
+  `Wide`, `Vertical`, `Printed` — and become the buttons under the enlarged poster.
+  With a single flyer the label is unnecessary and the caption just says "Flyer".
+- `flyers` is the twelfth column. Rows that stop earlier need the intervening commas —
+  count them carefully, or the value silently lands in `registration_url`.
+
+A single flyer is just the filename:
+
+```csv
+…,2026-09-25_hristo_chipilski.webp
+```
+
+### Optimizing a flyer
+
+Flyers follow the [two-format rule](#two-formats-for-every-raster-image) like every other
+raster image — a `.webp` for the site and a `.jpg` twin of identical dimensions for
+email. The twin matters more here than anywhere else on the site: the flyer *is* the
+thing that gets pasted into the announcement email, and Outlook still will not render
+WebP.
+
+Posters carry more detail than a headshot, so they get a larger budget:
+
+```bash
+magick ~/Downloads/JackieYe.png -resize 1600x1600\> -quality 82 \
+       data/flyers/2026-09-18_jackie_ye.webp
+magick data/flyers/2026-09-18_jackie_ye.webp -background white -alpha remove -alpha off \
+       -colorspace sRGB -strip -quality 82 -interlace Plane \
+       data/flyers/2026-09-18_jackie_ye.jpg
+```
+
+| Kind | Max longest edge | Quality | Typical WebP |
+| --- | --- | --- | --- |
+| Flyer / poster | 1600 px | 82 | 200–250 KB |
+
+`1600x1600\>` shrinks the longest edge to 1600 whichever way the poster is oriented, and
+never upscales. That is enough to fill the lightbox on a high-DPI laptop and stays well
+under the 500 KB hard ceiling. There is deliberately **no separate thumbnail**: the grid
+lazy-loads, so only the flyers actually scrolled into view are ever fetched, and one file
+per flyer keeps this a two-command job.
+
+Orientation does not matter. The grid tiles are a fixed shape with the poster contained
+inside, and the lightbox sizes to the image's own aspect, so wide banners and vertical
+posters mix freely in the same semester.
+
+Add `data/flyers` to the [pair audit](#auditing-the-pairs) before committing.
 
 ---
 
@@ -516,7 +607,7 @@ break message appear, simply have no future-dated rows.
 
 ```
 index.html              Front-page shell: semantic regions plus empty data-* mount points
-schedule/ speakers/ archive/ trichotemy.html
+schedule/ speakers/ archive/ flyers/ trichotemy.html
                         Subpage shells, initialized by their own entry scripts
 templates/              Reusable HTML fragments fetched and filled at runtime
 static/styles.css       CSS entrypoint — only imports from static/css/
@@ -525,11 +616,11 @@ static/css/components/  Per-component styling (header, hero, content-sections, f
 static/css/components/motion.css  Motion tokens, scroll-reveal states, skeletons, reduced-motion
 static/css/responsive.css  Breakpoint overrides
 static/app.js           JS entrypoint — only orchestrates initialization
-static/js/data/         page-data.js, speakers.js, semester-schedule.js, archive-schedule.js, templates.js
+static/js/data/         page-data.js, speakers.js, semester-schedule.js, archive-schedule.js, flyer-schedule.js, templates.js
 static/js/render/       Functions that turn data into markup
-static/js/ui/           Navigation, icons, scroll behavior, reveal.js, chrome.js
-static/js/utils/        CSV parsing, DOM helpers, HTML escaping, materials links
-data/                   speakers.csv, speaker-profiles.csv, images, archived HTML
+static/js/ui/           Navigation, icons, scroll behavior, reveal.js, chrome.js, lightbox.js
+static/js/utils/        CSV parsing, DOM helpers, HTML escaping, date formatting, materials and flyer links
+data/                   speakers.csv, speaker-profiles.csv, images, flyers, archived HTML
 images/                 Banner and general artwork
 ```
 

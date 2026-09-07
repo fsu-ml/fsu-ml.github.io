@@ -10,6 +10,7 @@ export const pageData = {
       { id: "schedule", label: "Schedule", href: "/schedule/" },
       { id: "speakers", label: "Speakers", href: "/speakers/" },
       { id: "archive", label: "Archive", href: "/archive/" },
+      { id: "flyers", label: "Flyers", href: "/flyers/" },
       { id: "community", label: "Community", href: "/#community" }
     ]
   },

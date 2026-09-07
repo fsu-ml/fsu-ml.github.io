@@ -3,8 +3,12 @@
   "configurations": [
     {
       "name": "site",
+      "comment": "python -m http.server sends no Cache-Control, so browsers apply heuristic caching to the ES modules and CSVs and keep serving stale copies after an edit. Same static serve, plus no-store.",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "4173"],
+      "runtimeArgs": [
+        "-c",
+        "import http.server, socketserver\nclass H(http.server.SimpleHTTPRequestHandler):\n    def end_headers(self):\n        self.send_header('Cache-Control', 'no-store, max-age=0')\n        super().end_headers()\nsocketserver.ThreadingTCPServer.allow_reuse_address = True\nwith socketserver.ThreadingTCPServer(('127.0.0.1', 4173), H) as httpd:\n    print('serving on http://127.0.0.1:4173')\n    httpd.serve_forever()\n"
+      ],
       "port": 4173
     }
   ]

@@ -5,28 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="Upcoming FSU SC Artificial Intelligence Seminar talks, dates, speakers, and topics."
+      content="Flyers and announcement artwork for FSU SC Artificial Intelligence Seminar talks, by semester."
     >
     <meta name="theme-color" content="#782f40">
-    <link rel="canonical" href="https://sc-ai.net/schedule/">
+    <link rel="canonical" href="https://sc-ai.net/flyers/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="FSU SC Artificial Intelligence Seminar">
-    <meta property="og:title" content="Schedule | FSU SC Artificial Intelligence Seminar">
+    <meta property="og:title" content="Flyers | FSU SC Artificial Intelligence Seminar">
     <meta
       property="og:description"
-      content="Upcoming FSU SC Artificial Intelligence Seminar talks, dates, speakers, and topics."
+      content="Flyers and announcement artwork for FSU SC Artificial Intelligence Seminar talks, by semester."
     >
-    <meta property="og:url" content="https://sc-ai.net/schedule/">
+    <meta property="og:url" content="https://sc-ai.net/flyers/">
     <meta property="og:image" content="https://sc-ai.net/images/social-card.jpg">
     <meta property="og:image:alt" content="FSU Scientific Computing Artificial Intelligence Seminar banner">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Schedule | FSU SC Artificial Intelligence Seminar">
+    <meta name="twitter:title" content="Flyers | FSU SC Artificial Intelligence Seminar">
     <meta
       name="twitter:description"
-      content="Upcoming FSU SC Artificial Intelligence Seminar talks, dates, speakers, and topics."
+      content="Flyers and announcement artwork for FSU SC Artificial Intelligence Seminar talks, by semester."
     >
     <meta name="twitter:image" content="https://sc-ai.net/images/social-card.jpg">
-    <title>Schedule | FSU SC Artificial Intelligence Seminar</title>
+    <title>Flyers | FSU SC Artificial Intelligence Seminar</title>
     <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
     <link rel="icon" href="/images/icon-192.png" type="image/png" sizes="192x192">
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
@@ -66,7 +66,7 @@
       })();
     </script>
     <link rel="stylesheet" href="/static/styles.css">
-    <script type="module" src="/static/schedule.js"></script>
+    <script type="module" src="/static/flyers.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
@@ -87,21 +87,18 @@
       </nav>
     </header>
 
-    <main class="subpage-main" id="main" tabindex="-1">
-      <section class="section section-dashboard page-content-section" aria-labelledby="schedule-list-title">
-        <div class="section-inner">
-          <div class="panel-heading page-panel-heading" data-reveal="up">
-            <div>
-              <p class="section-kicker" data-schedule-kicker></p>
-              <h1 id="schedule-list-title">Seminar Schedule</h1>
-              <h2 class="sr-only">All scheduled talks</h2>
-            </div>
-            <div class="panel-actions">
-              <a class="button-link button-primary panel-button" href="https://fsu.zoom.us/j/9038137210">Join via Zoom</a>
-              <a class="button-link button-primary panel-button" href="/speakers/">View speakers</a>
+    <main class="subpage-main archive-main" id="main" tabindex="-1">
+      <section class="section archive-page-section page-content-section" aria-labelledby="flyers-title">
+        <div class="section-inner archive-page-inner">
+          <div class="archive-page-header" data-reveal="up">
+            <div class="archive-page-intro" data-flyers-intro></div>
+            <div class="panel-actions archive-page-actions">
+              <a class="button-link button-primary panel-button" href="/schedule/">Current schedule</a>
+              <a class="button-link button-primary panel-button" href="/archive/">Past talks</a>
             </div>
           </div>
-          <div class="talk-showcase-grid" data-full-schedule-list data-skeleton style="--skeleton-height: 460px"></div>
+          <div data-reveal="fade" data-flyers-nav></div>
+          <div class="archive-content" data-flyers-content data-skeleton style="--skeleton-height: 480px"></div>
         </div>
       </section>
     </main>

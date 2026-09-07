@@ -103,6 +103,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .flyer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .dashboard-panel-talks,
   .dashboard-panel-roster,
   .dashboard-panel-community {
@@ -172,6 +176,18 @@
   .speaker-directory-grid,
   .speaker-roster-grid {
     grid-template-columns: 1fr;
+  }
+
+  .flyer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* No room beside the poster at this width, so the arrows would only sit on
+     top of the artwork. The variant pills under the caption navigate the same
+     set with clearer labels, and they are always shown when there is more than
+     one flyer. */
+  .flyer-lightbox-step {
+    display: none;
   }
 
   .schedule-table thead {
