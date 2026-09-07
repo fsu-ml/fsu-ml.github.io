@@ -1,9 +1,9 @@
 /* ---------------------------------------------------------------------------
    Winter — December
    ---------------------------------------------------------------------------
-   Snow, frost and a night treeline. The artboard's own note is that smaller
-   and slower reads more elegant than dense, so the flakes stay 3-9px and take
-   12-26s to cross the viewport.
+   Snow, frost, a moonlit skyline and a night treeline. The artboard's own
+   note is that smaller and slower reads more elegant than dense, so the
+   flakes stay 3-9px and take 12-26s to cross the viewport.
 
    Keyframes are namespaced `wn-`.
    -------------------------------------------------------------------------- */
@@ -24,6 +24,15 @@
   --season-sky:
     radial-gradient(ellipse 120% 60% at 50% 6%, rgba(206, 184, 136, 0.16), transparent 62%),
     linear-gradient(180deg, #2a1118 0%, #351720 42%, #4a1c27 78%, #5b2533 100%);
+}
+
+/* The hero's sky carries two more lights than the footer's: the moon's halo,
+   painted where `.wn-moon` sits, and the city's own glow along the horizon. */
+:root[data-season="winter"] .wn-hero .season-sky {
+  background:
+    radial-gradient(circle at var(--wn-moon-x) var(--wn-moon-y), rgba(255, 246, 220, 0.2), rgba(255, 246, 220, 0.06) 12%, transparent 26%),
+    radial-gradient(ellipse 80% 34% at 50% 100%, rgba(236, 178, 118, 0.26), transparent 72%),
+    var(--season-sky);
 }
 
 /* The banner photograph and the hero's own overlay are tuned to each other;
@@ -118,6 +127,52 @@
   height: 100%;
 }
 
+/* Registered so the colour cycle can animate it; a plain custom property
+   snaps between keyframes instead of blending. Where `@property` is missing the
+   bulbs simply keep their inline colours, still lit, still breathing. */
+@property --bulb {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #fff1c4;
+}
+
+/* Warm white, gold, ice blue, garnet — the same four the markup starts the
+   bulbs on, in the same order, so the cycle begins where the string is. */
+@keyframes wn-cycle {
+  0%,
+  18% {
+    --bulb: #fff1c4;
+  }
+  25%,
+  43% {
+    --bulb: #ceb888;
+  }
+  50%,
+  68% {
+    --bulb: #bfe0f5;
+  }
+  75%,
+  93% {
+    --bulb: #c1273b;
+  }
+  100% {
+    --bulb: #fff1c4;
+  }
+}
+
+@keyframes wn-breathe {
+  from {
+    filter: brightness(0.8);
+  }
+  to {
+    filter: brightness(1.1);
+  }
+}
+
+/* Every bulb is on. Two slow animations, both offset per bulb from the
+   markup: a 32s walk through the four colours, staggered so the string always
+   shows all of them, and a breathing glow that drifts down the wire. Nothing
+   ever switches off, so nothing blinks. */
 .wn-bulb {
   position: absolute;
   width: 10px;
@@ -125,13 +180,12 @@
   /* Narrow at the cap, round at the base: a bulb, not a pill. */
   border-radius: 5px 5px 6px 6px;
   background: var(--bulb);
-  /* Unlit glass is dark and barely tinted; the colour arrives with the light. */
-  filter: brightness(0.32) saturate(0.5);
-  opacity: 0.55;
-  transition:
-    filter var(--dur-slow) var(--ease-out-soft),
-    opacity var(--dur-slow) var(--ease-out-soft),
-    box-shadow var(--dur-slow) var(--ease-out-soft);
+  box-shadow:
+    0 0 8px 2px color-mix(in srgb, var(--bulb) 70%, transparent),
+    0 0 18px 6px color-mix(in srgb, var(--bulb) 34%, transparent);
+  animation:
+    wn-cycle 32s linear var(--cycle-delay, 0s) infinite,
+    wn-breathe 4.8s ease-in-out var(--breathe-delay, 0s) infinite alternate;
 }
 
 /* The brass cap and the drop of wire it hangs from. */
@@ -143,14 +197,6 @@
   height: 6px;
   content: "";
   background: #ceb888;
-}
-
-.wn-bulb.is-lit {
-  filter: none;
-  opacity: 1;
-  box-shadow:
-    0 0 8px 2px color-mix(in srgb, var(--bulb) 70%, transparent),
-    0 0 18px 6px color-mix(in srgb, var(--bulb) 34%, transparent);
 }
 
 /* Snow cap on the brand mark. The mark shrinks to 36px below the mobile
@@ -231,25 +277,104 @@
   transform: scaleX(-1);
 }
 
-/* Snow bank along the bottom of the hero, bleeding into the section below.
-   One silhouette, one colour: every attempt at a second layer for depth read
-   as a stain rather than as snow, because whatever tone it took differed from
-   the white it sat against. */
-.wn-drift {
-  position: absolute;
-  right: 0;
-  bottom: -1px;
-  left: 0;
-  /* In front of `.hero-inner` (z-index 1). Behind it, the next-seminar card's
-     drop shadow fell across the white bank and dirtied it. */
-  z-index: 2;
-  width: 100%;
-  height: 64px;
+/* The moon. Its halo is painted on the sky at the same spot, so both are
+   placed from one pair of tokens.
+
+   Where it goes depends on the hero's layout. In the two-column layout the
+   only open sky is the corridor between the wordmark and the seminar card,
+   whose centre works out to `50% - 22px` at every width the columns survive
+   at; below 1264px that corridor is narrower than the moon, so it shrinks and
+   rises to sit among the lights. Once the columns stack the right-hand side
+   is clear again. */
+:root[data-season="winter"] .wn-hero {
+  --wn-moon-size: 68px;
+  --wn-moon-x: calc(50% - 22px);
+  --wn-moon-y: 176px;
 }
 
-/* Exactly the white that `.section-overview` starts with. */
-.wn-drift-front {
-  fill: #ffffff;
+@media (max-width: 1264px) {
+  :root[data-season="winter"] .wn-hero {
+    --wn-moon-size: 40px;
+    --wn-moon-y: 104px;
+  }
+}
+
+@media (max-width: 1080px) {
+  :root[data-season="winter"] .wn-hero {
+    --wn-moon-size: 68px;
+    --wn-moon-x: calc(100% - 6% - 34px);
+    --wn-moon-y: 176px;
+  }
+}
+
+.wn-moon {
+  position: absolute;
+  top: calc(var(--wn-moon-y) - var(--wn-moon-size) / 2);
+  left: calc(var(--wn-moon-x) - var(--wn-moon-size) / 2);
+  width: var(--wn-moon-size);
+  height: var(--wn-moon-size);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 36% 32%, #fffdf4, #f3e9c6 60%, #e2d3a5);
+  box-shadow:
+    0 0 24px 6px rgba(255, 246, 220, 0.35),
+    0 0 70px 20px rgba(255, 246, 220, 0.12);
+}
+
+/* Craters: three faint dents, so the disc is a moon and not a lamp. */
+.wn-moon::before,
+.wn-moon::after {
+  position: absolute;
+  content: "";
+  border-radius: 50%;
+  background: rgba(190, 172, 130, 0.35);
+}
+
+.wn-moon::before {
+  top: 40%;
+  left: 24%;
+  width: 20%;
+  height: 20%;
+  box-shadow: calc(var(--wn-moon-size) * 0.32) calc(var(--wn-moon-size) * -0.2) 0 -3px rgba(190, 172, 130, 0.3);
+}
+
+.wn-moon::after {
+  top: 62%;
+  left: 56%;
+  width: 13%;
+  height: 13%;
+}
+
+/* The city along the bottom edge. Behind `.hero-inner`, so the copy and the
+   card sit on it the way the artboard's copy sat on the drift. */
+.wn-skyline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+}
+
+@media (max-width: 620px) {
+  /* The wordmark spans almost the whole width of a phone, so the moon
+     tucks into the corner between the lowest bulb and the wordmark's first
+     line, which ends well short of the edge. */
+  :root[data-season="winter"] .wn-hero {
+    --wn-moon-size: 34px;
+    --wn-moon-x: calc(100% - 23px);
+    --wn-moon-y: 122px;
+  }
+}
+
+@media (max-width: 760px) {
+  /* The tile is drawn in pixels; on a phone the whole city is scaled down
+     from its bottom-left corner and widened to compensate, so it still
+     reaches the right edge. */
+  .wn-skyline {
+    width: 140%;
+    transform: scale(0.714);
+    transform-origin: 0 100%;
+  }
 }
 
 .wn-treeline {
@@ -269,25 +394,160 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Section divider
+   Seam lights
+   ---------------------------------------------------------------------------
+   A string of lights draped over the top edge of a section, hanging into it.
+   The host reserves room above its copy so the lowest bulb never lands on a
+   heading.
    -------------------------------------------------------------------------- */
 
-.wn-rule {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(120, 47, 64, 0.34), transparent);
+.wn-seam {
+  top: -1px;
+  right: 0;
+  left: 0;
+  z-index: 2;
 }
 
-.wn-rule-mark {
-  display: block;
-  width: 24px;
-  color: var(--fsu-garnet);
+.wn-seam-hero {
+  height: 56px;
 }
 
-.wn-rule-mark svg {
+.wn-seam-dashboard {
+  height: 44px;
+}
+
+/* Smaller than the header's bulbs, and against a white page the glass needs a
+   hairline so a warm-white bulb does not vanish into it. No colour cycle. */
+.wn-seam-bulb {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  border-radius: 4px 4px 5px 5px;
+  background: var(--bulb);
+  box-shadow:
+    0 0 0 1px rgba(150, 120, 60, 0.32),
+    0 0 7px 2px color-mix(in srgb, var(--bulb) 60%, transparent),
+    0 0 14px 5px color-mix(in srgb, var(--bulb) 26%, transparent);
+  animation: wn-breathe 4.8s ease-in-out var(--breathe-delay, 0s) infinite alternate;
+}
+
+.wn-seam-bulb::before {
+  position: absolute;
+  top: -5px;
+  left: 3px;
+  width: 2px;
+  height: 5px;
+  content: "";
+  background: #ceb888;
+}
+
+:root[data-season="winter"] .section-overview {
+  padding-top: 92px;
+}
+
+/* Sixteen bulbs across a phone crowd the wire; every other one comes off. */
+@media (max-width: 620px) {
+  .wn-seam .wn-seam-bulb:nth-of-type(even) {
+    display: none;
+  }
+}
+
+:root[data-season="winter"] .section-overview + .section-dashboard {
+  padding-top: 70px;
+}
+
+/* ---------------------------------------------------------------------------
+   The nights of December
+   ---------------------------------------------------------------------------
+   Footer additions that exist only on their own dates.
+   -------------------------------------------------------------------------- */
+
+/* A candle stand on the snow, in front of the treeline. */
+.wn-vigil {
+  position: absolute;
+  bottom: 6px;
+  width: 112px;
+  filter: drop-shadow(0 0 14px rgba(246, 183, 60, 0.35));
+}
+
+.wn-vigil-left {
+  left: 6%;
+}
+
+.wn-vigil-right {
+  right: 6%;
+}
+
+.wn-vigil svg {
   display: block;
   width: 100%;
   height: auto;
+}
+
+@keyframes wn-flicker {
+  0%,
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleY(0.88) translateY(0.4px);
+    opacity: 0.82;
+  }
+}
+
+.wn-flame-live {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: wn-flicker 1.6s ease-in-out var(--delay, 0s) infinite;
+}
+
+/* On the solstice the moon rides higher and larger. */
+:root[data-season="winter"] .wn-hero.wn-solstice {
+  --wn-moon-size: 92px;
+}
+
+@media (max-width: 1264px) and (min-width: 1081px) {
+  :root[data-season="winter"] .wn-hero.wn-solstice {
+    --wn-moon-size: 48px;
+  }
+}
+
+@media (max-width: 620px) {
+  :root[data-season="winter"] .wn-hero.wn-solstice {
+    --wn-moon-size: 40px;
+  }
+}
+
+/* New Year's Eve: three bursts in the footer sky, each blooming and fading in
+   turn. Without motion they hang fully open. */
+.wn-firework {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  opacity: 0.85;
+}
+
+@keyframes wn-burst {
+  0% {
+    transform: scale(0.15);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  55% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(1.12);
+    opacity: 0;
+  }
+}
+
+.wn-firework-live {
+  animation: wn-burst 5.8s ease-out var(--delay, 0s) infinite;
 }
 
 /* ---------------------------------------------------------------------------

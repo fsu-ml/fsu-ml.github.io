@@ -1,14 +1,19 @@
 /**
  * Winter — December.
  *
- * Snow is fixed-count DOM particles on CSS keyframes, so there is no canvas
- * and no frame loop. The one thing that reacts per frame is the light string,
- * and it is deliberately cheap: a rAF-throttled scroll listener that only
- * touches the DOM on the frames where the number of lit bulbs changes.
+ * Snow is fixed-count DOM particles on CSS keyframes, so there is no canvas,
+ * no frame loop and no scroll listener: everything that moves — flakes, the
+ * light strings, the candle flames, a few city windows — is a declarative
+ * animation the browser composites on its own.
  *
- * The artwork here is ported from Winter.dc.html rather than invented — the
- * frost corners, frost ring, snow cap, icicles and the footer treeline are all
- * the artboard's own paths.
+ * The frost corners, frost ring, snow cap, icicles and the footer treeline are
+ * ported from Winter.dc.html. The skyline and the light strings are generated
+ * here from a seed, so they are the same drawing on every visit.
+ *
+ * The theme is December's, not one holiday's: a moonlit city, snow, and
+ * strings of light against the longest nights. The observances that fall in
+ * the month each get a small addition to the footer on their own dates only —
+ * see "The nights of December".
  */
 
 import { Disposer, buildParticles, decorate, make, pick, range, seeded } from "./engine.js";
@@ -109,18 +114,103 @@ const icicles = (seed) => {
     </svg>`;
 };
 
-/* Rolling snow bank for the bottom of the hero.
-   One silhouette in one colour, and that colour is the exact white
-   `.section-overview` starts with, so the bank reads as that section rising
-   into the hero rather than a shape laid over it. */
-const DRIFT_PATH =
-  "M0 30c150-18 260 6 400-6s220-22 340-6 240 24 300 8 120-10 160 2V60H0z";
+/* ---------------------------------------------------------------------------
+   Skyline
+   ---------------------------------------------------------------------------
+   A city along the bottom of the hero, in two layers: a paler, taller row far
+   off and a darker row in front, with windows lit in the near one.
 
-const driftSvg = (height) => `
-  <svg class="wn-drift" viewBox="0 0 1200 60" preserveAspectRatio="none"
-       aria-hidden="true" focusable="false" style="height:${height}px">
-    <path class="wn-drift-front" d="${DRIFT_PATH}"></path>
-  </svg>`;
+   The buildings live in an SVG <pattern> in user units rather than a scaled
+   viewBox, so a building is the same width on a phone as on a monitor and the
+   tile simply repeats across whatever the viewport is. Stretching a single
+   drawing to the viewport turned every tower into a needle on narrow screens.
+   -------------------------------------------------------------------------- */
+
+const SKY_TILE = 960;
+const SKY_H = 170;
+
+/* One row of buildings across a tile. Returns the silhouette as a single path
+   and the windows as one path per brightness bucket, so a whole city is a
+   handful of nodes rather than hundreds of rects. */
+const skylineLayer = (rand, { minH, maxH, windows, animate }) => {
+  const bodies = [];
+  const lit = { bright: [], dim: [] };
+  const flicker = [];
+  let x = 0;
+  while (x < SKY_TILE) {
+    const w = range(rand, 26, 84);
+    const h = range(rand, minH, maxH);
+    const top = SKY_H - h;
+    const x1 = x + w;
+    const roof = rand();
+    let d = `M${x.toFixed(1)} ${SKY_H}V${top.toFixed(1)}`;
+    if (roof < 0.22) {
+      /* Antenna mast off the middle of the roof. */
+      const mx = x + w / 2;
+      d += `H${(mx - 1.2).toFixed(1)}V${(top - range(rand, 10, 26)).toFixed(1)}h2.4V${top.toFixed(1)}`;
+    } else if (roof < 0.46) {
+      /* A stepped penthouse. */
+      const inset = w * range(rand, 0.18, 0.3);
+      const rise = range(rand, 8, 18);
+      d += `H${(x + inset).toFixed(1)}V${(top - rise).toFixed(1)}H${(x1 - inset).toFixed(1)}V${top.toFixed(1)}`;
+    } else if (roof < 0.56) {
+      /* A spire. */
+      d += `L${(x + w / 2).toFixed(1)} ${(top - range(rand, 14, 30)).toFixed(1)}`;
+    }
+    d += `H${x1.toFixed(1)}V${SKY_H}Z`;
+    bodies.push(d);
+
+    if (windows) {
+      const cols = Math.floor((w - 8) / 11);
+      const rows = Math.floor((h - 12) / 15);
+      for (let r = 0; r < rows; r += 1) {
+        for (let c = 0; c < cols; c += 1) {
+          const on = rand();
+          if (on > 0.5) {
+            continue;
+          }
+          const wx = x + 5 + c * 11;
+          const wy = top + 8 + r * 15;
+          const rect = `M${wx.toFixed(1)} ${wy.toFixed(1)}h4v6h-4z`;
+          if (animate && on < 0.03 && flicker.length < 14) {
+            flicker.push(
+              `<path d="${rect}" fill="#f5d78a" opacity=".8">` +
+                `<animate attributeName="opacity" values=".85;.1;.85" dur="${range(rand, 6, 14).toFixed(1)}s" ` +
+                `begin="${(-rand() * 10).toFixed(1)}s" repeatCount="indefinite"/></path>`
+            );
+          } else {
+            (on < 0.22 ? lit.bright : lit.dim).push(rect);
+          }
+        }
+      }
+    }
+    x = x1 + range(rand, 2, 16);
+  }
+  return { bodies: bodies.join(""), lit, flicker: flicker.join("") };
+};
+
+const skylineSvg = (seed, motion) => {
+  const rand = seeded(seed);
+  const far = skylineLayer(rand, { minH: 70, maxH: 150, windows: true, animate: false });
+  const near = skylineLayer(rand, { minH: 26, maxH: 104, windows: true, animate: motion });
+  return `
+    <svg class="wn-skyline" width="100%" height="${SKY_H}" aria-hidden="true" focusable="false">
+      <defs>
+        <pattern id="wn-sky-tile" patternUnits="userSpaceOnUse" width="${SKY_TILE}" height="${SKY_H}">
+          <path fill="#3a1721" d="${far.bodies}"></path>
+          <path fill="#f5d78a" opacity=".22" d="${far.lit.bright.join("")}${far.lit.dim.join("")}"></path>
+          <path fill="#160709" d="${near.bodies}"></path>
+          <path fill="#f5d78a" opacity=".85" d="${near.lit.bright.join("")}"></path>
+          <path fill="#f5d78a" opacity=".42" d="${near.lit.dim.join("")}"></path>
+          ${near.flicker}
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#wn-sky-tile)"></rect>
+    </svg>`;
+};
+
+/* A full moon, high on the right, with its halo painted on the sky. */
+const MOON = `<span class="wn-moon"></span>`;
 
 const starfield = (seed, n, maxTop) => {
   const rand = seeded(seed);
@@ -146,98 +236,233 @@ const TREELINE = `
   </svg>`;
 
 /* ---------------------------------------------------------------------------
-   Light string
+   Light strings
+   ---------------------------------------------------------------------------
+   One drawing, used three times: hanging off the header, and draped over the
+   two section seams the way a garland goes over a railing.
+
+   The wire is a row of parabolic sags between hooks, drawn as an SVG that is
+   stretched to the host's width. A stretched curve is still a smooth curve.
+   The bulbs are not in the SVG: they are positioned elements at a percentage
+   across and a pixel height taken from the same formula, so they keep their
+   shape at any width and always sit on the wire.
    -------------------------------------------------------------------------- */
 
-const BULBS = 14;
 const WIRE_W = 1200;
-const WIRE_H = 58;
-const WIRE_HOOKS = 4;
-const WIRE_SAG = 17;
-const WIRE_TOP = 2;
-const BULB_COLORS = ["#ceb888", "#c1273b", "#dce9f2", "#3e6b52"];
 
-/* The wire is four parabolic sags between hooks. Both the path and the bulb
-   positions come from the same formula, so a bulb always sits on the wire no
-   matter how the strip is scaled. */
-const wireY = (x) => {
-  const seg = WIRE_W / WIRE_HOOKS;
-  const t = (x % seg) / seg;
-  return WIRE_TOP + 4 * WIRE_SAG * t * (1 - t);
-};
+/* Warm white, gold, ice blue, garnet: winter lights rather than one holiday's,
+   and the pair in the middle is the site's own. */
+const BULB_COLORS = ["#fff1c4", "#ceb888", "#bfe0f5", "#c1273b"];
 
-const WIRE_D = (() => {
-  const seg = WIRE_W / WIRE_HOOKS;
-  let d = `M0 ${WIRE_TOP}`;
-  for (let k = 0; k < WIRE_HOOKS; k += 1) {
-    d += ` Q${(k + 0.5) * seg} ${WIRE_TOP + 2 * WIRE_SAG} ${(k + 1) * seg} ${WIRE_TOP}`;
+/* Every bulb is lit. The colour cycle and the breathing glow are CSS
+   keyframes; the per-bulb delays here are what turn fourteen identical
+   animations into a string that always shows all four colours, with the
+   glow travelling slowly down the wire rather than the whole string
+   pulsing at once. */
+const CYCLE_PERIOD = 32;
+
+const lightString = ({ hooks, sag, top, bulbs, bulbClass, colorAt, extra = "" }) => {
+  const seg = WIRE_W / hooks;
+  const wireY = (x) => {
+    const t = (x % seg) / seg;
+    return top + 4 * sag * t * (1 - t);
+  };
+  let d = `M0 ${top}`;
+  for (let k = 0; k < hooks; k += 1) {
+    d += ` Q${(k + 0.5) * seg} ${top + 2 * sag} ${(k + 1) * seg} ${top}`;
   }
-  return d;
-})();
-
-const lightStringHtml = () => {
-  const bulbs = [];
-  for (let i = 0; i < BULBS; i += 1) {
-    const x = 30 + i * ((WIRE_W - 60) / (BULBS - 1));
-    bulbs.push(
-      `<span class="wn-bulb" style="left:${((x / WIRE_W) * 100).toFixed(3)}%;` +
-        `top:${wireY(x).toFixed(1)}px;--bulb:${BULB_COLORS[i % BULB_COLORS.length]};` +
-        `--order:${i}"></span>`
+  const height = top + sag + 22;
+  const spans = [];
+  for (let i = 0; i < bulbs; i += 1) {
+    const x = 30 + i * ((WIRE_W - 60) / (bulbs - 1));
+    spans.push(
+      `<span class="${bulbClass}" style="left:${((x / WIRE_W) * 100).toFixed(3)}%;` +
+        `top:${wireY(x).toFixed(1)}px;--bulb:${colorAt(i)};` +
+        `--cycle-delay:${(-(((i % 4) * CYCLE_PERIOD) / 4 + i * 0.35)).toFixed(2)}s;` +
+        `--breathe-delay:${(-i * 0.42).toFixed(2)}s${extra}"></span>`
     );
   }
-  return `
-    <svg class="wn-wire" viewBox="0 0 ${WIRE_W} ${WIRE_H}" preserveAspectRatio="none"
-         aria-hidden="true" focusable="false">
-      <path d="${WIRE_D}" fill="none" stroke="#ceb888" stroke-width="1.4" opacity=".7"></path>
-    </svg>
-    ${bulbs.join("")}`;
+  return {
+    height,
+    html:
+      `<svg class="wn-wire" viewBox="0 0 ${WIRE_W} ${height}" preserveAspectRatio="none" ` +
+      `aria-hidden="true" focusable="false">` +
+      `<path d="${d}" fill="none" stroke="#ceb888" stroke-width="1.4" opacity=".7"></path></svg>` +
+      spans.join("")
+  };
 };
 
-/**
- * Lights the header string one bulb at a time as the page is scrolled.
- *
- * The listener runs on every scroll frame but the DOM is only touched when
- * the number of lit bulbs changes — fourteen class toggles at most fourteen
- * times over a whole page, rather than per frame.
- *
- * Returns its `update`, which the mounted engine re-exposes as `syncLights()`.
- * Hidden documents never fire requestAnimationFrame, so without a way to
- * advance this by hand the string cannot be verified anywhere the page is not
- * actually on screen — the same reason `Loop` makes `step` and `draw` public.
- */
-const bindLightString = (disposer, host) => {
-  const bulbs = Array.from(host.querySelectorAll(".wn-bulb"));
-  if (bulbs.length === 0) {
-    return () => {};
+const headerLights = () =>
+  lightString({
+    hooks: 4,
+    sag: 17,
+    top: 2,
+    bulbs: 14,
+    bulbClass: "wn-bulb",
+    colorAt: (i) => BULB_COLORS[i % BULB_COLORS.length]
+  });
+
+/* Over a seam: two gentle swags, mostly warm white with a gold or a blue
+   bulb here and there. No colour cycle — against a white page a string that
+   changes colour is a lot of event; these just breathe. */
+const seamLights = (seed, sag) => {
+  const rand = seeded(seed);
+  return lightString({
+    hooks: 2,
+    sag,
+    top: 0,
+    bulbs: 16,
+    bulbClass: "wn-seam-bulb",
+    colorAt: () => {
+      const r = rand();
+      return r < 0.62 ? "#fff1c4" : r < 0.84 ? "#ceb888" : "#bfe0f5";
+    }
+  });
+};
+
+/* ---------------------------------------------------------------------------
+   The nights of December
+   ---------------------------------------------------------------------------
+   Small, date-specific additions to the footer and the hero. Each appears only
+   on its own dates; on every other night the scene is simply winter.
+
+   Hanukkah moves with the Hebrew calendar, so its first evening is a table
+   rather than a rule. Extend it as years are added; a year missing from the
+   table shows no menorah, nothing worse.
+   -------------------------------------------------------------------------- */
+
+const HANUKKAH_FIRST_EVENING = {
+  2024: [11, 25],
+  2025: [11, 14],
+  2026: [11, 4],
+  2027: [11, 24],
+  2028: [11, 12],
+  2029: [11, 1],
+  2030: [11, 20]
+};
+
+const DAY_MS = 86400000;
+
+/* Which candles are lit on a given date and time. Candles are lit at nightfall
+   and stay in the picture through the following day, so the count switches
+   at five in the afternoon rather than at midnight. */
+const hanukkahNight = (date) => {
+  /* A Hanukkah that starts late in December runs into January. */
+  const year = date.getMonth() === 0 ? date.getFullYear() - 1 : date.getFullYear();
+  const first = HANUKKAH_FIRST_EVENING[year];
+  if (!first) {
+    return 0;
   }
-  let lit = -1;
-  let ticking = false;
+  const start = new Date(year, first[0], first[1]);
+  const evening = new Date(date.getTime() - 17 * 3600000);
+  const night = Math.floor((evening - start) / DAY_MS) + 1;
+  return night >= 1 && night <= 8 ? night : 0;
+};
 
-  const update = () => {
-    ticking = false;
-    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-    const ratio = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 1;
-    /* One bulb is lit from the very top so the string never reads as broken. */
-    const next = Math.max(1, Math.round(ratio * bulbs.length));
-    if (next === lit) {
-      return;
+/* Kwanzaa: 26 December through 1 January, a candle a day. */
+const kwanzaaDay = (date) => {
+  const m = date.getMonth();
+  const d = date.getDate();
+  if (m === 11 && d >= 26) {
+    return d - 25;
+  }
+  if (m === 0 && d === 1) {
+    return 7;
+  }
+  return 0;
+};
+
+const isSolstice = (date) => date.getMonth() === 11 && date.getDate() === 21;
+const isNewYearsEve = (date) => date.getMonth() === 11 && date.getDate() === 31;
+
+/* `?date=2026-12-31` previews another night. Parsed by parts so it lands in
+   local time; `new Date("2026-12-31")` is UTC midnight, which is the evening
+   before in Tallahassee. */
+const tonight = () => {
+  const raw = new URLSearchParams(window.location.search).get("date");
+  const m = raw && /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 20) : new Date();
+};
+
+const FLAME = (x, y, motion, delay) =>
+  `<g class="wn-flame${motion ? " wn-flame-live" : ""}" style="--delay:${delay}s" transform="translate(${x} ${y})">` +
+  `<ellipse cx="0" cy="-5" rx="3.6" ry="6.5" fill="#f6b73c" opacity=".9"/>` +
+  `<ellipse cx="0" cy="-4" rx="1.8" ry="3.6" fill="#fff3c4"/>` +
+  `<circle cx="0" cy="-5" r="9" fill="#f6b73c" opacity=".16"/></g>`;
+
+/* A hanukkiah: eight candles at one height with the shamash raised in the
+   middle. Candles go in from the right, one more each night, so night one is
+   the rightmost holder and the shamash. */
+const menorahSvg = (night, motion) => {
+  const rand = seeded(night);
+  const holders = [0, 1, 2, 3, 5, 6, 7, 8];
+  const lit = new Set(holders.slice().reverse().slice(0, night));
+  const parts = [];
+  for (let i = 0; i < 9; i += 1) {
+    const x = 12 + i * 12;
+    const shamash = i === 4;
+    const top = shamash ? 22 : 34;
+    /* Arms rise from the stem to each holder. */
+    parts.push(`<path d="M60 74 L60 ${top + 12} L${x} ${top + 12} L${x} ${top + 6}" stroke="#ceb888" stroke-width="2.2" fill="none"/>`);
+    parts.push(`<rect x="${x - 3}" y="${top + 4}" width="6" height="3" fill="#ceb888"/>`);
+    if (shamash || lit.has(i)) {
+      parts.push(`<rect x="${x - 2}" y="${top - 12}" width="4" height="16" fill="${shamash ? "#f4efe2" : "#e9edf6"}"/>`);
+      parts.push(FLAME(x, top - 12, motion, (-rand() * 3).toFixed(1)));
     }
-    lit = next;
-    bulbs.forEach((bulb, index) => bulb.classList.toggle("is-lit", index < next));
-  };
+  }
+  return `
+    <svg class="wn-menorah" viewBox="0 0 120 84" aria-hidden="true" focusable="false">
+      <path d="M44 84 Q60 72 76 84 Z" fill="#ceb888"/>
+      ${parts.join("")}
+    </svg>`;
+};
 
-  const onScroll = () => {
-    if (ticking) {
-      return;
+/* A kinara: three red, one black, three green, lit one a day — the black
+   first, then alternating from the outside in, red before green. */
+const kinaraSvg = (day, motion) => {
+  const rand = seeded(day + 40);
+  const reds = Math.ceil((day - 1) / 2);
+  const greens = Math.floor((day - 1) / 2);
+  const parts = [];
+  for (let i = 0; i < 7; i += 1) {
+    const x = 12 + i * 16;
+    const color = i < 3 ? "#b3232f" : i === 3 ? "#1c1a1a" : "#2f7d3a";
+    const lit = i === 3 || (i < 3 && i < reds) || (i > 3 && i >= 7 - greens);
+    parts.push(`<rect x="${x - 4}" y="54" width="8" height="5" fill="#8a6a3a"/>`);
+    parts.push(`<rect x="${x - 3}" y="30" width="6" height="26" fill="${color}"/>`);
+    if (lit) {
+      parts.push(FLAME(x, 30, motion, (-rand() * 3).toFixed(1)));
     }
-    ticking = true;
-    requestAnimationFrame(update);
-  };
+  }
+  return `
+    <svg class="wn-kinara" viewBox="0 0 120 64" aria-hidden="true" focusable="false">
+      <path d="M4 64 L10 58 L110 58 L116 64 Z" fill="#6b4a25"/>
+      ${parts.join("")}
+    </svg>`;
+};
 
-  disposer.listen(window, "scroll", onScroll, { passive: true });
-  disposer.listen(window, "resize", onScroll, { passive: true });
-  update();
-  return update;
+/* Three bursts in the footer sky for the last night of the year. */
+const fireworksHtml = (motion) => {
+  const rand = seeded(99);
+  const colors = ["#ceb888", "#c1273b", "#bfe0f5"];
+  return Array.from({ length: 3 }, (_, k) => {
+    const rays = [];
+    for (let i = 0; i < 16; i += 1) {
+      const a = (i / 16) * Math.PI * 2;
+      const r = 26 + rand() * 10;
+      rays.push(
+        `<line x1="0" y1="0" x2="${(Math.cos(a) * r).toFixed(1)}" y2="${(Math.sin(a) * r).toFixed(1)}"/>` +
+          `<circle cx="${(Math.cos(a) * (r + 4)).toFixed(1)}" cy="${(Math.sin(a) * (r + 4)).toFixed(1)}" r="1.6"/>`
+      );
+    }
+    return (
+      `<svg class="wn-firework${motion ? " wn-firework-live" : ""}" viewBox="-40 -40 80 80" ` +
+      `style="left:${(18 + k * 28 + rand() * 8).toFixed(1)}%;top:${(10 + rand() * 18).toFixed(1)}%;--delay:${(k * 1.9).toFixed(1)}s" ` +
+      `aria-hidden="true" focusable="false"><g stroke="${colors[k]}" fill="${colors[k]}" stroke-width="1.3" stroke-linecap="round">` +
+      rays.join("") +
+      `</g></svg>`
+    );
+  }).join("");
 };
 
 /* ---------------------------------------------------------------------------
@@ -297,15 +522,11 @@ export const mount = ({ overlay, density, motion }) => {
 
   buildSnow(overlay, density, motion);
 
-  /* Header: a string of lights hanging off the bar's bottom edge, coming on a
-     bulb at a time as the page is scrolled. No snow on the bar itself. */
-  const [lights] = decorate(
-    disposer,
-    ".site-header",
-    "season-scene wn-lights",
-    lightStringHtml()
-  );
-  const syncLights = lights ? bindLightString(disposer, lights) : () => {};
+  /* Header: a string of lights hanging off the bar's bottom edge, all lit,
+     slowly trading colours. No snow on the bar itself. */
+  decorate(disposer, ".site-header", "season-scene wn-lights", headerLights().html);
+
+  const night = tonight();
 
   const brand = document.querySelector(".site-header .brand");
   if (brand) {
@@ -315,42 +536,58 @@ export const mount = ({ overlay, density, motion }) => {
     disposer.node(cap);
   }
 
-  /* Hero: night sky, stars, frost creeping in from the upper corners, and a
-     bank along the bottom that bleeds into the section below. */
+  /* Hero: a moonlit night — sky, stars, the moon, frost creeping in from the
+     upper corners, and a city skyline along the bottom. */
   decorate(
     disposer,
     ".hero",
     "season-scene wn-hero",
     `<div class="season-sky"></div>
      ${starfield(3, 30, 52)}
+     ${MOON}
      <div class="wn-frost wn-frost-left">${FROST_CORNER}</div>
      <div class="wn-frost wn-frost-right">${FROST_CORNER}</div>
-     ${driftSvg(64)}`
+     ${skylineSvg(7, motion)}`
   );
+  if (isSolstice(night)) {
+    /* The longest night: the moon rides higher and larger. */
+    document.querySelectorAll(".wn-hero").forEach((scene) => scene.classList.add("wn-solstice"));
+  }
+
+  /* The seam under the hero: a string of lights draped over it like a
+     railing, hanging into the section below. It lives in the overview rather
+     than the hero, because the hero clips its children. */
+  decorate(disposer, ".section-overview", "season-scene wn-seam wn-seam-hero", seamLights(41, 34).html, {
+    first: true
+  });
 
   /* Footer: the artboard's own night — garnet gradient, stars, a fir treeline
-     with snow on the ground. */
+     with snow on the ground — and, on the nights that have one, a candle
+     stand on the snow or fireworks in the sky. */
+  const hanukkah = hanukkahNight(night);
+  const kwanzaa = kwanzaaDay(night);
   decorate(
     disposer,
     ".site-footer",
     "season-scene wn-footer",
     `<div class="season-sky"></div>
      ${starfield(23, 22, 48)}
-     ${TREELINE}`
+     ${isNewYearsEve(night) ? fireworksHtml(motion) : ""}
+     ${TREELINE}
+     ${hanukkah ? `<div class="wn-vigil wn-vigil-left">${menorahSvg(hanukkah, motion)}</div>` : ""}
+     ${kwanzaa ? `<div class="wn-vigil wn-vigil-right">${kinaraSvg(kwanzaa, motion)}</div>` : ""}`
   );
 
-  /* Section seam between the overview and the dashboard.
-     The adjacent-sibling selector matters: the subpages reuse
+  /* Section seam between the overview and the dashboard: the same string,
+     shallower. The adjacent-sibling selector matters: the subpages reuse
      `.section-dashboard` as their only section, with no overview before it, so
-     a bare class selector hangs a seam divider directly under the header on
-     every one of them. */
+     a bare class selector hangs lights directly under the header on every one
+     of them. */
   decorate(
     disposer,
     ".section-overview + .section-dashboard",
-    "season-divider wn-divider",
-    `<span class="wn-rule"></span>
-     <span class="wn-rule-mark">${SNOWFLAKE}</span>
-     <span class="wn-rule"></span>`,
+    "season-scene wn-seam wn-seam-dashboard",
+    seamLights(43, 22).html,
     { first: true }
   );
 
@@ -391,10 +628,6 @@ export const mount = ({ overlay, density, motion }) => {
   );
 
   return {
-    /* Applies the current scroll position to the light string immediately,
-       bypassing the rAF throttle. Used to verify the string where rAF is
-       suspended. */
-    syncLights,
     destroy() {
       disposer.dispose();
     }
