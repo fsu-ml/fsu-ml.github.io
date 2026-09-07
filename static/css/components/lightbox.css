@@ -159,11 +159,28 @@
   line-height: 1;
 }
 
+/* Centred with opposing offsets plus auto margins rather than
+   `top: 50%; margin-top: -22px`. A percentage `top` resolves against the
+   containing block the dialog's own 40px padding has already shrunk, which left
+   the arrows sitting 14px below the true middle; `inset-block: 0` with auto
+   margins is exact and does not care about the padding or the button's height. */
 .flyer-lightbox-step {
-  top: 50%;
-  margin-top: -22px;
-  font-size: 2rem;
-  line-height: 1;
+  top: 0;
+  bottom: 0;
+  margin-block: auto;
+}
+
+/* Chevrons rather than the ‹ › characters: a text glyph is centred only as well
+   as its font's side bearings allow, while a symmetric path in a square viewBox
+   is centred by construction in both axes. */
+.flyer-lightbox-step svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .flyer-lightbox-step.is-prev {

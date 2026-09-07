@@ -18,6 +18,7 @@
  * arrow keys, and a counter. With a single flyer none of that chrome renders.
  */
 
+import { icon } from "./icons.js";
 import { escapeHtml } from "../utils/html.js";
 
 const TRIGGER_SELECTOR = "[data-flyer-set]";
@@ -57,10 +58,10 @@ const mount = () => {
         <span aria-hidden="true">&times;</span>
       </button>
       <button class="flyer-lightbox-step is-prev" type="button" data-step="-1" aria-label="Previous flyer">
-        <span aria-hidden="true">&lsaquo;</span>
+        ${icon("chevron-left")}
       </button>
       <button class="flyer-lightbox-step is-next" type="button" data-step="1" aria-label="Next flyer">
-        <span aria-hidden="true">&rsaquo;</span>
+        ${icon("chevron-right")}
       </button>
       <figure class="flyer-lightbox-figure">
         <img class="flyer-lightbox-image" data-image alt="">

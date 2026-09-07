@@ -24,6 +24,10 @@ const icons = {
     '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3c2.8 3.1 4.2 6.4 4.2 9s-1.4 5.9-4.2 9c-2.8-3.1-4.2-6.4-4.2-9s1.4-5.9 4.2-9z"></path></svg>',
   image:
     '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="8.5" cy="9.5" r="1.5"></circle><path d="m4 18 5-5 3 3 3-3 5 5"></path></svg>',
+  "chevron-left":
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>',
+  "chevron-right":
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg>',
   linkedin: brandIcons.linkedin,
   discord: brandIcons.discord
 };
