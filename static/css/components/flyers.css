@@ -48,6 +48,25 @@
   stroke-linejoin: round;
 }
 
+/* In the homepage schedule table the chip sits under the date badge, centred on
+   it. The cell is `white-space: nowrap` for the badge's sake, so the wrapper
+   restores normal flow and does the centring. */
+.schedule-table-date-flyer {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.schedule-table-date-flyer .flyer-chip {
+  padding: 3px 9px;
+  font-size: 0.72rem;
+}
+
+.schedule-table-date-flyer .flyer-chip svg {
+  width: 12px;
+  height: 12px;
+}
+
 /* On the dark hero card the garnet-on-cream chip has nothing to sit against. */
 .seminar-card-body .flyer-chip {
   border-color: rgba(206, 184, 136, 0.45);
@@ -62,15 +81,21 @@
   color: var(--fsu-garnet-deep);
 }
 
-/* The talk card's chip sits on the title row rather than in the body flow, so
-   the card's four-row grid is unchanged whether or not a flyer exists. */
+/* The chip lives inside .talk-card-header as a third item spanning both of its
+   columns, rather than as another child of .talk-card. That card's
+   `grid-template-rows: auto auto 1fr auto` is positional, so adding a child
+   would hand the flexible row to the wrong element and squash the description.
+   Sitting in the header keeps the card's own track assignment untouched. */
 .talk-card-flyer {
   display: flex;
   flex-wrap: wrap;
   /* Without this the chip stretches to whatever height the card's grid row
      happens to be, since a flex item defaults to `align-self: stretch`. */
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  grid-column: 1 / -1;
+  margin-top: 2px;
 }
 
 /* ---- /flyers/ grid ---- */

@@ -154,12 +154,20 @@ const sessionSummary = (talk = {}) =>
 
 // The chip that opens the flyer lightbox. Renders nothing for a talk with no
 // artwork, so every card is unchanged until a flyer is added to the CSV.
-const flyerChipMarkup = (talk = {}) => {
+const flyerChipMarkup = (talk = {}, { compact = false } = {}) => {
   const flyers = parseFlyerList(talk.flyers, talk.talkTitle);
   if (!flyers.length) {
     return "";
   }
-  const label = flyers.length > 1 ? `View flyers (${flyers.length})` : "View flyer";
+  // The schedule table's date column is only as wide as its badge, so the verb
+  // is dropped there. Everywhere else the chip has room to say what it does.
+  const label = compact
+    ? flyers.length > 1
+      ? `Flyers (${flyers.length})`
+      : "Flyer"
+    : flyers.length > 1
+      ? `View flyers (${flyers.length})`
+      : "View flyer";
   return `<button class="flyer-chip" type="button" data-flyer-set="${escapeHtml(
     flyerTriggerAttrs(flyers, talk.talkTitle)
   )}">${icon("image")}<span>${escapeHtml(label)}</span></button>`;
@@ -202,6 +210,7 @@ const scheduleRowClasses = (talk, nextTalkDate) => {
 const renderScheduleRow = (talk, nextTalkDate) => {
   const badge = dateBadge(talk.talkDate);
   const isNext = talk.talkDate === nextTalkDate && !isBreakEntry(talk);
+  const rowFlyerMarkup = flyerChipMarkup(talk, { compact: true });
   return `
     <tr class="${scheduleRowClasses(talk, nextTalkDate)}" data-reveal="row">
       <th class="schedule-table-date" scope="row">
@@ -210,6 +219,7 @@ const renderScheduleRow = (talk, nextTalkDate) => {
           <span class="date-day">${escapeHtml(badge.day)}</span>
         </span>
         <span class="sr-only">${escapeHtml(readableDate(talk.talkDate))}</span>
+        ${rowFlyerMarkup ? `<span class="schedule-table-date-flyer">${rowFlyerMarkup}</span>` : ""}
       </th>
       <td class="schedule-table-topic">
         <span class="schedule-table-title">${escapeHtml(talk.talkTitle)}</span>
@@ -321,11 +331,11 @@ const renderTalkCard = (speaker, details = {}) => {
           <span class="date-day" aria-hidden="true">${escapeHtml(badge.day)}</span>
         </div>
         <h3>${escapeHtml(speaker.talkTitle)}</h3>
+        ${talkFlyerMarkup ? `<div class="talk-card-flyer">${talkFlyerMarkup}</div>` : ""}
       </div>
       ${sessionSummaryMarkup(speaker, "p")}
       <p class="talk-description">${escapeHtml(description)}</p>
       <div class="talk-card-spacer" aria-hidden="true"></div>
-      ${talkFlyerMarkup ? `<div class="talk-card-flyer">${talkFlyerMarkup}</div>` : ""}
       <${speakerRowTag} class="talk-speaker-row"${speakerRowAttrs}>
         <span class="speaker-media" aria-hidden="true">
           ${imageMarkup}
