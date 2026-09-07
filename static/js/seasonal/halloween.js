@@ -664,10 +664,64 @@ const SPIDER = `
     <ellipse cx="7" cy="33" rx="3.2" ry="4" fill="#1a0b12"></ellipse>
   </svg>`;
 
-const DIVIDER = `
-  <span class="hw-rule"></span>
-  <span class="hw-rule-mark">${SPIDER}</span>
-  <span class="hw-rule"></span>`;
+/* The seam between the overview and the dashboard is a plain hairline. The
+   spider used to hang from its centre, but a spider dangling in the middle of
+   an empty rule reads as a stray graphic; hooked onto the tail of the heading
+   below it instead, it reads as deliberate. */
+const DIVIDER = `<span class="hw-rule"></span>`;
+
+/* Hangs the spider off a letter of a heading.
+ *
+ * The letter has to become its own element for the thread to have something
+ * to hang from, so the heading's text node is split into three around it and
+ * the middle piece is wrapped. The wrapper stays *inline* — an inline-block
+ * would let the line break between the word and its last letter — which is
+ * enough to make it the containing block for the absolutely positioned mark.
+ *
+ * Teardown puts the text back exactly as it was, so a theme switch does not
+ * leave the heading permanently sliced up.
+ */
+const hangSpider = (disposer, selector, letter) => {
+  const host = document.querySelector(selector);
+  if (!host) {
+    return;
+  }
+  /* The last match, so "Discussions" hangs it off the trailing s rather than
+     the one in the middle of the word. */
+  const walker = document.createTreeWalker(host, NodeFilter.SHOW_TEXT);
+  let text = null;
+  let at = -1;
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const index = node.nodeValue.toLowerCase().lastIndexOf(letter);
+    if (index !== -1) {
+      text = node;
+      at = index;
+    }
+  }
+  if (!text) {
+    return;
+  }
+
+  const target = text.splitText(at);
+  target.splitText(1);
+  const glyph = target.nodeValue;
+  const anchor = make("span", { class: "hw-hang", text: glyph });
+  target.replaceWith(anchor);
+
+  const mark = make("span", { class: "hw-hang-mark", "aria-hidden": "true" });
+  mark.innerHTML = SPIDER;
+  anchor.appendChild(mark);
+
+  disposer.add(() => {
+    const parent = anchor.parentNode;
+    anchor.replaceWith(document.createTextNode(glyph));
+    if (parent) {
+      /* Re-join the three fragments, or every mount/teardown cycle leaves the
+         heading with one more text node than it started with. */
+      parent.normalize();
+    }
+  });
+};
 
 /* Logo treatment for the circular speaker photographs: the artboard's cobweb
    ring — a full radial web around the mark, ten spokes and five sagging
@@ -737,6 +791,7 @@ export const mount = ({ overlay, density, motion, root }) => {
     `<div class="season-sky"></div>
      ${starfield(3, 46, 74)}
      ${moon("hw-moon", "hero")}
+     <div class="hw-ghosts hw-ghosts-hero">${ghosts(23, 3)}</div>
      <div class="hw-tree hw-tree-far hw-tree-2">${bareTree(21, { H: 240 })}</div>
      <div class="hw-tree hw-tree-far hw-tree-3">${bareTree(34, { H: 240 })}</div>
      <div class="hw-tree hw-tree-far hw-tree-4">${bareTree(47, { H: 240 })}</div>
@@ -756,7 +811,7 @@ export const mount = ({ overlay, density, motion, root }) => {
   );
 
   /* Footer: the same night, with a graveyard, a bare tree and an owl in it. */
-  decorate(
+  const [footerScene] = decorate(
     disposer,
     ".site-footer",
     "season-scene hw-footer",
@@ -772,67 +827,121 @@ export const mount = ({ overlay, density, motion, root }) => {
   );
 
   /* Startle a ghost and it gasps and vanishes, then rises again on its next
-     cycle. One listener on the layer rather than one per ghost.
-     
+     cycle.
+
      The vanish has to start from wherever the ghost currently is. A CSS class
      carrying its own animation cannot do that: replacing the rise drops the
      element back to its base style first, so the ghost snapped to the ground
      at zero opacity and gasped from there. So the live transform and opacity
      are read at click time, pinned inline, and the vanish is composed on top
      of that matrix through the animation API. */
-  const ghostLayer = document.querySelector(".hw-ghosts");
-  if (ghostLayer) {
-    disposer.listen(ghostLayer, "click", (event) => {
-      const ghost = event.target.closest(".hw-ghost");
-      if (!ghost || ghost.dataset.spooked) {
+  const startle = (ghost) => {
+    if (ghost.dataset.spooked) {
+      return;
+    }
+    const current = getComputedStyle(ghost);
+    /* The rise animation's matrix at this instant — it already carries both
+       the travel and the scale, so the vanish multiplies onto it rather
+       than replacing it. */
+    const at = current.transform === "none" ? "" : `${current.transform} `;
+    const opacity = Number(current.opacity) || 0.4;
+
+    ghost.dataset.spooked = "1";
+    ghost.classList.add("is-spooked");
+    /* Stop the rise and hold the pose it was in. */
+    ghost.style.animation = "none";
+    ghost.style.transform = current.transform;
+    ghost.style.opacity = String(opacity);
+
+    const vanish = ghost.animate(
+      [
+        { transform: `${at}scale(1)`, opacity },
+        /* A beat brighter and bigger, so the O-mouth registers before it
+           goes. */
+        { transform: `${at}scale(1.14)`, opacity: Math.min(1, opacity + 0.3), offset: 0.3 },
+        { transform: `${at}translateY(-46px) scale(1.3)`, opacity: 0 }
+      ],
+      { duration: 620, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }
+    );
+
+    /* onfinish rather than the finished promise: a cancel on teardown
+       rejects that promise, and there is nothing useful to do with it. */
+    vanish.onfinish = () => {
+      ghost.classList.remove("is-spooked");
+      ghost.style.removeProperty("animation");
+      ghost.style.removeProperty("transform");
+      ghost.style.removeProperty("opacity");
+      /* Every ghost carries a *negative* animation-delay so the four of them
+         are spread through the cycle at load. Restoring the CSS animation
+         therefore resumes it mid-rise, and a startled ghost popped straight
+         back into view. A positive delay instead: it stays away for a few
+         seconds and then climbs from the ground.
+
+         Delay only applies before the first iteration, so the loop after
+         that is unaffected. During it the element falls back to its base
+         style, which is opacity 0 — so it is genuinely gone, not lurking. */
+      ghost.style.animationDelay = `${range(Math.random, 4, 11).toFixed(1)}s`;
+      delete ghost.dataset.spooked;
+    };
+  };
+
+  /* Blood moon.
+   *
+   * Clicking either moon turns both of them red and lays a faint red wash
+   * over the whole page; clicking again puts the night back. The wash is a
+   * real fixed element rather than a body background, because the page's
+   * white is spread across a dozen surfaces — sections, cards, tables — and
+   * one multiplying sheet over the lot tints them all consistently.
+   */
+  const wash = disposer.node(make("div", { class: "hw-blood-wash", "aria-hidden": "true" }));
+  document.body.appendChild(wash);
+  disposer.add(() => root.classList.remove("hw-blood"));
+  const toggleMoon = () => root.classList.toggle("hw-blood");
+
+  /* Both the moon and the hero's ghosts sit *behind* the page's own copy:
+     `.hero-inner` and `.footer-inner` carry z-index 1 and the scenes carry
+     none, so anything lifted over them paints on top of the headline. Their
+     boxes also swallow the clicks, which is why the hit test is geometric —
+     the listener is on the section, and what was under the pointer is worked
+     out from the live rectangles. The ghosts move continuously, so those
+     rectangles have to be read at click time anyway.
+
+     Anything interactive under the pointer wins outright: a ghost drifting
+     across the hero's primary action must not eat the press. */
+  const spookyClicks = (scene, host) => {
+    if (!scene || !host) {
+      return;
+    }
+    disposer.listen(host, "click", (event) => {
+      if (event.target.closest("a, button, input, select, textarea, summary, [role='button']")) {
         return;
       }
-      const current = getComputedStyle(ghost);
-      /* The rise animation's matrix at this instant — it already carries both
-         the travel and the scale, so the vanish multiplies onto it rather
-         than replacing it. */
-      const at = current.transform === "none" ? "" : `${current.transform} `;
-      const opacity = Number(current.opacity) || 0.4;
-
-      ghost.dataset.spooked = "1";
-      ghost.classList.add("is-spooked");
-      /* Stop the rise and hold the pose it was in. */
-      ghost.style.animation = "none";
-      ghost.style.transform = current.transform;
-      ghost.style.opacity = String(opacity);
-
-      const vanish = ghost.animate(
-        [
-          { transform: `${at}scale(1)`, opacity },
-          /* A beat brighter and bigger, so the O-mouth registers before it
-             goes. */
-          { transform: `${at}scale(1.14)`, opacity: Math.min(1, opacity + 0.3), offset: 0.3 },
-          { transform: `${at}translateY(-46px) scale(1.3)`, opacity: 0 }
-        ],
-        { duration: 620, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }
-      );
-
-      /* onfinish rather than the finished promise: a cancel on teardown
-         rejects that promise, and there is nothing useful to do with it. */
-      vanish.onfinish = () => {
-        ghost.classList.remove("is-spooked");
-        ghost.style.removeProperty("animation");
-        ghost.style.removeProperty("transform");
-        ghost.style.removeProperty("opacity");
-        /* Every ghost carries a *negative* animation-delay so the four of them
-           are spread through the cycle at load. Restoring the CSS animation
-           therefore resumes it mid-rise, and a startled ghost popped straight
-           back into view. A positive delay instead: it stays away for a few
-           seconds and then climbs from the ground.
-
-           Delay only applies before the first iteration, so the loop after
-           that is unaffected. During it the element falls back to its base
-           style, which is opacity 0 — so it is genuinely gone, not lurking. */
-        ghost.style.animationDelay = `${range(Math.random, 4, 11).toFixed(1)}s`;
-        delete ghost.dataset.spooked;
+      const x = event.clientX;
+      const y = event.clientY;
+      const hit = (el) => {
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
       };
+
+      const moonEl = scene.querySelector(".hw-moon");
+      if (moonEl && hit(moonEl)) {
+        toggleMoon();
+        return;
+      }
+
+      for (const ghost of scene.querySelectorAll(".hw-ghost")) {
+        /* Mid-cycle a ghost is invisible but its box is still there, and
+           being startled by nothing is just a dead click. */
+        if (Number(getComputedStyle(ghost).opacity) > 0.06 && hit(ghost)) {
+          startle(ghost);
+          return;
+        }
+      }
     });
-  }
+  };
+
+  spookyClicks(heroScene, document.querySelector(".hero"));
+  spookyClicks(footerScene, document.querySelector(".site-footer"));
 
   /* The lanterns sit on the footer's top edge, so they need to escape it —
      they live in their own decoration rather than inside `.hw-footer`, which
@@ -901,6 +1010,9 @@ export const mount = ({ overlay, density, motion, root }) => {
      a bare class selector hangs a seam divider directly under the header on
      every one of them. */
   decorate(disposer, ".section-overview + .section-dashboard", "season-divider hw-divider", DIVIDER, { first: true });
+
+  /* ...and the spider hangs off the tail of the heading under it. */
+  hangSpider(disposer, "#talks-title", "s");
 
   /* Every circular speaker photograph gets a web across one corner of its rim. */
   decorate(disposer, ".speaker-directory-photo, .seminar-speaker-photo", "season-ring", PHOTO_WEB);

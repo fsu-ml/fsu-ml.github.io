@@ -227,6 +227,64 @@
   background: radial-gradient(circle, rgba(253, 247, 234, 0.34) 0%, rgba(253, 247, 234, 0) 62%);
 }
 
+/* ---------------------------------------------------------------------------
+   Blood moon
+   ---------------------------------------------------------------------------
+   Clicking either moon turns both of them, and the page under them, red.
+   -------------------------------------------------------------------------- */
+
+/* The crescent's colour is a presentation attribute in the markup, and the
+   `fill` *property* beats one — no !important needed. Only the visible disc:
+   the two circles inside the mask are what cut the crescent, and colouring
+   those would fill it back in. */
+.hw-moon svg > circle,
+.hw-moon-glow {
+  transition:
+    fill 0.9s var(--ease-out-soft, ease),
+    background 0.9s var(--ease-out-soft, ease);
+}
+
+:root.hw-blood .hw-moon svg > circle {
+  fill: #d0342c;
+}
+
+:root.hw-blood .hw-moon-glow {
+  background: radial-gradient(circle, rgba(208, 52, 44, 0.44) 0%, rgba(208, 52, 44, 0) 64%);
+}
+
+/* One sheet over the whole document — above the header and the ambient layer,
+   below nothing that matters, and multiplying so it tints the page's white
+   surfaces rather than fogging them. Kept faint: this is a cast over the
+   page, not a filter on it. */
+.hw-blood-wash {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: radial-gradient(ellipse 120% 90% at 50% 0%, rgba(198, 26, 26, 0.9), rgba(214, 76, 60, 0.55));
+  mix-blend-mode: multiply;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.9s var(--ease-out-soft, ease);
+}
+
+:root.hw-blood .hw-blood-wash {
+  opacity: 0.12;
+}
+
+:root.season-static .hw-blood-wash,
+:root.season-static .hw-moon svg > circle,
+:root.season-static .hw-moon-glow {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-blood-wash,
+  .hw-moon svg > circle,
+  .hw-moon-glow {
+    transition: none;
+  }
+}
+
 /* Tucked into the corner above the last link column. Further in, the halo
    washes across the column heading and the moon reads as a smudge behind the
    type rather than as sky. */
@@ -415,6 +473,25 @@
   width: 100%;
   height: auto;
   filter: drop-shadow(0 0 10px rgba(233, 224, 244, 0.35));
+}
+
+/* Hero ghosts.
+   Behind the hero's copy rather than in front of it: `.hero-inner` carries
+   z-index 1 and the scene carries none, so anything lifted above 1 in here
+   paints over the headline. They are startled all the same — halloween.js
+   hit-tests the click against their live boxes instead of relying on the
+   pointer reaching them. */
+.hw-ghosts-hero {
+  z-index: 0;
+  /* Dimmer than the footer's: these pass behind type, and the ones down
+     there have open sky to themselves. */
+  opacity: 0.72;
+}
+
+.hw-ghosts-hero .hw-ghost {
+  bottom: 0;
+  /* Nothing to receive: the section's own listener does the hit testing. */
+  pointer-events: none;
 }
 
 /* Lanterns sitting on the footer's top edge.
@@ -639,17 +716,61 @@
   background: linear-gradient(90deg, transparent, rgba(42, 17, 24, 0.34), transparent);
 }
 
-/* The spider hangs from the rule. Static: one bobbing element in the middle of
-   the page is a distraction, not atmosphere. */
-.hw-rule-mark {
-  display: block;
-  width: 14px;
+/* ---------------------------------------------------------------------------
+   Spider on a heading
+   ---------------------------------------------------------------------------
+   The wrapped letter is the anchor. It stays inline — an inline-block would
+   let the line break between the word and its final letter — and inline
+   position: relative is enough to make it the mark's containing block.
+   -------------------------------------------------------------------------- */
+
+.hw-hang {
+  position: relative;
 }
 
-.hw-rule-mark svg {
+/* Hooked over the trailing edge of the letter rather than its middle: the
+   thread then runs down the outside of the glyph and the spider dangles clear
+   of it, instead of sitting on top of the letterform. */
+.hw-hang-mark {
+  position: absolute;
+  top: 0.16em;
+  left: 100%;
+  z-index: 1;
+  width: 13px;
+  margin-left: -3px;
+  pointer-events: none;
+  transform-origin: 50% 0;
+  animation: hw-dangle 7s ease-in-out infinite;
+}
+
+.hw-hang-mark svg {
   display: block;
   width: 100%;
   height: auto;
+}
+
+/* A couple of degrees, slowly. Any more and a spider on a heading is a
+   distraction rather than atmosphere. */
+@keyframes hw-dangle {
+  0%,
+  100% {
+    transform: rotate(-2.4deg);
+  }
+  50% {
+    transform: rotate(2.4deg);
+  }
+}
+
+/* The mark lives inside the page's own heading, not inside a `.season-*`
+   container, so the global motion switches in base.css do not reach it. */
+:root.season-static .hw-hang-mark {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-hang-mark {
+    animation: none;
+  }
 }
 
 /* The graveyard and the tree occupy the footer's bottom band, and the footer's
