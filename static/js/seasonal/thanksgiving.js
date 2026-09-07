@@ -27,7 +27,10 @@ import {
   trackPointer
 } from "./engine.js";
 
-const LEAF_COLORS = ["#d98e3f", "#b4562c", "#8e1f31", "#ceb888"];
+/* Amber, burnt orange, rust, ochre, brown, and one garnet to keep the brand
+   in the mix. It was half garnet and wine, which read as the dinner rather
+   than the season. */
+const LEAF_COLORS = ["#d98e3f", "#c8641f", "#b4562c", "#e0a83c", "#7a3b1c", "#8e1f31"];
 const LEAF_KINDS = ["maple", "oak", "birch", "ovate"];
 const LEAF_PATH = {
   maple: "M12 2l2 5 5-1-3 4 4 3-5 1 1 5-4-3-4 3 1-5-5-1 4-3-3-4 5 1z",
@@ -36,7 +39,9 @@ const LEAF_PATH = {
   ovate: "M12 2C5 5 3 12 6 21c7-1 12-7 12-14 0-2-1-4-2-5-1 3-3 5-5 6 2-2 2-5 1-6z"
 };
 
-const leafCount = (density) => Math.min(30, Math.round(density / 4));
+/* Tuned so the hero reads as a leaf fall at the default density: at 45 that
+   is 20 leaves, where it was 11. */
+const leafCount = (density) => Math.min(48, Math.round(density / 2.2));
 
 /* ---------------------------------------------------------------------------
    Wind
@@ -124,7 +129,7 @@ class LeafField {
       /* Depth drives size, fall speed, opacity and how hard the wind shoves
          it, so one number gives the field its parallax. */
       d,
-      size: 10 + d * 9,
+      size: 12 + d * 10,
       x: Math.random() * this.surface.width,
       y: fromTop
         ? range(Math.random, -80, -20)
@@ -458,6 +463,111 @@ const leafScatter = (seed) => {
 };
 
 /* ---------------------------------------------------------------------------
+   Hero: hills, trees, grass
+   ---------------------------------------------------------------------------
+   Rolling hills in three depths, lit from behind by the sun: the far row is
+   a sunlit haze, the middle row rust, the near row nearly black. Bare trees
+   stand on the middle ridge. The drawing is 1440x220 and is never stretched
+   (see `.tg-ground` in the stylesheet), so the trees keep their shape.
+   -------------------------------------------------------------------------- */
+
+const GROUND_W = 1440;
+const GROUND_H = 220;
+
+/* A bare tree, drawn upward from its base at (0, 0). */
+const TREE = `M0 0V-40M0 -13L-10 -25M-10 -25L-14 -36M0 -19L11 -33M11 -33L9 -44M0 -26L-7 -42M0 -32L7 -48M0 -40L-2 -58`;
+
+const tree = (x, y, scale, flip = false) =>
+  `<path d="${TREE}" transform="translate(${x} ${y}) scale(${flip ? -scale : scale} ${scale})"
+         fill="none" stroke="#2a0e07" stroke-width="${(2.2 / scale).toFixed(2)}"
+         stroke-linecap="round" stroke-linejoin="round"></path>`;
+
+const groundSvg = () => {
+  const far = `M0 118C150 72 300 92 460 100S760 42 940 82S1260 62 ${GROUND_W} 112V${GROUND_H}H0Z`;
+  const mid = `M0 152C200 112 380 132 560 142S900 94 1080 132S1320 122 ${GROUND_W} 152V${GROUND_H}H0Z`;
+  const near = `M0 188C240 164 420 178 640 180S980 154 1200 176S1360 184 ${GROUND_W} 178V${GROUND_H}H0Z`;
+  /* Trees stand on the middle ridge, so their bases follow its curve. */
+  const trees = [
+    tree(118, 138, 1.05),
+    tree(154, 141, 0.7, true),
+    tree(392, 136, 0.85),
+    tree(1002, 130, 1.1, true),
+    tree(1038, 131, 0.75),
+    tree(1312, 134, 0.95)
+  ].join("");
+  return `
+    <svg viewBox="0 0 ${GROUND_W} ${GROUND_H}" preserveAspectRatio="xMidYMax slice"
+         aria-hidden="true" focusable="false">
+      <path d="${far}" fill="#c26a22" opacity=".85"></path>
+      <path d="${mid}" fill="#7a3116"></path>
+      ${trees}
+      <path d="${near}" fill="#3b150a"></path>
+    </svg>`;
+};
+
+/* Grass and wheat along the bottom edge, in a user-unit pattern so the tufts
+   repeat across any width rather than stretching. Some stalks carry a wheat
+   head, which is the harvest note in the hero. */
+const grassSvg = (seed) => {
+  const rand = seeded(seed);
+  const tile = 140;
+  const H = 56;
+  const stalks = [];
+  const heads = [];
+  for (let i = 0; i < 16; i += 1) {
+    const x = rand() * tile;
+    const h = range(rand, 16, 46);
+    const lean = range(rand, -6, 6);
+    const top = H - h;
+    stalks.push(`M${x.toFixed(1)} ${H}Q${(x + lean * 0.4).toFixed(1)} ${(H - h * 0.55).toFixed(1)} ${(x + lean).toFixed(1)} ${top.toFixed(1)}`);
+    if (rand() < 0.3) {
+      heads.push(
+        `<ellipse cx="${(x + lean).toFixed(1)}" cy="${(top - 2).toFixed(1)}" rx="1.9" ry="5.5"
+                  transform="rotate(${(lean * 2.5).toFixed(0)} ${(x + lean).toFixed(1)} ${(top - 2).toFixed(1)})"></ellipse>`
+      );
+    }
+  }
+  return `
+    <svg width="100%" height="${H}" aria-hidden="true" focusable="false">
+      <defs>
+        <pattern id="tg-grass-tile" patternUnits="userSpaceOnUse" width="${tile}" height="${H}">
+          <path d="${stalks.join("")}" fill="none" stroke="#1f0904" stroke-width="1.6"
+                stroke-linecap="round"></path>
+          <g fill="#b9772a" opacity=".9">${heads.join("")}</g>
+        </pattern>
+      </defs>
+      <rect width="100%" height="${H}" fill="url(#tg-grass-tile)"></rect>
+    </svg>`;
+};
+
+/* Leaves lying on the near hill and in the grass. */
+const groundLeaves = (seed, n = 22) => {
+  const rand = seeded(seed);
+  const out = [];
+  for (let i = 0; i < n; i += 1) {
+    const size = range(rand, 16, 32);
+    out.push(
+      `<span style="left:${(rand() * 100).toFixed(1)}%;bottom:${range(rand, 2, 42).toFixed(0)}px;transform:rotate(${(
+        rand() * 360
+      ).toFixed(0)}deg) scaleY(${range(rand, 0.55, 0.9).toFixed(2)});opacity:${range(rand, 0.75, 0.95).toFixed(2)}">${leafSvg(
+        LEAF_KINDS[Math.floor(rand() * 4)],
+        LEAF_COLORS[Math.floor(rand() * LEAF_COLORS.length)],
+        size
+      )}</span>`
+    );
+  }
+  return `<div class="tg-ground-leaves">${out.join("")}</div>`;
+};
+
+const HERO = () => `
+  <div class="season-sky"></div>
+  <div class="tg-sun"></div>
+  <div class="tg-dusk"></div>
+  <div class="tg-ground">${groundSvg()}</div>
+  <div class="tg-grass">${grassSvg(29)}</div>
+  ${groundLeaves(53)}`;
+
+/* ---------------------------------------------------------------------------
    Mount
    -------------------------------------------------------------------------- */
 
@@ -499,17 +609,10 @@ export const mount = ({ overlay, density, motion, root }) => {
   /* Header: a garland hanging off the bar's bottom edge. */
   decorate(disposer, ".site-header", "season-edge-strip tg-garland", garland(6));
 
-  /* Hero: the warm wash and nothing else. The tumbling leaves already cross
-     it from the ambient layer, and every scenic element tried here — sun,
-     hills, wheat, leaf bank — competed with the banner art and the
-     next-seminar card rather than sitting behind them. */
-  decorate(
-    disposer,
-    ".hero",
-    "season-scene tg-hero",
-    `<div class="season-sky"></div>
-     <div class="tg-dusk"></div>`
-  );
+  /* Hero: golden hour over the hills. Sky, sun, the scroll-driven dusk, then
+     the ground in front. Everything sits behind `.hero-inner`, so the copy and
+     the seminar card keep the contrast they were audited with. */
+  decorate(disposer, ".hero", "season-scene tg-hero", HERO());
 
   /* Footer: the artboard's own composition — the table after dinner under a
      night sky, with the link columns sitting unchanged above it. */

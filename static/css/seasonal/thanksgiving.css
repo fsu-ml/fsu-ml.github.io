@@ -13,14 +13,14 @@
 
 :root[data-season="thanksgiving"] {
   --season-accent: #d98e3f;
-  --season-accent-soft: #e8d5a8;
-  --season-deep: #4a1c27;
-  --season-particle: #b4562c;
+  --season-accent-soft: #f0d29a;
+  --season-deep: #3b150a;
+  --season-particle: #c8641f;
   --season-glow: rgba(217, 142, 63, 0.42);
   --season-edge: 0px;
 
-  /* Warm, and net-darkening at the top and bottom where the type sits. The
-     amber lift is kept to the middle band, well clear of the headline. */
+  /* The footer's sky: a warm dusk. The hero overrides this with a full
+     sunset (see "Scroll: the sunset" and the hero block below). */
   --season-sky:
     radial-gradient(circle at 42% 14%, rgba(217, 142, 63, 0.26), transparent 44%),
     linear-gradient(180deg, rgba(74, 28, 39, 0.52) 0%, rgba(150, 72, 40, 0.1) 52%, rgba(58, 20, 30, 0.62) 100%);
@@ -255,6 +255,165 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Hero: golden hour
+   ---------------------------------------------------------------------------
+   Winter and Halloween replace the hero outright; Thanksgiving used to wash
+   a little amber over the site's navy banner, which read as a darker garnet
+   rather than as a season. This is the same move the others make: the banner
+   photograph and its overlay go, and the hero becomes a late-afternoon sky
+   over rolling hills, a low sun, bare trees, grass leaning in the wind, and
+   leaves lying on the ground.
+
+   Contrast: the copy sits in the middle band of the hero, which the sky keeps
+   in the rust range (roughly #7f3819 to #9a4a1e). White and the gold headline
+   both clear 4.5:1 there, and a shade on the left, where the copy is, keeps
+   the margin. The bright horizon lies below the buttons and is mostly hidden
+   behind the hills, showing only in the valleys between them.
+   -------------------------------------------------------------------------- */
+
+:root[data-season="thanksgiving"] .hero-media,
+:root[data-season="thanksgiving"] .hero-overlay {
+  display: none;
+}
+
+/* Matches the top of the sky, so there is no flash of the site's navy before
+   the theme mounts. */
+:root[data-season="thanksgiving"] .hero {
+  background: #5a2314;
+}
+
+:root[data-season="thanksgiving"] .tg-hero {
+  --tg-sun-size: 84px;
+  --tg-sun-x: calc(50% - 22px);
+  --tg-sun-y: 150px;
+}
+
+:root[data-season="thanksgiving"] .tg-hero .season-sky {
+  background:
+    /* Shade on the copy's side, deepest at the bottom-left where the
+       buttons sit closest to the horizon. */
+    radial-gradient(ellipse 70% 46% at 0% 100%, rgba(40, 12, 6, 0.52), transparent 72%),
+    linear-gradient(90deg, rgba(48, 16, 8, 0.56) 0%, rgba(48, 16, 8, 0.28) 40%, transparent 64%),
+    /* The sun's halo, painted on the sky where the disc sits. */
+    radial-gradient(circle at var(--tg-sun-x) calc(100% - var(--tg-sun-y)), rgba(255, 214, 140, 0.55), rgba(255, 190, 100, 0.18) 16%, transparent 34%),
+    /* A haze of light along the horizon, kept low enough that the hills hide
+       most of it. */
+    radial-gradient(ellipse 110% 18% at 50% 100%, rgba(255, 196, 96, 0.5), transparent 70%),
+    /* Zenith to horizon: dusky brown, rust, amber, gold. The bright stops
+       sit in the bottom fifth, under the button row. */
+    linear-gradient(180deg, #4e1d12 0%, #6e2d15 24%, #8a3f1a 48%, #a0501e 68%, #c47428 82%, #e6a648 92%, #f5c86a 100%);
+}
+
+/* Sky rows behind the copy, in paint order: sky, sun, dusk, ground. The dusk
+   lies over the sun so it dims as the page is read, and under the hills so
+   they stay silhouetted. */
+.tg-sun {
+  position: absolute;
+  bottom: var(--tg-sun-y);
+  left: var(--tg-sun-x);
+  width: var(--tg-sun-size);
+  height: var(--tg-sun-size);
+  margin-left: calc(var(--tg-sun-size) / -2);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 42%, #fff4d2, #f9cc6c 56%, #f2a742 100%);
+  box-shadow:
+    0 0 32px 10px rgba(255, 200, 110, 0.55),
+    0 0 110px 44px rgba(240, 150, 60, 0.3);
+  /* Sinks as the sunset progresses. */
+  transform: translateY(calc(var(--season-progress, 0) * 70px));
+}
+
+/* Hills, trees and ground. `xMidYMax slice` keeps the drawing at its own
+   proportions and crops the sides on narrow screens, so a tree is a tree on a
+   phone instead of a needle. The box keeps the artwork's aspect until the
+   floor, where slicing takes over. */
+.tg-ground {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1440 / 220;
+  min-height: 150px;
+  max-height: 260px;
+}
+
+.tg-ground svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Grass and wheat along the bottom edge, leaning with the wind. The stalks
+   live in a user-unit pattern, so they repeat rather than stretch. */
+.tg-grass {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 56px;
+  transform: skewX(calc(var(--wind, 0) * -0.16deg));
+  transform-origin: 50% 100%;
+  transition: transform 0.55s ease-out;
+}
+
+.tg-grass svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Leaves lying on the near hill and the grass, with a nudge from the wind so
+   the ground is not quite still. */
+.tg-ground-leaves {
+  position: absolute;
+  inset: 0;
+  transform: translateX(calc(var(--wind, 0) * 0.08px));
+  transition: transform 0.7s ease-out;
+}
+
+.tg-ground-leaves span {
+  position: absolute;
+  display: block;
+}
+
+.tg-ground-leaves svg {
+  display: block;
+  filter: drop-shadow(0 2px 3px rgba(30, 10, 5, 0.45));
+}
+
+@media (max-width: 1264px) {
+  /* The corridor between the wordmark and the seminar card narrows here, so
+     the sun shrinks and stays low in the hills. */
+  :root[data-season="thanksgiving"] .tg-hero {
+    --tg-sun-size: 56px;
+    --tg-sun-y: 120px;
+  }
+}
+
+@media (max-width: 1080px) {
+  /* Columns stack; the right-hand side of the sky is open again. */
+  :root[data-season="thanksgiving"] .tg-hero {
+    --tg-sun-size: 84px;
+    --tg-sun-x: calc(100% - 6% - 34px);
+    --tg-sun-y: 150px;
+  }
+}
+
+@media (max-width: 620px) {
+  :root[data-season="thanksgiving"] .tg-hero {
+    --tg-sun-size: 60px;
+    --tg-sun-x: calc(100% - 52px);
+    --tg-sun-y: 130px;
+  }
+
+  .tg-ground {
+    min-height: 120px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Scroll: the sunset
    -------------------------------------------------------------------------- */
 
@@ -265,8 +424,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 42% 14%, rgba(142, 31, 49, 0.34), transparent 46%),
-    linear-gradient(180deg, rgba(38, 12, 22, 0.72) 0%, rgba(74, 28, 39, 0.4) 54%, rgba(24, 8, 14, 0.8) 100%);
+    radial-gradient(circle at 42% 14%, rgba(74, 28, 39, 0.34), transparent 46%),
+    linear-gradient(180deg, rgba(28, 10, 16, 0.82) 0%, rgba(60, 22, 30, 0.6) 58%, rgba(130, 56, 30, 0.34) 100%);
   opacity: var(--season-progress, 0);
   pointer-events: none;
 }

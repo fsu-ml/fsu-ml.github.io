@@ -834,6 +834,17 @@
   stroke-linejoin: round;
 }
 
+/* Inside a talk card the badge is a <p>, so the generic ".talk-card p" copy
+   colour would otherwise win over the pill's gold and leave grey-on-garnet.
+   Cards centre their contents, so the shrink-wrapped pill needs auto margins
+   to sit under the title rather than hugging the left edge. */
+.talk-card p.location-note {
+  margin: 9px auto 0;
+  color: var(--fsu-gold);
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
 .schedule-table-next-tag {
   display: inline-block;
   margin-left: 8px;
