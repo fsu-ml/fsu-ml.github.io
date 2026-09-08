@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="240" height="240"
+     role="img" aria-label="Rabbit">
+  <mask id="lny-rabbit" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+    <rect width="120" height="120" fill="#000"/>
+    <path d="M34 48 C27 30 27 12 36 6 C47 5 48 24 46 42 Z" fill="#fff"/><path d="M86 48 C93 30 93 12 84 6 C73 5 72 24 74 42 Z" fill="#fff"/><ellipse cx="60" cy="68" rx="35" ry="31" fill="#fff"/><path d="M37 43 C33 30 33 17 38 12 C43 18 42 31 41 42 Z" fill="#000"/><path d="M83 43 C87 30 87 17 82 12 C77 18 78 31 79 42 Z" fill="#000"/><circle cx="47" cy="64" r="5.5" fill="#000"/><circle cx="73" cy="64" r="5.5" fill="#000"/><path d="M54 80 L66 80 L60 88 Z" fill="#000"/>
+  </mask>
+  <rect width="120" height="120" fill="#c8102e" mask="url(#lny-rabbit)"/>
+</svg>

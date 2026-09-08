@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="240" height="240"
+     role="img" aria-label="Dragon">
+  <mask id="lny-dragon" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+    <rect width="120" height="120" fill="#000"/>
+    <path d="M36 38 C26 24 12 18 4 22 C12 30 16 42 32 48 Z" fill="#fff"/><path d="M84 38 C94 24 108 18 116 22 C108 30 104 42 88 48 Z" fill="#fff"/><path d="M26 60 L6 58 L22 74 Z" fill="#fff"/><path d="M94 60 L114 58 L98 74 Z" fill="#fff"/><path d="M24 52 C24 34 96 34 96 52 C96 68 90 78 78 82 C74 94 66 100 60 100C54 100 46 94 42 82 C30 78 24 68 24 52 Z" fill="#fff"/><path d="M42 86 C26 98 12 94 10 82" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M78 86 C94 98 108 94 110 82" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="44" cy="58" r="6.5" fill="#000"/><circle cx="76" cy="58" r="6.5" fill="#000"/><path d="M34 46 C40 41 50 41 55 46" fill="none" stroke="#000" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M65 46 C70 41 80 41 86 46" fill="none" stroke="#000" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="53" cy="80" r="3.8" fill="#000"/><circle cx="67" cy="80" r="3.8" fill="#000"/>
+  </mask>
+  <rect width="120" height="120" fill="#c8102e" mask="url(#lny-dragon)"/>
+</svg>

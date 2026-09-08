@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="240" height="240"
+     role="img" aria-label="Dog">
+  <mask id="lny-dog" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+    <rect width="120" height="120" fill="#000"/>
+    <path d="M32 44 C14 46 6 66 13 84 C22 94 35 86 37 68 Z" fill="#fff"/><path d="M88 44 C106 46 114 66 107 84 C98 94 85 86 83 68 Z" fill="#fff"/><ellipse cx="60" cy="60" rx="31" ry="30" fill="#fff"/><ellipse cx="60" cy="84" rx="20" ry="15" fill="#fff"/><ellipse cx="60" cy="84" rx="20" ry="15" fill="none" stroke="#000" stroke-width="3"/><ellipse cx="60" cy="74" rx="7.5" ry="5.5" fill="#000"/><path d="M60 79 L60 88" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 88 C55 93 50 92 48 88" fill="none" stroke="#000" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 88 C65 93 70 92 72 88" fill="none" stroke="#000" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="47" cy="54" r="5.5" fill="#000"/><circle cx="73" cy="54" r="5.5" fill="#000"/>
+  </mask>
+  <rect width="120" height="120" fill="#c8102e" mask="url(#lny-dog)"/>
+</svg>

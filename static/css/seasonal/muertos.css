@@ -1,0 +1,590 @@
+/* ---------------------------------------------------------------------------
+   Día de Muertos — 1 to 5 November
+   ---------------------------------------------------------------------------
+   Papel picado, cempasúchil petals, candles and marigolds. Warm and
+   celebratory, never spooky: the palette is orange, magenta, turquoise and
+   purple against the brand's own garnet, and nothing in here reads as a
+   graveyard.
+
+   Keyframes are namespaced `dm-`.
+   -------------------------------------------------------------------------- */
+
+:root[data-season="muertos"] {
+  --season-accent: #f28c1b;
+  --season-accent-soft: #ffb627;
+  --season-deep: #4a1c27;
+  --season-particle: #f28c1b;
+  --season-glow: rgba(242, 140, 27, 0.45);
+  --season-edge: 0px;
+
+  /* Fully opaque: the night has to replace the hero art, not tint it. Anything
+     translucent leaves the banner photograph's navy showing through and the
+     result reads as a filter rather than a scene. The artboard's own sky —
+     night, into purple, into garnet, so the brand stays in the picture. */
+  --season-sky: linear-gradient(180deg, #1a1013 0%, #3a1640 55%, #4a1c27 100%);
+}
+
+/* The hero stops clipping so the marigolds can lie across its bottom edge, and
+   several pieces of the layer are deliberately drawn a little past the edge
+   they hang from. None of that should be able to widen the document, so the
+   season clips the page horizontally for as long as it is mounted. `clip`
+   rather than `hidden`: `overflow: hidden` on the root turns the sticky header
+   into a static one. */
+:root[data-season="muertos"] {
+  overflow-x: clip;
+}
+
+/* The banner photograph and the hero's own overlay are tuned to each other;
+   either left visible under the night sky puts the site's navy back into it. */
+:root[data-season="muertos"] .hero-media,
+:root[data-season="muertos"] .hero-overlay {
+  display: none;
+}
+
+/* Matches the top of the sky gradient, so there is no flash of the site's deep
+   navy before the scene mounts. */
+:root[data-season="muertos"] .hero,
+:root[data-season="muertos"] .site-footer {
+  background: #1a1013;
+}
+
+/* ---------------------------------------------------------------------------
+   Keyframes
+   -------------------------------------------------------------------------- */
+
+@keyframes dm-fall {
+  to {
+    transform: translateY(112vh);
+  }
+}
+
+/* Sway lives on a child so it composes with the fall on the parent instead of
+   overwriting it — two transforms, two elements, no matrix maths. A petal
+   turns as it drifts, which is what separates it from a falling flake. */
+@keyframes dm-sway {
+  from {
+    transform: translateX(-18px) rotate(calc(var(--tilt, 0deg) - 34deg));
+  }
+  to {
+    transform: translateX(18px) rotate(calc(var(--tilt, 0deg) + 34deg));
+  }
+}
+
+/* Cut paper catching the air: the flag tips away from the viewer and shears
+   a little, rather than swinging, which is what a hanging sheet actually
+   does. Needs `perspective` on the string for the rotateX to read. */
+@keyframes dm-flutter {
+  0%,
+  100% {
+    transform: rotateX(0deg) skewX(0deg);
+  }
+  50% {
+    transform: rotateX(22deg) skewX(3deg);
+  }
+}
+
+@keyframes dm-flame {
+  0%,
+  100% {
+    transform: scale(1, 1) skewX(0);
+  }
+  20% {
+    transform: scale(0.94, 1.08) skewX(-3deg);
+  }
+  40% {
+    transform: scale(1.05, 0.95) skewX(2deg);
+  }
+  60% {
+    transform: scale(0.97, 1.04) skewX(-2deg);
+  }
+  80% {
+    transform: scale(1.03, 0.98) skewX(3deg);
+  }
+}
+
+@keyframes dm-glowpulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes dm-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Ambient petals
+   -------------------------------------------------------------------------- */
+
+.dm-petal {
+  width: 100%;
+  height: 100%;
+  transform: rotate(var(--tilt, 0deg));
+}
+
+.dm-petal svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 1px 2px rgba(26, 16, 19, 0.35));
+}
+
+.dm-petal-fall {
+  animation: dm-fall var(--dur, 20s) linear var(--delay, 0s) infinite;
+}
+
+.dm-petal-sway {
+  animation: dm-sway var(--sway, 5s) ease-in-out var(--sway-delay, 0s) infinite alternate;
+}
+
+/* ---------------------------------------------------------------------------
+   Papel picado
+   -------------------------------------------------------------------------- */
+
+.dm-wire {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Each flag hangs from the point on the wire the markup put it at, so the
+   transform origin is the top edge, not the centre. */
+.dm-flag {
+  position: absolute;
+  display: block;
+  transform-origin: top center;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.25));
+}
+
+.dm-flag svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.dm-flag-live {
+  animation: dm-flutter var(--flutter, 3.4s) ease-in-out var(--flutter-delay, 0s) infinite;
+}
+
+/* The string of flags needs a perspective for the flutter's rotateX to read as
+   paper turning rather than as a vertical squash. Applied to every host that
+   carries a wire. */
+.dm-header-banner,
+.dm-footer-banner,
+.dm-card-banner {
+  perspective: 500px;
+}
+
+/* ---------------------------------------------------------------------------
+   Header
+   -------------------------------------------------------------------------- */
+
+/* The string hangs off the bar's bottom edge, so the wire's ends meet it and
+   the flags are attached to the header rather than floating below it. */
+.dm-header-banner {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 44px;
+  margin-top: -2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Nav links: the artboard's marigold dot rising above the link on hover, plus
+   the site's own underline recoloured. Two small marks, one above and one
+   below — the underline still has to carry `.is-active`, so it stays. */
+:root[data-season="muertos"] .nav-link {
+  background-image: radial-gradient(circle, #f28c1b 0 45%, transparent 50%);
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: 0 0;
+  transition:
+    color var(--dur-fast) var(--ease-out-soft),
+    background-size var(--dur-base) cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+:root[data-season="muertos"] .nav-link:hover,
+:root[data-season="muertos"] .nav-link:focus-visible,
+:root[data-season="muertos"] .nav-link.is-active {
+  background-size: 8px 8px;
+}
+
+:root[data-season="muertos"] .nav-link:hover,
+:root[data-season="muertos"] .nav-link:focus-visible {
+  color: var(--season-accent-soft);
+}
+
+:root[data-season="muertos"] .nav-link::after {
+  background: var(--season-accent);
+}
+
+/* ---------------------------------------------------------------------------
+   Scenes
+   -------------------------------------------------------------------------- */
+
+.dm-footer {
+  inset: 0;
+  overflow: hidden;
+}
+
+/* The hero's scene does not clip. The marigold bed is meant to sit *on* the
+   hero's bottom edge rather than inside it, so the blooms break the line
+   between the hero and the section under it the way a real bed of flowers laid
+   along a step would. */
+.dm-hero {
+  inset: 0;
+  overflow: visible;
+}
+
+:root[data-season="muertos"] .hero {
+  overflow: visible;
+  /* The section below is later in the document and would paint over the
+     blooms; one step up puts the whole hero, scene included, in front of it.
+     The header's own z-index is 20, so it still passes over the top. */
+  z-index: 1;
+}
+
+.dm-footer-banner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 74px;
+}
+
+/* Candles standing in the marigold bed. They go on the left: the hero's right
+   column is the seminar card, and the scene sits behind `.hero-inner`, so
+   anything placed there is simply hidden by it. */
+.dm-hero-candles {
+  position: absolute;
+  bottom: 34px;
+  left: 7%;
+  display: flex;
+  align-items: flex-end;
+  gap: 26px;
+  pointer-events: none;
+}
+
+.dm-candle {
+  position: relative;
+  display: block;
+  width: 21px;
+  flex: none;
+}
+
+/* Three different heights, so the group reads as a row of candles someone set
+   down rather than as a comb. */
+.dm-hero-candles .dm-candle:nth-child(2) {
+  width: 16px;
+}
+
+.dm-hero-candles .dm-candle:nth-child(3) {
+  width: 24px;
+}
+
+.dm-candle svg {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* The halo is a soft radial behind the flame rather than a shadow on it, so it
+   can breathe without the flame changing size.
+
+   Sized to a candle rather than to a bonfire: at four times the candle's width
+   the glow was a lantern hanging in the hero, and three of them washed out the
+   marigolds they were standing in. */
+.dm-candle-glow {
+  position: absolute;
+  top: -60%;
+  left: -70%;
+  width: 240%;
+  height: 240%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 182, 39, 0.34) 0%, rgba(255, 182, 39, 0) 70%);
+  animation: dm-glowpulse 3.6s ease-in-out infinite;
+}
+
+.dm-flame {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: dm-flame 1.7s steps(1) infinite;
+}
+
+/* ---------------------------------------------------------------------------
+   Marigold beds
+   -------------------------------------------------------------------------- */
+
+.dm-bed {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  height: 92px;
+  pointer-events: none;
+}
+
+/* Raised out of the hero so the blooms lie across its bottom edge. The bed's
+   own children are placed from its bottom, so moving the box moves the whole
+   row without disturbing the scatter. */
+.dm-hero .dm-bed {
+  bottom: -26px;
+}
+
+.dm-bloom {
+  position: absolute;
+  display: block;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
+}
+
+.dm-bloom svg,
+.dm-loose-petal svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.dm-loose-petal {
+  position: absolute;
+  display: block;
+  opacity: 0.9;
+}
+
+/* The bed is ~92px of flowers and the footer's own links are white on a dark
+   ground; the banner overhead hangs about 70px into the same box. Reserve both,
+   so a stacked column on a narrow screen can never land on the marigolds and
+   the link columns start below the flags rather than behind them. */
+:root[data-season="muertos"] .footer-inner {
+  padding-top: 92px;
+  padding-bottom: 116px;
+}
+
+.dm-footer-calavera {
+  position: absolute;
+  right: 6%;
+  bottom: 44px;
+  display: block;
+  width: 58px;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+}
+
+.dm-calavera {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* On a phone the calavera lands on the marigolds under the last link column,
+   and the hero's candles crowd the wordmark. Both come off. */
+@media (max-width: 620px) {
+  .dm-footer-calavera,
+  .dm-hero-candles {
+    display: none;
+  }
+
+  /* Sixteen flags across a phone hang shoulder to shoulder and the string stops
+     reading as separate cut sheets. Every other one comes off, and the
+     footer's — the largest anywhere — also come down a size. */
+  .dm-header-banner .dm-flag:nth-of-type(even),
+  .dm-footer-banner .dm-flag:nth-of-type(even) {
+    display: none;
+  }
+
+  .dm-footer-banner .dm-flag {
+    width: 34px !important;
+    margin-left: -17px !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Section divider
+   -------------------------------------------------------------------------- */
+
+.dm-rule {
+  flex: 1;
+  max-width: 420px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(206, 184, 136, 0.9));
+}
+
+.dm-rule + .dm-rule-mark + .dm-rule {
+  background: linear-gradient(90deg, rgba(206, 184, 136, 0.9), transparent);
+}
+
+.dm-rule-mark {
+  display: block;
+  width: 26px;
+  animation: dm-spin 30s linear infinite;
+}
+
+.dm-rule-mark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* ---------------------------------------------------------------------------
+   Portraits
+   -------------------------------------------------------------------------- */
+
+/* The petal ring, on hover only. The inner ends of the petals sit under the
+   photograph, so the bloom grows out from behind the person.
+
+   Held close: the petals reach about twelve pixels past the portrait, which
+   is enough to read as a bloom and short of the speaker's name below it. */
+.dm-ring {
+  inset: -10%;
+}
+
+.dm-petal-ring {
+  opacity: 0;
+  transform: scale(0.86) rotate(-14deg);
+  transition:
+    opacity var(--dur-slow) var(--ease-out-soft),
+    transform var(--dur-reveal) var(--ease-out-soft);
+}
+
+:is(.speaker-directory-card, .talk-card, .next-seminar):hover .dm-petal-ring,
+:is(.speaker-directory-card, .talk-card, .next-seminar):focus-within .dm-petal-ring,
+.speaker-directory-photo:hover .dm-petal-ring {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* ---------------------------------------------------------------------------
+   Card frames
+   ---------------------------------------------------------------------------
+   Two of the artboard's exteriors, both revealed on hover so a page at rest is
+   still the seminar site. Neither changes a card's own background, type or
+   focus ring.
+   -------------------------------------------------------------------------- */
+
+.dm-frame {
+  opacity: 0;
+  transition: opacity var(--dur-reveal) var(--ease-out-soft);
+}
+
+/* The marigold corners sit outside their card, so that host has to stop
+   clipping. The card banners hang inside theirs and need nothing. */
+:root[data-season="muertos"] .feature-card {
+  position: relative;
+  overflow: visible;
+}
+
+/* Room along the top edge for the string to hang into. Held for the whole
+   season, not just on hover: padding that appeared with the decoration would
+   push every line of the card down on a mouseover. */
+:root[data-season="muertos"] .talk-card {
+  position: relative;
+  padding-top: 36px;
+}
+
+:root[data-season="muertos"] .community-card {
+  position: relative;
+  padding-top: 38px;
+}
+
+/* Marigold corners: three blooms bunched over one corner and its opposite. */
+.dm-cluster {
+  position: absolute;
+  display: block;
+  width: 54px;
+  height: 52px;
+}
+
+.dm-cluster-tl {
+  top: -22px;
+  left: -18px;
+}
+
+/* The same bunch, turned through half a circle into the far corner. */
+.dm-cluster-br {
+  right: -18px;
+  bottom: -22px;
+  transform: rotate(180deg);
+}
+
+.dm-cluster-bloom {
+  position: absolute;
+  display: block;
+  filter: drop-shadow(0 3px 5px rgba(42, 17, 24, 0.3));
+}
+
+.dm-cluster-bloom svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.dm-cluster-a {
+  top: 6px;
+  left: 0;
+  width: 30px;
+}
+
+.dm-cluster-b {
+  top: 0;
+  left: 24px;
+  width: 24px;
+}
+
+.dm-cluster-c {
+  top: 26px;
+  left: 14px;
+  width: 20px;
+}
+
+:root[data-season="muertos"] .feature-card:hover .dm-corners,
+:root[data-season="muertos"] .feature-card:focus-within .dm-corners {
+  opacity: 1;
+}
+
+/* Papel picado strung across the inside of the card's top edge, the flags
+   hanging down over its top padding — the way the artboard hangs one off its
+   light card. The card reserves that padding for the whole season rather than
+   only while hovered, so revealing the string never moves a line of type. */
+.dm-card-banner {
+  /* `.season-frame` pins all four edges; the string only needs its top one. */
+  top: -3px;
+  bottom: auto;
+  /* Centred and capped rather than pinned to both edges. The flags are placed
+     at percentages along the wire, so a string stretched across a full-width
+     talk card would space them twice as far apart as the same string on a
+     half-width community card. A fixed span makes them the same garland. */
+  left: 50%;
+  width: min(100% - 16px, 400px);
+  height: 32px;
+  transform: translateX(-50%);
+}
+
+/* The cream wire reads against the night in the header, hero and footer; on a
+   white card it is invisible, so the string over a card is drawn in garnet. */
+.dm-card-banner .dm-wire path {
+  stroke: rgba(120, 47, 64, 0.45);
+}
+
+:root[data-season="muertos"] :is(.talk-card, .community-card):hover .dm-card-banner,
+:root[data-season="muertos"] :is(.talk-card, .community-card):focus-within .dm-card-banner {
+  opacity: 1;
+}
+

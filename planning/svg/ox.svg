@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="240" height="240"
+     role="img" aria-label="Ox">
+  <mask id="lny-ox" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+    <rect width="120" height="120" fill="#000"/>
+    <path d="M34 44 C14 44 2 30 6 14 C18 18 20 34 36 32 Z" fill="#fff"/><path d="M86 44 C106 44 118 30 114 14 C102 18 100 34 84 32 Z" fill="#fff"/><ellipse cx="22" cy="60" rx="14" ry="9" transform="rotate(18 22 60)" fill="#fff"/><ellipse cx="98" cy="60" rx="14" ry="9" transform="rotate(-18 98 60)" fill="#fff"/><path d="M26 46 C26 30 94 30 94 46 C94 78 82 102 60 102 C38 102 26 78 26 46 Z" fill="#fff"/><circle cx="46" cy="60" r="5.5" fill="#000"/><circle cx="74" cy="60" r="5.5" fill="#000"/><circle cx="52" cy="84" r="4.5" fill="#000"/><circle cx="68" cy="84" r="4.5" fill="#000"/>
+  </mask>
+  <rect width="120" height="120" fill="#c8102e" mask="url(#lny-ox)"/>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="240" height="240"
+     role="img" aria-label="Pig">
+  <mask id="lny-pig" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+    <rect width="120" height="120" fill="#000"/>
+    <path d="M30 50 C16 30 28 12 44 22 C50 32 48 46 43 54 Z" fill="#fff"/><path d="M90 50 C104 30 92 12 76 22 C70 32 72 46 77 54 Z" fill="#fff"/><ellipse cx="60" cy="66" rx="34" ry="30" fill="#fff"/><ellipse cx="60" cy="82" rx="18" ry="13" fill="#fff"/><ellipse cx="60" cy="82" rx="18" ry="13" fill="none" stroke="#000" stroke-width="3.4"/><circle cx="53" cy="82" r="4" fill="#000"/><circle cx="67" cy="82" r="4" fill="#000"/><circle cx="46" cy="58" r="5.5" fill="#000"/><circle cx="74" cy="58" r="5.5" fill="#000"/>
+  </mask>
+  <rect width="120" height="120" fill="#c8102e" mask="url(#lny-pig)"/>
+</svg>

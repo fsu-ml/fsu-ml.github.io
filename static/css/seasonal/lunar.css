@@ -1,0 +1,433 @@
+/* ---------------------------------------------------------------------------
+   Lunar New Year — the eve, the day, and the day after
+   ---------------------------------------------------------------------------
+   Lanterns, plum blossom, red and gold. Festive rather than solemn: the
+   palette is lantern red and gold against the brand's own garnet, and the
+   night behind it goes red at the horizon rather than blue.
+
+   Keyframes are namespaced `ln-`.
+   -------------------------------------------------------------------------- */
+
+:root[data-season="lunar"] {
+  --season-accent: #c8102e;
+  --season-accent-soft: #e8b64c;
+  --season-deep: #7d0a1c;
+  --season-particle: #ffd7e2;
+  --season-glow: rgba(232, 182, 76, 0.45);
+  --season-edge: 0px;
+
+  /* Fully opaque: the night has to replace the hero art, not tint it. Anything
+     translucent leaves the banner photograph's navy showing through and the
+     result reads as a filter rather than a scene. Night at the top, into
+     garnet, into lantern red at the horizon — so the brand stays in it. */
+  --season-sky: linear-gradient(180deg, #160709 0%, #4a0d18 52%, #7d0a1c 100%);
+}
+
+/* Lanterns hang below the edges they are strung from, and the tree is drawn a
+   little past the hero's left edge. None of that should be able to widen the
+   document, so the season clips the page horizontally while it is mounted.
+   `clip` rather than `hidden`: `overflow: hidden` on the root turns the sticky
+   header into a static one. */
+:root[data-season="lunar"] {
+  overflow-x: clip;
+}
+
+/* The banner photograph and the hero's own overlay are tuned to each other;
+   either left visible under the night sky puts the site's navy back into it. */
+:root[data-season="lunar"] .hero-media,
+:root[data-season="lunar"] .hero-overlay {
+  display: none;
+}
+
+/* Matches the top of the sky gradient, so there is no flash of the site's deep
+   navy before the scene mounts. */
+:root[data-season="lunar"] .hero,
+:root[data-season="lunar"] .site-footer {
+  background: #160709;
+}
+
+/* ---------------------------------------------------------------------------
+   Keyframes
+   ---------------------------------------------------------------------------
+   Transform and opacity only. Nothing seasonal animates a property that would
+   cost layout or paint on the main thread.
+   -------------------------------------------------------------------------- */
+
+@keyframes ln-fall {
+  to {
+    transform: translateY(112vh);
+  }
+}
+
+@keyframes ln-spin {
+  from {
+    transform: rotate(0deg) scaleX(1);
+  }
+  50% {
+    transform: rotate(180deg) scaleX(0.35);
+  }
+  to {
+    transform: rotate(360deg) scaleX(1);
+  }
+}
+
+/* A lantern hangs from its hook, so it swings about its top edge. */
+@keyframes ln-sway {
+  0%,
+  100% {
+    transform: rotate(-3.5deg);
+  }
+  50% {
+    transform: rotate(3.5deg);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Petal drift
+   -------------------------------------------------------------------------- */
+
+.ln-petal {
+  width: 100%;
+  line-height: 0;
+}
+
+.ln-petal svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.season-motion .ln-petal-fall {
+  animation: ln-fall var(--dur, 18s) linear var(--delay, 0s) infinite;
+}
+
+.season-motion .ln-petal-spin {
+  animation: ln-spin var(--spin, 5s) ease-in-out var(--spin-delay, 0s) infinite;
+}
+
+/* ---------------------------------------------------------------------------
+   Lantern strings
+   -------------------------------------------------------------------------- */
+
+.ln-string {
+  right: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.ln-wire {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ln-lantern {
+  position: absolute;
+  transform-origin: 50% 0;
+  line-height: 0;
+}
+
+.ln-lantern-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 7px rgba(255, 120, 90, 0.45));
+}
+
+.season-motion .ln-lantern-live {
+  animation: ln-sway var(--sway, 4s) ease-in-out var(--sway-delay, 0s) infinite;
+}
+
+/* The header carries a gold rule and nothing more. Anything with height hung
+   off this edge travels with the sticky bar and ends up over body copy. */
+.ln-edge {
+  top: 100%;
+  background: linear-gradient(90deg, transparent, #c8102e 18%, #e8b64c 50%, #c8102e 82%, transparent);
+}
+
+:root[data-season="lunar"] {
+  --season-edge: 3px;
+}
+
+/* Draped over the seam between two sections, hanging into the one below. The
+   host is `position: relative` already; the string sits at its top edge. */
+.ln-string-seam {
+  top: 0;
+  height: 56px;
+}
+
+/* ---------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+
+.ln-hero {
+  inset: 0;
+  overflow: hidden;
+}
+
+/* The hero clips its children so the tree can run off the bottom-left corner
+   the way a real branch leaves the frame. */
+:root[data-season="lunar"] .hero {
+  overflow: hidden;
+}
+
+/* Low and to the right, under the bough rather than behind it. Up in the
+   corner it was crossed by both the lantern string and the branch's thickest
+   wood, and a moon with a bough through its middle reads as a mistake. */
+.ln-moon {
+  position: absolute;
+  top: 30%;
+  right: 7%;
+  width: clamp(74px, 9vw, 128px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, #fff4dc, #f2d79f 62%, #e0b96a);
+  box-shadow: 0 0 60px 18px rgba(255, 216, 150, 0.22);
+}
+
+/* Below the header, not behind it. The bar is sticky and about 75px tall, so a
+   string at the hero's own top edge is simply hidden by it. */
+.ln-hero-string {
+  position: absolute;
+  top: 76px;
+  right: 0;
+  left: 0;
+  height: 150px;
+}
+
+/* The tree grows out of the hero's bottom-left corner. `meet` in the SVG fits
+   the whole drawing inside this box, so the crown and the trunk are both in
+   frame whatever the hero's aspect ratio turns out to be. */
+.ln-tree {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: min(62%, 760px);
+  height: clamp(230px, 40%, 440px);
+}
+
+/* The hero is two columns only above 1080px, with the next-seminar card in the
+   right one. Below that the card stacks under the copy and fills the hero's
+   floor, so a tree rooted there sits behind an opaque card: invisible, and a
+   couple of hundred nodes rendered for nothing. */
+@media (max-width: 1080px) {
+  .ln-hero .ln-tree {
+    display: none;
+  }
+}
+
+/* Same breakpoint, the other way round. Top right is open while the card is
+   stacked below; once it moves into the right column the moon is behind it, so
+   above 1080px the moon moves into the gutter between the two columns. */
+@media (min-width: 1081px) {
+  .ln-moon {
+    top: 22%;
+    right: 42%;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+
+.ln-footer {
+  inset: 0;
+  overflow: hidden;
+}
+
+.ln-footer-string {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 82px;
+}
+
+/* Mirrored, so the two trees on a page do not read as the same drawing twice.
+   The seed differs as well; the flip is what makes it read at a glance. */
+.ln-footer-tree {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 42%;
+  height: clamp(170px, 66%, 340px);
+  opacity: 0.6;
+  transform: scaleX(-1);
+}
+
+/* Overrides the hero tree's own box: inside the footer the drawing fills the
+   panel it is given rather than sitting in the corner of the page. */
+.ln-footer-tree .ln-tree {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   Portraits and cards
+   -------------------------------------------------------------------------- */
+
+.ln-ring-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ln-corner-blossom,
+.ln-frame-bloom,
+.ln-corner {
+  position: absolute;
+  display: block;
+  line-height: 0;
+}
+
+.ln-corner-blossom svg,
+.ln-frame-bloom svg,
+.ln-corner svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* A watermark, not a badge. */
+.ln-corner-blossom {
+  right: 12px;
+  bottom: 10px;
+  width: 30px;
+  opacity: 0.3;
+}
+
+/* Talk cards get theirs on hover only, so a dense grid of them stays quiet. */
+.ln-corner {
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+
+.ln-corner-tr {
+  top: 10px;
+  right: 12px;
+  width: 24px;
+}
+
+.ln-corner-bl {
+  bottom: 10px;
+  left: 12px;
+  width: 20px;
+}
+
+.talk-card:hover .ln-corner,
+.talk-card:focus-within .ln-corner {
+  opacity: 0.5;
+}
+
+/* ---------------------------------------------------------------------------
+   The red and gold frame
+   ---------------------------------------------------------------------------
+   Two inset rules — gold outside, a finer red inside — with a blossom set into
+   each corner. On the community and feature cards, on hover only: both are
+   grids of several cards, and a frame drawn on all of them at rest turns the
+   grid into a chessboard.
+   -------------------------------------------------------------------------- */
+
+.ln-frame {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+
+.ln-frame-gold,
+.ln-frame-red {
+  position: absolute;
+  border-style: solid;
+}
+
+.ln-frame-gold {
+  inset: 7px;
+  border-width: 1.5px;
+  border-color: #e8b64c;
+  border-radius: 11px;
+}
+
+.ln-frame-red {
+  inset: 12px;
+  border-width: 1px;
+  border-color: #c8102e;
+  border-radius: 7px;
+}
+
+/* Set on the corner so each one sits over the join in both rules, which is
+   where a frame otherwise shows its weakest point. */
+.ln-frame-bloom {
+  width: 19px;
+}
+
+.ln-frame-bloom-tl {
+  top: 1px;
+  left: 1px;
+}
+
+.ln-frame-bloom-tr {
+  top: 3px;
+  right: 3px;
+  width: 15px;
+}
+
+.ln-frame-bloom-bl {
+  bottom: 3px;
+  left: 3px;
+  width: 15px;
+}
+
+.ln-frame-bloom-br {
+  right: 1px;
+  bottom: 1px;
+}
+
+:is(.community-card, .feature-card):hover .ln-frame,
+:is(.community-card, .feature-card):focus-within .ln-frame {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------------------
+   Portrait ring
+   ---------------------------------------------------------------------------
+   Sits a little proud of the photograph and traces its circle, so what appears
+   on hover is the outline of the portrait rather than a shape around it.
+   -------------------------------------------------------------------------- */
+
+.ln-ring {
+  inset: -9%;
+}
+
+.ln-ring-art {
+  opacity: 0;
+  transform: scale(0.9);
+  transition:
+    opacity 300ms ease,
+    transform 380ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+:is(.speaker-directory-card, .talk-card, .next-seminar, .seminar-card):hover .ln-ring-art,
+:is(.speaker-directory-card, .talk-card, .next-seminar, .seminar-card):focus-within .ln-ring-art,
+:is(.speaker-directory-photo, .seminar-speaker-photo):hover .ln-ring-art {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion
+   ---------------------------------------------------------------------------
+   The controller already remounts every engine with `motion: false` when the
+   OS preference is set, which is what drops the animation classes. This is the
+   belt-and-braces pass for anything that slipped through, and it is scoped to
+   the season so it can never affect a page with no season on it.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-season="lunar"] .ln-petal-fall,
+  :root[data-season="lunar"] .ln-petal-spin,
+  :root[data-season="lunar"] .ln-lantern-live {
+    animation: none !important;
+  }
+}

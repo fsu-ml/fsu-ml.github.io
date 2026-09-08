@@ -11,6 +11,7 @@
  */
 
 import { Disposer, make, onMotionPreferenceChange, prefersReducedMotion } from "./engine.js";
+import { lunarAnimalForDate } from "./lunar-dates.js";
 
 /* Flip to false to drop the theme panel entirely while leaving the date-driven
    selection running. Nothing advertises the panel: it only opens from the
@@ -27,8 +28,10 @@ export const OFF = "off";
 export const SEASONS = [
   { id: OFF, label: "Off", note: "No seasonal layer", swatch: "#5f6673" },
   { id: "halloween", label: "Halloween", note: "October · bats, fog, embers", swatch: "#e07a2f" },
+  { id: "muertos", label: "Día de Muertos", note: "1–5 November · papel picado, marigolds", swatch: "#f28c1b" },
   { id: "thanksgiving", label: "Thanksgiving", note: "November · wind, leaves, harvest", swatch: "#d98e3f" },
-  { id: "winter", label: "Winter", note: "December · snow", swatch: "#dce9f2" }
+  { id: "winter", label: "Winter", note: "December · snow", swatch: "#dce9f2" },
+  { id: "lunar", label: "Lunar New Year", note: "Moves yearly · lanterns, plum blossom", swatch: "#c8102e" }
 ];
 
 const SEASON_IDS = SEASONS.map((entry) => entry.id);
@@ -37,8 +40,10 @@ const SEASON_IDS = SEASONS.map((entry) => entry.id);
    them without a manifest. Only the selected one is ever fetched. */
 const LOADERS = {
   halloween: () => import("./halloween.js"),
+  muertos: () => import("./muertos.js"),
   thanksgiving: () => import("./thanksgiving.js"),
-  winter: () => import("./winter.js")
+  winter: () => import("./winter.js"),
+  lunar: () => import("./lunar.js")
 };
 
 export const DENSITY_MIN = 0;
@@ -51,18 +56,32 @@ export const DENSITY_DEFAULT = 45;
 
 /**
  * Calendar default, used when the visitor has expressed no preference:
- * October is Halloween, November is Thanksgiving, and Winter runs from
- * 1 December through 5 January so it covers the break rather than stopping
- * dead on New Year's Day.
+ * October is Halloween, November opens with Día de Muertos and is Thanksgiving
+ * from the sixth, and Winter runs from 1 December through 5 January so it
+ * covers the break rather than stopping dead on New Year's Day. Lunar New Year
+ * sits outside that scheme entirely — see `lunar-dates.js`.
+ *
+ * Día de Muertos itself is 1 and 2 November. The layer is given through the
+ * fifth so the observance is still on the site for the working week around it
+ * rather than for a single midweek day.
  */
 export const seasonForDate = (date = new Date()) => {
+  /* Checked first, and by table rather than by month. Lunar New Year lands
+     anywhere from 21 January to 20 February, which is otherwise unclaimed —
+     but an early one falls inside Winter's 1 December to 5 January run, so
+     the precedence has to be stated rather than left to fall out of the
+     ordering of the month checks below. */
+  if (lunarAnimalForDate(date)) {
+    return "lunar";
+  }
+
   const month = date.getMonth();
   const day = date.getDate();
   if (month === 9) {
     return "halloween";
   }
   if (month === 10) {
-    return "thanksgiving";
+    return day <= 5 ? "muertos" : "thanksgiving";
   }
   if (month === 11 || (month === 0 && day <= 5)) {
     return "winter";

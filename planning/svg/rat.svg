@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="240" height="240"
+     role="img" aria-label="Rat">
+  <mask id="lny-rat" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+    <rect width="120" height="120" fill="#000"/>
+    <circle cx="28" cy="38" r="21" fill="#fff"/><circle cx="92" cy="38" r="21" fill="#fff"/><path d="M24 52 C24 32 96 32 96 52 C96 78 80 104 60 104 C40 104 24 78 24 52 Z" fill="#fff"/><path d="M48 88 L14 96" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M72 88 L106 96" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="28" cy="38" r="11" fill="#000"/><circle cx="92" cy="38" r="11" fill="#000"/><circle cx="47" cy="62" r="5.5" fill="#000"/><circle cx="73" cy="62" r="5.5" fill="#000"/><circle cx="60" cy="86" r="5" fill="#000"/>
+  </mask>
+  <rect width="120" height="120" fill="#c8102e" mask="url(#lny-rat)"/>
+</svg>

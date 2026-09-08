@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="240" height="240"
+     role="img" aria-label="Monkey">
+  <mask id="lny-monkey" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+    <rect width="120" height="120" fill="#000"/>
+    <circle cx="18" cy="56" r="18" fill="#fff"/><circle cx="102" cy="56" r="18" fill="#fff"/><ellipse cx="60" cy="58" rx="32" ry="31" fill="#fff"/><ellipse cx="60" cy="80" rx="22" ry="16" fill="#fff"/><ellipse cx="60" cy="80" rx="22" ry="16" fill="none" stroke="#000" stroke-width="3.4"/><circle cx="18" cy="56" r="9" fill="#000"/><circle cx="102" cy="56" r="9" fill="#000"/><circle cx="49" cy="52" r="5.5" fill="#000"/><circle cx="71" cy="52" r="5.5" fill="#000"/><circle cx="53" cy="75" r="3" fill="#000"/><circle cx="67" cy="75" r="3" fill="#000"/><path d="M50 86 C55 91 65 91 70 86" fill="none" stroke="#000" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </mask>
+  <rect width="120" height="120" fill="#c8102e" mask="url(#lny-monkey)"/>
+</svg>

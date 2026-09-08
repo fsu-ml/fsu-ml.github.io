@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="240" height="240"
+     role="img" aria-label="Rooster">
+  <mask id="lny-rooster-front" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+    <rect width="120" height="120" fill="#000"/>
+    <path d="M36 36 C28 16 42 4 50 18 C53 2 69 2 71 18 C80 4 93 16 85 36C77 28 68 30 63 38 C53 30 44 28 36 36 Z" fill="#fff"/><ellipse cx="60" cy="68" rx="25" ry="28" fill="#fff"/><circle cx="48" cy="92" r="8" fill="#fff"/><circle cx="72" cy="92" r="8" fill="#fff"/><path d="M53 80 L67 80 L60 100 Z" fill="#fff"/><path d="M53 80 L67 80" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="48" cy="62" r="5.5" fill="#000"/><circle cx="72" cy="62" r="5.5" fill="#000"/>
+  </mask>
+  <rect width="120" height="120" fill="#c8102e" mask="url(#lny-rooster-front)"/>
+</svg>
