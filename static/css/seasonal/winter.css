@@ -551,6 +551,168 @@
 }
 
 /* ---------------------------------------------------------------------------
+   The sleigh
+   ---------------------------------------------------------------------------
+   Christmas Eve and Christmas Day only. It crosses the hero over the rooftops,
+   behind the hero's own copy, and drops gifts on the roofs as it goes.
+
+   One cycle is `--wn-fly-cycle` long (set from winter.js). The crossing takes
+   the first 68% of it and the sleigh waits off the right edge for the rest,
+   so the flights come round every three quarters of a minute rather than
+   nose to tail. The gifts run the same cycle: each starts at the x the sleigh
+   has reached at its release fraction `--t` — the same linear formula,
+   evaluated in calc — with its delay set to that fraction of the crossing.
+   -------------------------------------------------------------------------- */
+
+.wn-flight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  --wn-sleigh-w: 300px;
+  /* The runner's height above the hero's bottom edge: over the near
+     rooftops, in front of the far row. */
+  --wn-flight-y: 96px;
+  /* How far a gift falls before it slips behind a roof. */
+  --wn-drop: 96px;
+  --wn-fly-from: calc(var(--wn-sleigh-w) * -1.15);
+  --wn-fly-to: 100vw;
+}
+
+/* The base transform is the parked position: with motion off the sleigh
+   simply sits in the sky, a little right of centre. Once the flight animation
+   runs the keyframes take over. */
+.wn-sleigh {
+  position: absolute;
+  bottom: var(--wn-flight-y);
+  left: 0;
+  width: var(--wn-sleigh-w);
+  transform: translateX(calc(56vw - var(--wn-sleigh-w) / 2));
+}
+
+.wn-sleigh-bob,
+.wn-sleigh-art {
+  display: block;
+}
+
+.wn-sleigh-art {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+}
+
+@keyframes wn-fly {
+  0% {
+    transform: translateX(var(--wn-fly-from));
+  }
+  68%,
+  100% {
+    transform: translateX(var(--wn-fly-to));
+  }
+}
+
+.wn-flight-live .wn-sleigh {
+  animation: wn-fly var(--wn-fly-cycle, 46s) linear var(--wn-fly-start, 1.2s) infinite;
+}
+
+/* The bob lives on a child, like the flakes' sway, so it composes with the
+   crossing instead of overwriting it. */
+@keyframes wn-bob {
+  from {
+    transform: translateY(-4px) rotate(-1.2deg);
+  }
+  to {
+    transform: translateY(4px) rotate(1.2deg);
+  }
+}
+
+.wn-flight-live .wn-sleigh-bob {
+  animation: wn-bob 2.8s ease-in-out infinite alternate;
+}
+
+/* A gift leaves the sack at the back of the sleigh. Its x is the sleigh's x
+   at fraction `--t` of the crossing, plus the sack's offset into the drawing;
+   its height is the sack's, scaled with the sleigh. Hidden until its cue. */
+.wn-gift {
+  position: absolute;
+  bottom: calc(var(--wn-flight-y) + var(--wn-sleigh-w) * 0.16);
+  left: 0;
+  width: 16px;
+  height: 16px;
+  opacity: 0;
+  --x: calc(var(--wn-fly-from) + (var(--wn-fly-to) - var(--wn-fly-from)) * var(--t, 0.5) + var(--wn-sleigh-w) * 0.04);
+  transform: translateX(var(--x));
+}
+
+.wn-gift svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Falls with a gravity curve, tumbling, and fades out in the last stretch so
+   it reads as landing behind a roof. The fall is 9% of the cycle, about four
+   seconds; the rest of the cycle it is gone. */
+@keyframes wn-drop {
+  0% {
+    opacity: 1;
+    transform: translate(var(--x), 0) rotate(0deg);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.85, 0.5);
+  }
+  9% {
+    opacity: 1;
+    transform: translate(calc(var(--x) + 12px), var(--wn-drop)) rotate(var(--spin, 300deg));
+  }
+  11%,
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--x) + 12px), var(--wn-drop)) rotate(var(--spin, 300deg));
+  }
+}
+
+.wn-flight-live .wn-gift {
+  animation: wn-drop var(--wn-fly-cycle, 46s) linear var(--gift-delay, 0s) infinite;
+}
+
+/* Once the hero's columns stack, the seminar card sits across the whole
+   skyline and a sleigh down there would only ever be seen through its glass.
+   So the flight moves up to the top of the hero, where it passes behind the
+   header's string of lights and above the wordmark. The fixed header is
+   translucent and would blur anything under it, so the flight starts just
+   below the bar — which is a line taller on a phone, where the title wraps.
+   The gifts still drop; they fade before they reach the wordmark. */
+@media (max-width: 1080px) {
+  .wn-flight {
+    --wn-sleigh-w: 200px;
+    --wn-flight-top: 78px;
+    --wn-drop: 44px;
+  }
+
+  .wn-sleigh,
+  .wn-gift {
+    bottom: auto;
+  }
+
+  .wn-sleigh {
+    top: var(--wn-flight-top);
+  }
+
+  /* The sack's underside is 0.375 of the drawing's height, which is 0.32 of
+     its width, so 0.12 of the width down from the sleigh's top edge. */
+  .wn-gift {
+    top: calc(var(--wn-flight-top) + var(--wn-sleigh-w) * 0.12);
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media (max-width: 620px) {
+  .wn-flight {
+    --wn-sleigh-w: 170px;
+    --wn-flight-top: 90px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Portraits and cards
    -------------------------------------------------------------------------- */
 

@@ -13,7 +13,8 @@
  * The theme is December's, not one holiday's: a moonlit city, snow, and
  * strings of light against the longest nights. The observances that fall in
  * the month each get a small addition to the footer on their own dates only —
- * see "The nights of December".
+ * see "The nights of December" — and on Christmas Eve and Christmas Day a
+ * sleigh crosses the hero's city, dropping gifts onto the roofs.
  */
 
 import { Disposer, buildParticles, decorate, make, pick, range, seeded } from "./engine.js";
@@ -466,6 +467,110 @@ const fireworksHtml = (motion) => {
 };
 
 /* ---------------------------------------------------------------------------
+   The sleigh
+   ---------------------------------------------------------------------------
+   On the two nights it flies, a sleigh crosses the hero over the rooftops,
+   dropping gifts onto them as it goes. It passes behind the hero's own copy,
+   the way the Halloween ghosts do, so nothing ever covers the headline.
+
+   All of the motion is CSS. The sleigh's crossing and each gift's fall are
+   keyframe animations of the same length, so a gift released at fraction `t`
+   of the crossing starts from wherever the sleigh is at that moment — its
+   start x is the same linear formula the sleigh follows, evaluated in calc
+   from `--t`, and its delay is `t` of the crossing time. Nothing has to be
+   measured or ticked.
+   -------------------------------------------------------------------------- */
+
+/* Coupled to the keyframes in winter.css: the crossing occupies the first
+   FLY_FRACTION of every cycle and the sleigh waits off-screen for the rest. */
+const FLY_CYCLE = 46;
+const FLY_FRACTION = 0.68;
+const FLY_START = 1.2;
+
+const GIFT_COLORS = ["#c1273b", "#ceb888", "#bfe0f5", "#fff1c4"];
+
+/* A reindeer at a gallop, facing right, drawn about its chest. The lead one
+   gets the red nose. */
+const reindeer = (x, y, lead) => `
+  <g transform="translate(${x} ${y})" fill="#5a3a1e" stroke="#5a3a1e" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 8l9 12 6 3M10 8l-3 13M-16 8l-10 9-4 7M-12 8l2 13" fill="none"></path>
+    <path d="M-24 -4l-6 -6" fill="none" stroke-width="3"></path>
+    <ellipse cx="0" cy="0" rx="24" ry="10" stroke="none"></ellipse>
+    <path d="M14 -4L26 -26L36 -24L26 0Z" stroke="none"></path>
+    <ellipse cx="36" cy="-25" rx="11" ry="6" stroke="none"></ellipse>
+    <path d="M31 -30l-2 -13M31 -30l-8 -7M31 -30l3 -10 5 -4" fill="none" stroke-width="2.2"></path>
+    <path d="M28 -30l4 -6 2 6z" stroke="none"></path>
+    <circle cx="47" cy="-25" r="2.6" fill="${lead ? "#e0323e" : "#1c1a1a"}" stroke="none"></circle>
+  </g>`;
+
+/* Santa, the sleigh and the team. Facing right, 300 units wide; the runner
+   sits on the bottom edge of the box. */
+const SLEIGH_ART = `
+  <svg class="wn-sleigh-art" viewBox="0 0 300 96" aria-hidden="true" focusable="false">
+    <path d="M71 35Q130 34 196 42M196 40Q236 32 272 36" fill="none" stroke="#ceb888" stroke-width="1.4" opacity=".8"></path>
+    ${reindeer(172, 56, false)}
+    ${reindeer(250, 48, true)}
+    <path d="M28 62Q26 36 42 36Q58 36 56 62Z" fill="#c1273b"></path>
+    <path d="M52 42L70 36" stroke="#c1273b" stroke-width="5" stroke-linecap="round"></path>
+    <circle cx="71" cy="35" r="3.2" fill="#f7f9fc"></circle>
+    <circle cx="44" cy="26" r="9" fill="#f2c9a8"></circle>
+    <path d="M35 28Q44 48 53 28Q49 34 44 32Q39 34 35 28Z" fill="#f7f9fc"></path>
+    <path d="M35 22L44 8L55 22Z" fill="#c1273b"></path>
+    <path d="M44 8Q34 4 29 12" fill="none" stroke="#c1273b" stroke-width="5" stroke-linecap="round"></path>
+    <circle cx="28" cy="13" r="3.5" fill="#f7f9fc"></circle>
+    <path d="M33 23Q44 17 55 23" fill="none" stroke="#f7f9fc" stroke-width="4" stroke-linecap="round"></path>
+    <path d="M6 74L2 40Q0 30 10 30H18V52H84Q92 52 96 44Q102 34 110 40L106 74Z" fill="#ceb888" stroke="#8a6a3a" stroke-width="1.6" stroke-linejoin="round"></path>
+    <path d="M110 40Q120 32 112 24Q106 20 106 28" fill="none" stroke="#ceb888" stroke-width="3.5" stroke-linecap="round"></path>
+    <path d="M6 36Q2 20 16 18Q30 18 26 36Z" fill="#8a6a3a"></path>
+    <rect x="9" y="20" width="6" height="7" fill="#c1273b"></rect>
+    <rect x="16" y="19" width="6" height="8" fill="#bfe0f5"></rect>
+    <path d="M10 22Q16 26 22 22" fill="none" stroke="#ceb888" stroke-width="2"></path>
+    <path d="M14 74V84M98 74V84" stroke="#8a6a3a" stroke-width="3"></path>
+    <path d="M0 92Q0 84 8 84H108Q118 84 122 76" fill="none" stroke="#ceb888" stroke-width="3" stroke-linecap="round"></path>
+  </svg>`;
+
+const GIFT = `
+  <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+    <rect x="1" y="4" width="14" height="11" rx="1.5" fill="var(--gift)"></rect>
+    <rect x="6.8" y="4" width="2.4" height="11" fill="#f7f9fc" opacity=".9"></rect>
+    <rect x="1" y="8.3" width="14" height="2.4" fill="#f7f9fc" opacity=".9"></rect>
+    <circle cx="5.6" cy="3" r="2.1" fill="#f7f9fc"></circle>
+    <circle cx="10.4" cy="3" r="2.1" fill="#f7f9fc"></circle>
+  </svg>`;
+
+/* Christmas Eve and Christmas Day. Like the candles and the fireworks, the
+   sleigh belongs to its own nights; the rest of the month is simply winter. */
+const isSleighNight = (date) => date.getMonth() === 11 && (date.getDate() === 24 || date.getDate() === 25);
+
+const sleighFlightHtml = (seed, motion) => {
+  const rand = seeded(seed);
+  const gifts = [];
+  if (motion) {
+    /* Four drops spread along the crossing, each nudged so the rhythm is not
+       a metronome. The sack is at the back of the sleigh and the crossing
+       starts a full sleigh-length off the left edge, so the window opens a
+       third of the way across — earlier than that the first gift falls
+       before the sack is on screen, on a phone as much as on a monitor. With
+       motion off there is nothing to drop from a parked sleigh, so no gifts
+       are made. */
+    for (let i = 0; i < 4; i += 1) {
+      const t = 0.36 + i * 0.16 + rand() * 0.06;
+      gifts.push(
+        `<span class="wn-gift" style="--t:${t.toFixed(3)};` +
+          `--gift-delay:${(FLY_START + t * FLY_FRACTION * FLY_CYCLE).toFixed(2)}s;` +
+          `--spin:${range(rand, 160, 420).toFixed(0)}deg;--gift:${pick(rand, GIFT_COLORS)}">${GIFT}</span>`
+      );
+    }
+  }
+  return (
+    `<div class="wn-flight${motion ? " wn-flight-live" : ""}" style="--wn-fly-cycle:${FLY_CYCLE}s;--wn-fly-start:${FLY_START}s">` +
+    `<span class="wn-sleigh"><span class="wn-sleigh-bob">${SLEIGH_ART}</span></span>` +
+    gifts.join("") +
+    `</div>`
+  );
+};
+
+/* ---------------------------------------------------------------------------
    Mount
    -------------------------------------------------------------------------- */
 
@@ -547,7 +652,8 @@ export const mount = ({ overlay, density, motion }) => {
      ${MOON}
      <div class="wn-frost wn-frost-left">${FROST_CORNER}</div>
      <div class="wn-frost wn-frost-right">${FROST_CORNER}</div>
-     ${skylineSvg(7, motion)}`
+     ${skylineSvg(7, motion)}
+     ${isSleighNight(night) ? sleighFlightHtml(53, motion) : ""}`
   );
   if (isSolstice(night)) {
     /* The longest night: the moon rides higher and larger. */
