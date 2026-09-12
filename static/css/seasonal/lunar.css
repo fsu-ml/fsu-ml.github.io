@@ -148,31 +148,47 @@
   --season-edge: 3px;
 }
 
-/* Three strands hung off the bar's bottom edge. The bar is fixed, so they
-   travel with it; nothing here is allowed to catch the pointer. */
+/* Strands hung side by side off the bar's bottom edge, sharing its width.
+   The bar is fixed, so they travel with it; nothing here is allowed to
+   catch the pointer. Two show by default; a phone gets one, and wider
+   screens three and four. */
 .ln-header-strands {
   position: absolute;
   top: 100%;
   right: 0;
   left: 0;
+  display: flex;
   height: 80px;
   margin-top: -2px;
   pointer-events: none;
 }
 
 .ln-strand {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
 }
 
-/* Three strands across a phone are a curtain. The shallow third one comes
-   off and the other two thin to every other lantern. */
-@media (max-width: 620px) {
-  .ln-strand-3 {
-    display: none;
-  }
+.ln-strand-3,
+.ln-strand-4 {
+  display: none;
+}
 
-  .ln-strand .ln-lantern:nth-of-type(even) {
+@media (min-width: 1441px) {
+  .ln-strand-3 {
+    display: block;
+  }
+}
+
+@media (min-width: 2001px) {
+  .ln-strand-4 {
+    display: block;
+  }
+}
+
+@media (max-width: 620px) {
+  .ln-strand-2 {
     display: none;
   }
 }

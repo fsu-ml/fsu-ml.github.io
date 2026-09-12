@@ -1033,16 +1033,17 @@ export const mount = ({ overlay, density, motion }) => {
 
   buildPetals(overlay, density, motion);
 
-  /* Header: a gold rule under the bar, and three strands of lanterns hung
-     off it at different sags, so they cross and overlap the way strings put
-     up across a street do. The bar is fixed, so the strands travel down the
-     page with it; the lanterns are kept small for that reason. */
+  /* Header: a gold rule under the bar, and strands of lanterns hung side by
+     side off it, each sagging between its own two ends, so the edge is a row
+     of swags. Four are drawn and the stylesheet shows as many as the width
+     has room for — one on a phone, two on an ordinary screen, more on a
+     wide one — sharing the width equally. The bar is fixed, so the strands
+     travel down the page with it; the lanterns are kept small for that
+     reason. */
   decorate(disposer, ".site-header", "season-edge-strip ln-edge", "");
-  const strands = [
-    lanternString({ seed: 5, count: 10, animal, width: 24, sag: 14, motion }),
-    lanternString({ seed: 11, count: 8, animal, width: 18, sag: 28, motion }),
-    lanternString({ seed: 19, count: 14, animal, width: 14, sag: 8, motion })
-  ];
+  const strands = [5, 11, 19, 23].map((seed) =>
+    lanternString({ seed, count: 7, animal, width: 26, sag: 22, motion })
+  );
   decorate(
     disposer,
     ".site-header",
