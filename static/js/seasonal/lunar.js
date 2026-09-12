@@ -5,20 +5,22 @@
  * cannot be derived from a month, so its dates live in `lunar-dates.js` and
  * both this file and the orchestrator read them from there.
  *
- * Two ideas carry the layer. Lanterns, strung off the header and the footer,
- * each carrying the zodiac animal whose year is beginning — so the decoration
- * says *which* new year it is, and says something different in 2032 than it
- * did in 2031. And a plum tree in bloom across the hero, because 梅花 opens in
- * the cold just before the new year and is the flower the holiday is drawn
- * with.
+ * Two ideas carry the layer. Lanterns, strung off the eave of a glazed roof
+ * across the top of the hero and off the footer, each carrying the zodiac
+ * animal whose year is beginning — so the decoration says *which* new year
+ * it is, and says something different in 2032 than it did in 2031. And a
+ * plum tree in bloom across the hero, because 梅花 opens in the cold just
+ * before the new year and is the flower the holiday is drawn with. Behind
+ * the tree a city; over it, fireworks and sky lanterns.
  *
- * Like Winter and Muertos, nothing here needs a canvas or a frame loop. The
- * petals are fixed-count DOM particles on CSS keyframes, the lanterns sway on
- * their own clocks, and the tree is generated once from a seed — so the same
- * density always draws the same scene.
+ * The fireworks are the one canvas engine here, a small particle system on
+ * the shared Surface and Loop. Everything else is markup on CSS keyframes:
+ * the petals are fixed-count DOM particles, the lanterns sway on their own
+ * clocks, and the tree and the city are generated once from a seed — so the
+ * same density always draws the same scene.
  */
 
-import { Disposer, buildParticles, decorate, make, pick, range, seeded } from "./engine.js";
+import { Disposer, Loop, Surface, buildParticles, decorate, make, pick, range, seeded } from "./engine.js";
 import { lunarAnimalForDate } from "./lunar-dates.js";
 
 /* Sparse, for the same reason Muertos' petals are: a blossom petal is several
@@ -403,126 +405,181 @@ const blossomTree = (seed, lush = false) =>
   });
 
 /* ---------------------------------------------------------------------------
-   Rooftops
+   The eave
    ---------------------------------------------------------------------------
-   A street of houses along the bottom of the hero in silhouette against the
-   red of the horizon: walls under roofs whose eaves sweep up at the tips,
-   the odd two-storey house with a second roof, a pagoda, lit windows, and
-   red lanterns hanging from the eave tips with their glow on the tiles. Two
-   rows — a paler, taller one behind for depth.
+   The top of the hero is the edge of a glazed roof seen from just under it:
+   columns of yellow barrel tiles running up and away in perspective, rows of
+   channel tiles stepping down between them, the round end caps and pointed
+   drip tiles along the lip, and beneath that the painted beam — blue with a
+   gold fret — and the red timber the lanterns hang from.
 
-   A user-unit <pattern>, like Winter's skyline, so it repeats across any
-   width rather than stretching. Houses are laid end to end across exactly
-   one tile, so nothing crosses the seam.
+   Drawn in a fixed 2000-unit canvas because the columns converge on a
+   vanishing point, which a repeating pattern cannot do. `xMidYMax slice`
+   keeps the lip on the container's bottom edge and crops the sides on a
+   narrow screen, where the middle columns are the near-vertical ones.
    -------------------------------------------------------------------------- */
 
-const ROOF_W = 720;
-const ROOF_H = 150;
+const EAVE_W = 2000;
+const EAVE_H = 214;
+const EAVE_LIP = 160;
+const EAVE_VP = { x: 1000, y: -700 };
 
-/* A roof between eave tips at (x, y - lift) and (x + w, y - lift), ridge
-   `h` above the eave line. The upper edge sweeps concave from tip to ridge,
-   which is what makes it a Chinese roof rather than a gable. */
-const roofPath = (x, y, w, h, lift) =>
-  `M${x} ${y - lift}` +
-  `C${x + w * 0.12} ${y - lift + 3} ${x + w * 0.3} ${y - h * 0.58} ${x + w / 2} ${y - h}` +
-  `C${x + w * 0.7} ${y - h * 0.58} ${x + w * 0.88} ${y - lift + 3} ${x + w} ${y - lift}` +
-  `Q${x + w / 2} ${y + lift * 0.7} ${x} ${y - lift}Z`;
+const eaveSvg = () => {
+  const parts = [];
+  const toward = (xb, y) => EAVE_VP.x + (xb - EAVE_VP.x) * ((y - EAVE_VP.y) / (EAVE_LIP - EAVE_VP.y));
 
-const rooftopsSvg = (seed, id) => {
-  const rand = seeded(seed);
-  const far = [];
-  const near = [];
-  const lights = [];
+  /* Channel tiles: the field between the barrels. */
+  parts.push(`<rect x="0" y="0" width="${EAVE_W}" height="${EAVE_LIP}" fill="#b97d1e"/>`);
 
-  /* Far row: taller, paler, no detail — a pagoda and a few big halls. */
-  let x = 0;
-  while (x < ROOF_W) {
-    const w = range(rand, 70, 130);
-    const wEnd = Math.min(x + w, ROOF_W);
-    const ww = wEnd - x;
-    if (rand() < 0.22 && ww > 80) {
-      /* Pagoda: stacked roofs narrowing upward, a spire on top. */
-      const tiers = 3 + Math.floor(rand() * 2);
-      const base = ROOF_H - range(rand, 40, 60);
-      const cx = x + ww / 2;
-      far.push(`<rect x="${(cx - ww * 0.22).toFixed(1)}" y="${base}" width="${(ww * 0.44).toFixed(1)}" height="${ROOF_H - base}"/>`);
-      for (let t = 0; t < tiers; t += 1) {
-        const tw = ww * (0.9 - t * 0.18);
-        const ty = base - t * 26;
-        far.push(roofPath(cx - tw / 2, ty, tw, 18, 7));
-        far.push(`<rect x="${(cx - tw * 0.24).toFixed(1)}" y="${ty - 26}" width="${(tw * 0.48).toFixed(1)}" height="26"/>`);
-      }
-      const top = base - tiers * 26;
-      far.push(`<path d="M${cx - 3} ${top}L${cx} ${top - 22}L${cx + 3} ${top}Z"/>`);
-    } else {
-      const wallTop = ROOF_H - range(rand, 46, 78);
-      far.push(`<rect x="${(x + ww * 0.08).toFixed(1)}" y="${wallTop}" width="${(ww * 0.84).toFixed(1)}" height="${ROOF_H - wallTop}"/>`);
-      far.push(roofPath(x, wallTop, ww, range(rand, 16, 26), 8));
-    }
-    x = wEnd;
+  /* Barrel columns. */
+  const step = 40;
+  for (let xb = 20; xb < EAVE_W; xb += step) {
+    const half = 9;
+    const xt = toward(xb, 0);
+    const halfT = half * ((0 - EAVE_VP.y) / (EAVE_LIP - EAVE_VP.y));
+    parts.push(
+      `<path d="M${(xb - half).toFixed(1)} ${EAVE_LIP}L${(xb + half).toFixed(1)} ${EAVE_LIP}L${(xt + halfT).toFixed(1)} 0L${(xt - halfT).toFixed(1)} 0Z" fill="url(#ln-barrel)"/>`
+    );
   }
 
-  /* Near row: the houses themselves, with windows and lanterns. */
-  x = 0;
-  while (x < ROOF_W) {
-    const w = range(rand, 54, 104);
-    const wEnd = Math.min(x + w, ROOF_W);
-    const ww = wEnd - x;
-    const storeys = rand() < 0.3 ? 2 : 1;
-    const wallH = range(rand, 34, 50);
-    let top = ROOF_H;
-    for (let sIdx = 0; sIdx < storeys; sIdx += 1) {
-      const inset = sIdx === 0 ? 0.1 : 0.2;
-      const wallTop = top - wallH;
-      const wx = x + ww * inset;
-      const wwidth = ww * (1 - inset * 2);
-      near.push(`<rect x="${wx.toFixed(1)}" y="${wallTop.toFixed(1)}" width="${wwidth.toFixed(1)}" height="${(top - wallTop + 2).toFixed(1)}"/>`);
-      /* Windows: a row of lit panes, some dark. */
-      const n = Math.max(1, Math.floor(wwidth / 16));
-      for (let i = 0; i < n; i += 1) {
-        if (rand() < 0.3) {
-          continue;
-        }
-        const px = wx + 5 + i * (wwidth - 8) / n;
-        lights.push(`<rect x="${px.toFixed(1)}" y="${(wallTop + 10).toFixed(1)}" width="7" height="11" rx="1" fill="#ffcf6b" opacity="${(0.7 + rand() * 0.3).toFixed(2)}"/>`);
-      }
-      const rw = ww * (sIdx === 0 ? 1 : 0.8);
-      const rx = x + (ww - rw) / 2;
-      const lift = 9;
-      const h = range(rand, 18, 28);
-      near.push(roofPath(rx, wallTop, rw, h, lift));
-      /* Ridge ornaments at the ends. */
-      near.push(`<circle cx="${(rx + rw / 2).toFixed(1)}" cy="${(wallTop - h - 1).toFixed(1)}" r="2.2"/>`);
-      /* Lanterns hanging from the eave tips, kept off the tile's own edges. */
-      for (const tipX of [rx + 3, rx + rw - 3]) {
-        if (tipX > 8 && tipX < ROOF_W - 8 && rand() < 0.8) {
-          const ly = wallTop - lift + 11;
-          lights.push(
-            `<circle cx="${tipX.toFixed(1)}" cy="${ly.toFixed(1)}" r="14" fill="url(#${id}-glow)"/>` +
-              `<path d="M${tipX.toFixed(1)} ${(ly - 8).toFixed(1)}v-4" stroke="#e8b64c" stroke-width="1"/>` +
-              `<ellipse cx="${tipX.toFixed(1)}" cy="${ly.toFixed(1)}" rx="4.4" ry="5.6" fill="#e0192f"/>` +
-              `<rect x="${(tipX - 2.6).toFixed(1)}" y="${(ly - 6.6).toFixed(1)}" width="5.2" height="1.6" fill="#e8b64c"/>` +
-              `<rect x="${(tipX - 2.6).toFixed(1)}" y="${(ly + 5).toFixed(1)}" width="5.2" height="1.6" fill="#e8b64c"/>` +
-              `<path d="M${tipX.toFixed(1)} ${(ly + 6.6).toFixed(1)}v4" stroke="#e8b64c" stroke-width="1"/>`
-          );
-        }
-      }
-      top = wallTop - h * 0.5;
-    }
-    x = wEnd;
+  /* Rows of tiles stepping down, closer together toward the top. */
+  let y = EAVE_LIP;
+  let gap = 28;
+  while (gap > 2.5) {
+    parts.push(`<line x1="0" y1="${y.toFixed(1)}" x2="${EAVE_W}" y2="${y.toFixed(1)}" stroke="rgba(80,44,8,.55)" stroke-width="${Math.max(1, gap / 9).toFixed(1)}"/>`);
+    parts.push(`<line x1="0" y1="${(y - gap * 0.12).toFixed(1)}" x2="${EAVE_W}" y2="${(y - gap * 0.12).toFixed(1)}" stroke="rgba(255,228,150,.35)" stroke-width="${Math.max(0.6, gap / 16).toFixed(1)}"/>`);
+    y -= gap;
+    gap *= 0.78;
   }
+
+  /* Distance: the field darkens as it climbs away. */
+  parts.push(`<rect x="0" y="0" width="${EAVE_W}" height="${EAVE_LIP}" fill="url(#ln-eave-far)"/>`);
+
+  /* Drip tiles between the columns, then the end caps over them. */
+  for (let xb = 20; xb < EAVE_W; xb += step) {
+    const x = xb + step / 2;
+    parts.push(
+      `<path d="M${x - 13} ${EAVE_LIP - 6}Q${x} ${EAVE_LIP - 2} ${x + 13} ${EAVE_LIP - 6}L${x + 9} ${EAVE_LIP + 8}Q${x} ${EAVE_LIP + 18} ${x - 9} ${EAVE_LIP + 8}Z" fill="#d9a02b" stroke="#7a4a10" stroke-width="1.5"/>` +
+        `<path d="M${x - 5} ${EAVE_LIP + 2}Q${x} ${EAVE_LIP + 10} ${x + 5} ${EAVE_LIP + 2}" fill="none" stroke="#7a4a10" stroke-width="1"/>`
+    );
+  }
+  for (let xb = 20; xb < EAVE_W; xb += step) {
+    parts.push(
+      `<circle cx="${xb}" cy="${EAVE_LIP}" r="13" fill="#d9a02b" stroke="#7a4a10" stroke-width="2"/>` +
+        `<circle cx="${xb}" cy="${EAVE_LIP}" r="7.5" fill="none" stroke="#7a4a10" stroke-width="1.2"/>` +
+        `<circle cx="${xb}" cy="${EAVE_LIP}" r="2.4" fill="#7a4a10"/>` +
+        [45, 135, 225, 315]
+          .map((deg) => {
+            const a = (deg * Math.PI) / 180;
+            return `<circle cx="${(xb + Math.cos(a) * 10).toFixed(1)}" cy="${(EAVE_LIP + Math.sin(a) * 10).toFixed(1)}" r="1.5" fill="#7a4a10"/>`;
+          })
+          .join("")
+    );
+  }
+
+  /* The beam: shadow under the lip, the painted band with its gold fret, a
+     green fillet, and the red timber. */
+  const beamTop = EAVE_LIP + 18;
+  parts.push(`<rect x="0" y="${beamTop}" width="${EAVE_W}" height="${EAVE_H - beamTop}" fill="#17365a"/>`);
+  parts.push(`<rect x="0" y="${beamTop}" width="${EAVE_W}" height="7" fill="rgba(0,0,0,.45)"/>`);
+  for (let x = 6; x < EAVE_W; x += 36) {
+    parts.push(
+      `<rect x="${x}" y="${beamTop + 11}" width="12" height="10" fill="none" stroke="#e8b64c" stroke-width="1.4"/>` +
+        `<rect x="${x + 4}" y="${beamTop + 15}" width="4" height="2" fill="#e8b64c"/>` +
+        `<circle cx="${x + 24}" cy="${beamTop + 16}" r="2.2" fill="#3fa88f"/>`
+    );
+  }
+  parts.push(`<rect x="0" y="${EAVE_H - 12}" width="${EAVE_W}" height="3" fill="#1f6b5a"/>`);
+  parts.push(`<rect x="0" y="${EAVE_H - 9}" width="${EAVE_W}" height="9" fill="#6b1a12"/>`);
+  parts.push(`<rect x="0" y="${EAVE_H - 9}" width="${EAVE_W}" height="1" fill="#e8b64c" opacity=".7"/>`);
 
   return `
-    <svg class="ln-rooftops-art" width="100%" height="${ROOF_H}" aria-hidden="true" focusable="false">
+    <svg class="ln-eave-art" viewBox="0 0 ${EAVE_W} ${EAVE_H}" preserveAspectRatio="xMidYMax slice"
+         aria-hidden="true" focusable="false">
       <defs>
-        <radialGradient id="${id}-glow">
-          <stop offset="0" stop-color="rgba(255,120,60,.5)"/>
-          <stop offset="1" stop-color="rgba(255,120,60,0)"/>
-        </radialGradient>
-        <pattern id="${id}" patternUnits="userSpaceOnUse" width="${ROOF_W}" height="${ROOF_H}">
-          <g fill="#3a0a16" opacity=".85">${far.join("")}</g>
-          <g fill="#150307">${near.join("")}</g>
-          ${lights.join("")}
+        <linearGradient id="ln-barrel" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="#9c6414"/>
+          <stop offset=".3" stop-color="#f2c14e"/>
+          <stop offset=".65" stop-color="#d9a02b"/>
+          <stop offset="1" stop-color="#8a5510"/>
+        </linearGradient>
+        <linearGradient id="ln-eave-far" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="rgba(22,7,9,.7)"/>
+          <stop offset=".6" stop-color="rgba(22,7,9,.15)"/>
+          <stop offset="1" stop-color="rgba(22,7,9,0)"/>
+        </linearGradient>
+      </defs>
+      ${parts.join("")}
+    </svg>`;
+};
+
+/* ---------------------------------------------------------------------------
+   The city
+   ---------------------------------------------------------------------------
+   Skyscrapers in silhouette along the bottom, in two rows for depth, with
+   lit windows. A user-unit pattern like Winter's, so it repeats rather than
+   stretches. Nothing fancy: it is the background the tree stands against.
+   -------------------------------------------------------------------------- */
+
+const CITY_W = 960;
+const CITY_H = 190;
+
+const cityRow = (rand, { minH, maxH, windows }) => {
+  const bodies = [];
+  const lit = { bright: [], dim: [] };
+  let x = 0;
+  while (x < CITY_W) {
+    const w = range(rand, 26, 80);
+    const h = range(rand, minH, maxH);
+    const top = CITY_H - h;
+    const x1 = Math.min(x + w, CITY_W);
+    const roof = rand();
+    let d = `M${x.toFixed(1)} ${CITY_H}V${top.toFixed(1)}`;
+    if (roof < 0.2) {
+      const mx = x + (x1 - x) / 2;
+      d += `H${(mx - 1.2).toFixed(1)}V${(top - range(rand, 10, 28)).toFixed(1)}h2.4V${top.toFixed(1)}`;
+    } else if (roof < 0.42) {
+      const inset = (x1 - x) * range(rand, 0.18, 0.3);
+      const rise = range(rand, 8, 18);
+      d += `H${(x + inset).toFixed(1)}V${(top - rise).toFixed(1)}H${(x1 - inset).toFixed(1)}V${top.toFixed(1)}`;
+    } else if (roof < 0.52) {
+      d += `L${(x + (x1 - x) / 2).toFixed(1)} ${(top - range(rand, 14, 30)).toFixed(1)}`;
+    }
+    d += `H${x1.toFixed(1)}V${CITY_H}Z`;
+    bodies.push(d);
+
+    if (windows) {
+      const cols = Math.floor((x1 - x - 8) / 11);
+      const rows = Math.floor((h - 12) / 15);
+      for (let r = 0; r < rows; r += 1) {
+        for (let c = 0; c < cols; c += 1) {
+          const on = rand();
+          if (on > 0.5) {
+            continue;
+          }
+          const rect = `M${(x + 5 + c * 11).toFixed(1)} ${(top + 8 + r * 15).toFixed(1)}h4v6h-4z`;
+          (on < 0.2 ? lit.bright : lit.dim).push(rect);
+        }
+      }
+    }
+    x = x1 + range(rand, 2, 14);
+  }
+  return { bodies: bodies.join(""), lit };
+};
+
+const citySvg = (seed, id) => {
+  const rand = seeded(seed);
+  const far = cityRow(rand, { minH: 80, maxH: 170, windows: true });
+  const near = cityRow(rand, { minH: 30, maxH: 110, windows: true });
+  return `
+    <svg class="ln-city-art" width="100%" height="${CITY_H}" aria-hidden="true" focusable="false">
+      <defs>
+        <pattern id="${id}" patternUnits="userSpaceOnUse" width="${CITY_W}" height="${CITY_H}">
+          <path d="${far.bodies}" fill="#3a0a16" opacity=".85"/>
+          <path d="${far.lit.bright.join("")}${far.lit.dim.join("")}" fill="#c9773d" opacity=".45"/>
+          <path d="${near.bodies}" fill="#15030a"/>
+          <path d="${near.lit.bright.join("")}" fill="#ffcf6b" opacity=".95"/>
+          <path d="${near.lit.dim.join("")}" fill="#e09a4a" opacity=".55"/>
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill="url(#${id})"></rect>
@@ -530,62 +587,243 @@ const rooftopsSvg = (seed, id) => {
 };
 
 /* ---------------------------------------------------------------------------
-   Fireworks and sky lanterns
+   Fireworks
    ---------------------------------------------------------------------------
-   Fireworks go up before they open: each is a rocket — a short bright trail
-   — that climbs from behind the rooftops to its own height, and a burst
-   that blooms there the moment the rocket arrives. Both are keyframes on
-   the same cycle, offset per firework so the sky is never quiet and never
-   all at once.
+   A particle system on a canvas, on the shared `Surface` and `Loop` so it
+   inherits DPR handling, the zero-size guard and the hidden-document pause.
 
-   Sky lanterns rise slowly out of the street, drifting a little as they
-   go, and fade high in the sky. They are emitted before the rooftops in the
-   markup, so each one appears from behind a roof rather than out of the
-   ground.
+   Rockets launch from behind the city at random intervals, trailing embers,
+   and burst at their apex into a shell of sparks. Four shell types: a peony
+   (an even sphere), a ring, a willow (gold, heavy, long-lived, so it droops)
+   and a crackle (short-lived and twinkling). Sparks are drawn as short
+   streaks from where they were to where they are, with `lighter` blending
+   so overlapping sparks glow rather than paint over each other.
+
+   Budget: a few hundred sparks at most, one path per spark per frame. On a
+   phone that is a fraction of a millisecond.
    -------------------------------------------------------------------------- */
 
-const FIREWORK_COLORS = ["#ffd98a", "#ff4d5e", "#ff9fbb", "#e8b64c"];
+const SHELL_COLORS = ["#ff4d5e", "#ffd98a", "#ff9fbb", "#ffffff", "#e8b64c", "#ff7a3d"];
+const MAX_SPARKS = 900;
 
-const burstSvg = (rand, color) => {
-  const rays = [];
-  const n = 18;
-  for (let i = 0; i < n; i += 1) {
-    const a = (i / n) * Math.PI * 2 + rand() * 0.1;
-    const r = 30 + rand() * 12;
-    const ex = Math.cos(a) * r;
-    const ey = Math.sin(a) * r;
-    rays.push(
-      `<line x1="${(ex * 0.25).toFixed(1)}" y1="${(ey * 0.25).toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}"/>` +
-        `<circle cx="${(ex * 1.12).toFixed(1)}" cy="${(ey * 1.12).toFixed(1)}" r="1.8"/>`
-    );
+class Fireworks {
+  constructor(surface) {
+    this.surface = surface;
+    this.rockets = [];
+    this.sparks = [];
+    this.next = 0.6;
+    this.t = 0;
   }
-  for (let i = 0; i < 10; i += 1) {
-    const a = (i / 10) * Math.PI * 2 + 0.3;
-    rays.push(`<circle cx="${(Math.cos(a) * 14).toFixed(1)}" cy="${(Math.sin(a) * 14).toFixed(1)}" r="1.4"/>`);
-  }
-  return `<svg class="ln-burst" viewBox="-50 -50 100 100" aria-hidden="true" focusable="false">` +
-    `<g stroke="${color}" fill="${color}" stroke-width="1.2" stroke-linecap="round" opacity=".95">${rays.join("")}</g></svg>`;
-};
 
-const fireworksHtml = (seed, n, motion) => {
-  const rand = seeded(seed);
-  const cycle = 11;
-  return Array.from({ length: n }, (_, k) => {
-    const color = pick(rand, FIREWORK_COLORS);
-    const left = 6 + ((k + 0.5) / n) * 88 + (rand() - 0.5) * 8;
-    const rise = Math.round(range(rand, 300, 520));
-    /* Spread through the cycle rather than random, so two never fire
-       together and the gaps are even. */
-    const delay = (k / n) * cycle + rand() * 1.2;
-    return (
-      `<span class="ln-firework${motion ? " ln-firework-live" : ""}" ` +
-      `style="left:${left.toFixed(1)}%;--rise:${rise}px;--cycle:${cycle}s;--delay:${delay.toFixed(1)}s;--size:${Math.round(range(rand, 110, 170))}px">` +
-      `<span class="ln-rocket" style="background:linear-gradient(to top, transparent, ${color})"></span>` +
-      burstSvg(rand, color) +
-      `</span>`
-    );
-  }).join("");
-};
+  launch() {
+    const W = this.surface.width;
+    const H = this.surface.height;
+    const x = W * range(Math.random, 0.06, 0.94);
+    const apex = H * range(Math.random, 0.14, 0.42);
+    const start = H - 60;
+    const g = 240;
+    this.rockets.push({
+      x,
+      y: start,
+      vx: range(Math.random, -12, 12),
+      vy: -Math.sqrt(2 * g * (start - apex)),
+      g,
+      color: pick(Math.random, SHELL_COLORS),
+      kind: Math.random() < 0.55 ? "peony" : Math.random() < 0.45 ? "willow" : Math.random() < 0.5 ? "ring" : "crackle"
+    });
+  }
+
+  burst(r) {
+    const kind = r.kind;
+    const n = kind === "ring" ? 54 : kind === "crackle" ? 70 : kind === "willow" ? 90 : 110;
+    const color = kind === "willow" ? "#ffd98a" : r.color;
+    const second = kind === "peony" && Math.random() < 0.5 ? pick(Math.random, SHELL_COLORS) : null;
+    /* A ring is tilted so it reads as a disc seen at an angle. */
+    const tilt = range(Math.random, 0.35, 0.8);
+    for (let i = 0; i < n; i += 1) {
+      const a = kind === "ring" ? (i / n) * Math.PI * 2 : Math.random() * Math.PI * 2;
+      let sp;
+      if (kind === "ring") {
+        sp = 170;
+      } else if (kind === "willow") {
+        sp = range(Math.random, 40, 150);
+      } else if (kind === "crackle") {
+        sp = range(Math.random, 60, 210);
+      } else {
+        /* Even sphere: speed by sqrt so the shell is not denser at the centre. */
+        sp = 60 + 160 * Math.sqrt(Math.random());
+      }
+      const vx = Math.cos(a) * sp;
+      const vy = Math.sin(a) * sp * (kind === "ring" ? tilt : 1);
+      const ttl =
+        kind === "willow" ? range(Math.random, 2.6, 3.6) : kind === "crackle" ? range(Math.random, 0.7, 1.4) : range(Math.random, 1.3, 2.1);
+      this.sparks.push({
+        x: r.x,
+        y: r.y,
+        px: r.x,
+        py: r.y,
+        vx: vx + r.vx * 0.3,
+        vy,
+        life: ttl,
+        ttl,
+        color: second && i % 2 ? second : color,
+        size: kind === "willow" ? 1.6 : kind === "crackle" ? 1.3 : 1.9,
+        g: kind === "willow" ? 210 : kind === "crackle" ? 90 : 120,
+        drag: kind === "willow" ? 1.2 : 1.9,
+        twinkle: kind === "crackle"
+      });
+    }
+    /* A bright flash at the centre, gone in a blink. */
+    this.sparks.push({ x: r.x, y: r.y, px: r.x, py: r.y, vx: 0, vy: 0, life: 0.12, ttl: 0.12, color: "#ffffff", size: 14, g: 0, drag: 0, twinkle: false, flash: true });
+  }
+
+  step(dt) {
+    if (!this.surface.ready) {
+      return;
+    }
+    this.t += dt;
+    this.next -= dt;
+    if (this.next <= 0) {
+      this.launch();
+      this.next = range(Math.random, 0.9, 2.4);
+    }
+
+    for (let i = this.rockets.length - 1; i >= 0; i -= 1) {
+      const r = this.rockets[i];
+      r.x += r.vx * dt;
+      r.y += r.vy * dt;
+      r.vy += r.g * dt;
+      /* Embers off the tail. */
+      if (this.sparks.length < MAX_SPARKS) {
+        this.sparks.push({
+          x: r.x,
+          y: r.y,
+          px: r.x,
+          py: r.y,
+          vx: range(Math.random, -18, 18),
+          vy: range(Math.random, 20, 70),
+          life: 0.45,
+          ttl: 0.45,
+          color: "#ffd98a",
+          size: 1,
+          g: 80,
+          drag: 2,
+          twinkle: false
+        });
+      }
+      if (r.vy >= -20) {
+        this.rockets.splice(i, 1);
+        if (this.sparks.length < MAX_SPARKS - 130) {
+          this.burst(r);
+        }
+      }
+    }
+
+    const k = Math.exp(-dt);
+    for (let i = this.sparks.length - 1; i >= 0; i -= 1) {
+      const s = this.sparks[i];
+      s.life -= dt;
+      if (s.life <= 0) {
+        this.sparks.splice(i, 1);
+        continue;
+      }
+      s.px = s.x;
+      s.py = s.y;
+      const d = Math.pow(k, s.drag);
+      s.vx *= d;
+      s.vy = s.vy * d + s.g * dt;
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+    }
+  }
+
+  draw() {
+    const ctx = this.surface.begin();
+    if (!ctx) {
+      return;
+    }
+    ctx.globalCompositeOperation = "lighter";
+    ctx.lineCap = "round";
+    for (const r of this.rockets) {
+      ctx.strokeStyle = "rgba(255,225,160,.9)";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(r.x, r.y + 16);
+      ctx.lineTo(r.x, r.y);
+      ctx.stroke();
+    }
+    for (const s of this.sparks) {
+      const u = s.life / s.ttl;
+      let alpha = u < 0.35 ? u / 0.35 : 1;
+      if (s.twinkle && Math.random() < 0.35) {
+        alpha *= 0.25;
+      }
+      if (s.flash) {
+        ctx.globalAlpha = alpha * 0.9;
+        ctx.fillStyle = s.color;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size * (1.6 - u), 0, Math.PI * 2);
+        ctx.fill();
+        continue;
+      }
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = s.color;
+      ctx.lineWidth = s.size;
+      ctx.beginPath();
+      ctx.moveTo(s.px, s.py);
+      ctx.lineTo(s.x, s.y);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = "source-over";
+  }
+
+  /** Reduced motion: three shells hanging open in the sky. */
+  drawStatic() {
+    const ctx = this.surface.begin();
+    if (!ctx) {
+      return;
+    }
+    const rand = seeded(5);
+    const W = this.surface.width;
+    const H = this.surface.height;
+    ctx.globalCompositeOperation = "lighter";
+    ctx.lineCap = "round";
+    for (let k = 0; k < 3; k += 1) {
+      const cx = W * (0.2 + k * 0.28 + rand() * 0.1);
+      const cy = H * (0.2 + rand() * 0.2);
+      const color = SHELL_COLORS[k * 2];
+      const R = 46 + rand() * 24;
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      for (let i = 0; i < 40; i += 1) {
+        const a = (i / 40) * Math.PI * 2 + rand() * 0.1;
+        const r = R * (0.8 + rand() * 0.2);
+        ctx.globalAlpha = 0.85;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(a) * r * 0.55, cy + Math.sin(a) * r * 0.55);
+        ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(a) * r * 1.08, cy + Math.sin(a) * r * 1.08, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = "source-over";
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Sky lanterns
+   ---------------------------------------------------------------------------
+   They rise slowly out of the city, drifting a little as they go, and fade
+   high in the sky. Emitted before the city in the markup, so each one
+   appears from behind a building rather than out of the ground. Negative
+   delays spread them through their cycles, so the first frame already has
+   several in the air.
+   -------------------------------------------------------------------------- */
 
 const SKY_LANTERN =
   `<svg viewBox="0 0 24 34" aria-hidden="true" focusable="false">` +
@@ -599,13 +837,13 @@ const SKY_LANTERN =
 const skyLanternsHtml = (seed, n, motion) => {
   const rand = seeded(seed);
   return Array.from({ length: n }, () => {
-    const dur = range(rand, 48, 78);
-    const size = Math.round(range(rand, 18, 32));
+    const dur = range(rand, 30, 52);
+    const size = Math.round(range(rand, 16, 30));
     const left = range(rand, 4, 94);
-    const rise = Math.round(range(rand, 620, 900));
+    const rise = Math.round(range(rand, 640, 900));
     /* With motion off the lanterns are already up: each holds a seeded
        height, so the sky still has lanterns in it, just a still one. */
-    const still = motion ? "" : `bottom:${Math.round(range(rand, 180, 620))}px;`;
+    const still = motion ? "" : `bottom:${Math.round(range(rand, 200, 620))}px;`;
     return (
       `<span class="ln-skylantern${motion ? " ln-skylantern-live" : ""}" ` +
       `style="left:${left.toFixed(1)}%;width:${size}px;${still}--rise:${rise}px;--dur:${dur.toFixed(1)}s;` +
@@ -721,25 +959,46 @@ export const mount = ({ overlay, density, motion }) => {
      to the hero, which does not move. */
   decorate(disposer, ".site-header", "season-edge-strip ln-edge", "");
 
-  /* Hero: a night that goes to red at the horizon, a moon, fireworks going
-     up over a street of rooftops along the bottom, sky lanterns rising out
-     of it, a string of lanterns across the top, and the crown of a plum tree
-     in full flower filling the left. Paint order matters here: the fireworks
-     and the sky lanterns come before the rooftops so they start out behind
-     the roofs, and the tree comes last so it stands in front of the street. */
-  const heroString = lanternString({ seed: 13, count: 8, animal, width: 40, sag: 22, motion });
-  decorate(
+  /* Hero, from the back: the sky and the moon, the fireworks canvas, sky
+     lanterns, the city, the tree, and in front of everything the eave along
+     the top with the lantern string hanging from its beam. The lanterns and
+     the fireworks come before the city so they start out behind it. */
+  const heroString = lanternString({ seed: 13, count: 9, animal, width: 32, sag: 6, motion });
+  const [heroScene] = decorate(
     disposer,
     ".hero",
     "season-scene ln-hero",
     `<div class="season-sky"></div>
      <span class="ln-moon"></span>
-     <div class="ln-fireworks">${fireworksHtml(17, 5, motion)}</div>
-     <div class="ln-skylanterns">${skyLanternsHtml(31, 6, motion)}</div>
-     <div class="ln-rooftops">${rooftopsSvg(3, "ln-roofs-hero")}</div>
-     <div class="ln-hero-string">${heroString.html}</div>
-     ${blossomTree(7, true)}`
+     <canvas class="ln-canvas" aria-hidden="true"></canvas>
+     <div class="ln-skylanterns">${skyLanternsHtml(31, 8, motion)}</div>
+     <div class="ln-city">${citySvg(3, "ln-city-hero")}</div>
+     ${blossomTree(7, true)}
+     <div class="ln-eave">${eaveSvg()}</div>
+     <div class="ln-hero-string">${heroString.html}</div>`
   );
+
+  /* The fireworks run on the hero's own canvas, so they scroll away with it
+     rather than following the reader down the page. Subpages have no hero
+     and simply get no fireworks. */
+  let fireworks = null;
+  let loop = null;
+  const canvas = heroScene ? heroScene.querySelector(".ln-canvas") : null;
+  if (canvas) {
+    const surface = new Surface(canvas);
+    disposer.add(() => surface.destroy());
+    fireworks = new Fireworks(surface);
+    loop = new Loop({
+      motion,
+      step: (dt) => fireworks.step(dt),
+      /* With motion off, `Loop.start()` paints exactly one frame: three
+         shells hanging open rather than an empty sky. */
+      draw: () => (motion ? fireworks.draw() : fireworks.drawStatic())
+    });
+    disposer.add(() => loop.destroy());
+    surface.onChange = () => loop.draw();
+    loop.start();
+  }
 
   /* Footer: the same night, mirrored, with a second tree and its own string. */
   const footerString = lanternString({ seed: 29, count: 7, animal, width: 30, sag: 14, motion });
@@ -815,6 +1074,10 @@ export const mount = ({ overlay, density, motion }) => {
   );
 
   return {
+    /* Exposed for tuning and for verification: hidden documents never fire
+       rAF, so this is the only way to advance the fireworks off-screen. */
+    fireworks,
+    loop,
     destroy() {
       disposer.dispose();
     }
