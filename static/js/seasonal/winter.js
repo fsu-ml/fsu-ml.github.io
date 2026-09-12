@@ -13,8 +13,8 @@
  * The theme is December's, not one holiday's: a moonlit city, snow, and
  * strings of light against the longest nights. The observances that fall in
  * the month each get a small addition to the footer on their own dates only —
- * see "The nights of December" — and on Christmas Eve and Christmas Day a
- * sleigh crosses the hero's city, dropping gifts onto the roofs.
+ * see "The nights of December". The sleigh is not one of those: it crosses
+ * the hero's city all season long, dropping gifts onto the roofs.
  */
 
 import { Disposer, buildParticles, decorate, make, pick, range, seeded } from "./engine.js";
@@ -469,8 +469,8 @@ const fireworksHtml = (motion) => {
 /* ---------------------------------------------------------------------------
    The sleigh
    ---------------------------------------------------------------------------
-   On the two nights it flies, a sleigh crosses the hero over the rooftops,
-   dropping gifts onto them as it goes. It passes behind the hero's own copy,
+   All season long a sleigh crosses the hero over the rooftops, dropping
+   gifts onto them as it goes. It passes behind the hero's own copy,
    the way the Halloween ghosts do, so nothing ever covers the headline.
 
    All of the motion is CSS. The sleigh's crossing and each gift's fall are
@@ -537,10 +537,6 @@ const GIFT = `
     <circle cx="5.6" cy="3" r="2.1" fill="#f7f9fc"></circle>
     <circle cx="10.4" cy="3" r="2.1" fill="#f7f9fc"></circle>
   </svg>`;
-
-/* Christmas Eve and Christmas Day. Like the candles and the fireworks, the
-   sleigh belongs to its own nights; the rest of the month is simply winter. */
-const isSleighNight = (date) => date.getMonth() === 11 && (date.getDate() === 24 || date.getDate() === 25);
 
 const sleighFlightHtml = (seed, motion) => {
   const rand = seeded(seed);
@@ -653,7 +649,7 @@ export const mount = ({ overlay, density, motion }) => {
      <div class="wn-frost wn-frost-left">${FROST_CORNER}</div>
      <div class="wn-frost wn-frost-right">${FROST_CORNER}</div>
      ${skylineSvg(7, motion)}
-     ${isSleighNight(night) ? sleighFlightHtml(53, motion) : ""}`
+     ${sleighFlightHtml(53, motion)}`
   );
   if (isSolstice(night)) {
     /* The longest night: the moon rides higher and larger. */

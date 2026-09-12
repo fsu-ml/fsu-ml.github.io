@@ -3,13 +3,12 @@
  *
  * The drawing itself lives in static/js/seasonal/winter.js; this pulls the
  * sleigh and gift artwork out of that module and lays it on the theme's
- * garnet sky at three sizes, so it can be judged without waiting for the
- * night it flies on. Run it after changing the art:
+ * garnet sky at three sizes, so it can be judged on its own. Run it after
+ * changing the art:
  *
  *   node planning/build-winter-sleigh.mjs
  *
- * On the site the sleigh appears only on 24 and 25 December; preview it any
- * day with `/?season=winter&date=2026-12-24`.
+ * On the site: `/?season=winter`.
  */
 
 import fs from "node:fs";

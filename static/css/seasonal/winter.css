@@ -553,8 +553,8 @@
 /* ---------------------------------------------------------------------------
    The sleigh
    ---------------------------------------------------------------------------
-   Christmas Eve and Christmas Day only. It crosses the hero over the rooftops,
-   behind the hero's own copy, and drops gifts on the roofs as it goes.
+   Flies all season. It crosses the hero over the rooftops, behind the hero's
+   own copy, and drops gifts on the roofs as it goes.
 
    One cycle is `--wn-fly-cycle` long (set from winter.js). The crossing takes
    the first 68% of it and the sleigh waits off the right edge for the rest,
