@@ -11,7 +11,7 @@
  * says *which* new year it is, and says something different in 2032 than it
  * did in 2031. And a plum tree in bloom, because 梅花 opens in the cold just
  * before the new year and is the flower the holiday is drawn with. Beyond
- * the roof a city, the tree against it, and over it fireworks and sky
+ * the eave a city, the tree against it, and over it fireworks and sky
  * lanterns.
  *
  * The fireworks are the one canvas engine here, a small particle system on
@@ -409,58 +409,23 @@ const blossomTree = (seed, lush = false) =>
    The roof
    ---------------------------------------------------------------------------
    We are standing on a roof looking out over the city, and the bottom of
-   the hero is that roof: columns of glazed yellow barrel tiles running down
-   and away from us to the eave, rows of channel tiles stepping down between
-   them, the round end caps and pointed drip tiles along the lip, and under
-   the lip the painted beam — blue with a gold fret — and the red timber the
-   lanterns hang from, below the hero's own edge.
+   the hero is its eave: the round end caps and pointed drip tiles along the
+   lip, and under the lip the painted beam — blue with a gold fret — and the
+   red timber the lanterns hang from, below the hero's own edge. Only the
+   edge: the tiled field above it was drawn and taken out again, since it
+   walled off the bottom of the scene.
 
-   Drawn in a fixed 2000-unit canvas because the columns converge (gently,
-   toward a point far below the lip), which a repeating pattern cannot do.
-   `xMidYMax slice` keeps the lip on the container's bottom edge and crops
-   the sides on a narrow screen.
+   Drawn in a fixed 2000-unit canvas and sliced to the width, so the caps
+   keep their size and the lip stays on the container's bottom edge.
    -------------------------------------------------------------------------- */
 
 const ROOF_W = 2000;
-const ROOF_H = 170;
-const ROOF_LIP = 120;
-const ROOF_VP = { x: 1000, y: ROOF_LIP + 900 };
+const ROOF_LIP = 14;
+const ROOF_H = ROOF_LIP + 50;
 
 const roofSvg = () => {
   const parts = [];
-  const spread = (xb, y) => ROOF_VP.x + (xb - ROOF_VP.x) * ((ROOF_VP.y - y) / (ROOF_VP.y - ROOF_LIP));
-
-  /* Channel tiles: the field between the barrels. */
-  parts.push(`<rect x="0" y="0" width="${ROOF_W}" height="${ROOF_LIP}" fill="#b97d1e"/>`);
-
-  /* Barrel columns: widest nearest us at the top, narrowing to the lip. */
   const step = 40;
-  const half = 9;
-  const halfTop = half * ((ROOF_VP.y - 0) / (ROOF_VP.y - ROOF_LIP));
-  for (let xb = 20; xb < ROOF_W; xb += step) {
-    const xt = spread(xb, 0);
-    parts.push(
-      `<path d="M${(xt - halfTop).toFixed(1)} 0L${(xt + halfTop).toFixed(1)} 0L${(xb + half).toFixed(1)} ${ROOF_LIP}L${(xb - half).toFixed(1)} ${ROOF_LIP}Z" fill="url(#ln-barrel)"/>`
-    );
-  }
-
-  /* Rows of tiles stepping down toward the eave, closer together as they
-     get farther away. */
-  let y = 0;
-  let gap = 30;
-  while (y + gap * 0.5 < ROOF_LIP) {
-    parts.push(`<line x1="0" y1="${y.toFixed(1)}" x2="${ROOF_W}" y2="${y.toFixed(1)}" stroke="rgba(80,44,8,.55)" stroke-width="${Math.max(1, gap / 9).toFixed(1)}"/>`);
-    parts.push(`<line x1="0" y1="${(y + gap * 0.12).toFixed(1)}" x2="${ROOF_W}" y2="${(y + gap * 0.12).toFixed(1)}" stroke="rgba(255,228,150,.35)" stroke-width="${Math.max(0.6, gap / 16).toFixed(1)}"/>`);
-    y += gap;
-    gap *= 0.8;
-  }
-
-  /* The ridge along the top edge, so the field has a finished near side. */
-  parts.push(`<rect x="0" y="0" width="${ROOF_W}" height="9" fill="#8a5510"/>`);
-  parts.push(`<rect x="0" y="2" width="${ROOF_W}" height="2" fill="rgba(255,228,150,.45)"/>`);
-
-  /* Distance: a little shade toward the lip. */
-  parts.push(`<rect x="0" y="0" width="${ROOF_W}" height="${ROOF_LIP}" fill="url(#ln-roof-far)"/>`);
 
   /* Drip tiles between the columns, then the end caps over them. */
   for (let xb = 20; xb < ROOF_W; xb += step) {
@@ -503,18 +468,6 @@ const roofSvg = () => {
   return `
     <svg class="ln-roof-art" viewBox="0 0 ${ROOF_W} ${ROOF_H}" preserveAspectRatio="xMidYMax slice"
          aria-hidden="true" focusable="false">
-      <defs>
-        <linearGradient id="ln-barrel" x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0" stop-color="#9c6414"/>
-          <stop offset=".3" stop-color="#f2c14e"/>
-          <stop offset=".65" stop-color="#d9a02b"/>
-          <stop offset="1" stop-color="#8a5510"/>
-        </linearGradient>
-        <linearGradient id="ln-roof-far" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0" stop-color="rgba(22,7,9,0)"/>
-          <stop offset="1" stop-color="rgba(22,7,9,.32)"/>
-        </linearGradient>
-      </defs>
       ${parts.join("")}
     </svg>`;
 };
