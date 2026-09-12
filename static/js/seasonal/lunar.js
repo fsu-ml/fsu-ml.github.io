@@ -10,9 +10,9 @@
  * carrying the zodiac animal whose year is beginning — so the decoration
  * says *which* new year it is, and says something different in 2032 than it
  * did in 2031. And a plum tree in bloom, because 梅花 opens in the cold just
- * before the new year and is the flower the holiday is drawn with. Beyond
- * the eave a city, the tree against it, and over it fireworks and sky
- * lanterns.
+ * before the new year and is the flower the holiday is drawn with — in the
+ * footer now; the hero is a city beyond the eave, with fireworks and sky
+ * lanterns over it.
  *
  * The fireworks are the one canvas engine here, a small particle system on
  * the shared Surface and Loop. Everything else is markup on CSS keyframes:
@@ -427,6 +427,23 @@ const roofSvg = () => {
   const parts = [];
   const step = 40;
 
+  /* The beam under the lip first: the painted band with its gold fret, a
+     green fillet, and the red timber at the hero's edge. The caps and drips
+     are drawn over its top edge, so they sit on it rather than above it. */
+  const beamTop = ROOF_LIP + 6;
+  parts.push(`<rect x="0" y="${beamTop}" width="${ROOF_W}" height="${ROOF_H - beamTop}" fill="#17365a"/>`);
+  parts.push(`<rect x="0" y="${beamTop}" width="${ROOF_W}" height="10" fill="rgba(0,0,0,.35)"/>`);
+  for (let x = 6; x < ROOF_W; x += 36) {
+    parts.push(
+      `<rect x="${x}" y="${beamTop + 16}" width="12" height="10" fill="none" stroke="#e8b64c" stroke-width="1.4"/>` +
+        `<rect x="${x + 4}" y="${beamTop + 20}" width="4" height="2" fill="#e8b64c"/>` +
+        `<circle cx="${x + 24}" cy="${beamTop + 21}" r="2.2" fill="#3fa88f"/>`
+    );
+  }
+  parts.push(`<rect x="0" y="${ROOF_H - 12}" width="${ROOF_W}" height="3" fill="#1f6b5a"/>`);
+  parts.push(`<rect x="0" y="${ROOF_H - 9}" width="${ROOF_W}" height="9" fill="#6b1a12"/>`);
+  parts.push(`<rect x="0" y="${ROOF_H - 9}" width="${ROOF_W}" height="1" fill="#e8b64c" opacity=".7"/>`);
+
   /* Drip tiles between the columns, then the end caps over them. */
   for (let xb = 20; xb < ROOF_W; xb += step) {
     const x = xb + step / 2;
@@ -448,22 +465,6 @@ const roofSvg = () => {
           .join("")
     );
   }
-
-  /* The beam under the lip: shadow, the painted band with its gold fret, a
-     green fillet, and the red timber at the hero's edge. */
-  const beamTop = ROOF_LIP + 18;
-  parts.push(`<rect x="0" y="${beamTop}" width="${ROOF_W}" height="${ROOF_H - beamTop}" fill="#17365a"/>`);
-  parts.push(`<rect x="0" y="${beamTop}" width="${ROOF_W}" height="7" fill="rgba(0,0,0,.45)"/>`);
-  for (let x = 6; x < ROOF_W; x += 36) {
-    parts.push(
-      `<rect x="${x}" y="${beamTop + 10}" width="12" height="10" fill="none" stroke="#e8b64c" stroke-width="1.4"/>` +
-        `<rect x="${x + 4}" y="${beamTop + 14}" width="4" height="2" fill="#e8b64c"/>` +
-        `<circle cx="${x + 24}" cy="${beamTop + 15}" r="2.2" fill="#3fa88f"/>`
-    );
-  }
-  parts.push(`<rect x="0" y="${ROOF_H - 12}" width="${ROOF_W}" height="3" fill="#1f6b5a"/>`);
-  parts.push(`<rect x="0" y="${ROOF_H - 9}" width="${ROOF_W}" height="9" fill="#6b1a12"/>`);
-  parts.push(`<rect x="0" y="${ROOF_H - 9}" width="${ROOF_W}" height="1" fill="#e8b64c" opacity=".7"/>`);
 
   return `
     <svg class="ln-roof-art" viewBox="0 0 ${ROOF_W} ${ROOF_H}" preserveAspectRatio="xMidYMax slice"
@@ -919,12 +920,13 @@ export const mount = ({ overlay, density, motion }) => {
   decorate(disposer, ".site-header", "season-edge-strip ln-edge", "");
 
   /* Hero, from the back: the sky and the moon, the fireworks canvas, sky
-     lanterns, the city, the tree, and in front of everything the roof we
-     are standing on along the bottom, with the lantern string hanging off
-     its beam below the hero's edge. The lanterns and the fireworks come
-     before the city so they start out behind it, and the tree's trunk is
-     behind the roof. */
-  const heroString = lanternString({ seed: 13, count: 9, animal, width: 36, sag: 8, motion });
+     lanterns, the city, a string of lanterns under the header, and in front
+     of everything the eave of the roof we are standing on along the bottom,
+     with a second string hanging off its beam below the hero's edge. The
+     sky lanterns and the fireworks come before the city so they start out
+     behind it. */
+  const headerString = lanternString({ seed: 13, count: 8, animal, width: 40, sag: 22, motion });
+  const roofString = lanternString({ seed: 17, count: 9, animal, width: 36, sag: 8, motion });
   const [heroScene] = decorate(
     disposer,
     ".hero",
@@ -934,9 +936,9 @@ export const mount = ({ overlay, density, motion }) => {
      <canvas class="ln-canvas" aria-hidden="true"></canvas>
      <div class="ln-skylanterns">${skyLanternsHtml(31, 8, motion)}</div>
      <div class="ln-city">${citySvg(3, "ln-city-hero")}</div>
-     ${blossomTree(7, true)}
+     <div class="ln-hero-string">${headerString.html}</div>
      <div class="ln-roof">${roofSvg()}</div>
-     <div class="ln-roof-string">${heroString.html}</div>`
+     <div class="ln-roof-string">${roofString.html}</div>`
   );
 
   /* The fireworks run on the hero's own canvas, so they scroll away with it

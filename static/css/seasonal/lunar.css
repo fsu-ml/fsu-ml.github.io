@@ -189,7 +189,17 @@
   box-shadow: 0 0 60px 18px rgba(255, 216, 150, 0.22);
 }
 
-/* The lantern string hangs off the roof's beam, below the hero's own edge,
+/* Below the header, not behind it. The bar is sticky and about 75px tall, so a
+   string at the hero's own top edge is simply hidden by it. */
+.ln-hero-string {
+  position: absolute;
+  top: 76px;
+  right: 0;
+  left: 0;
+  height: 150px;
+}
+
+/* A second string hangs off the roof's beam, below the hero's own edge,
    into the section beneath. That section reserves the room. */
 .ln-roof-string {
   position: absolute;
@@ -222,17 +232,6 @@
   left: 0;
   width: min(62%, 760px);
   height: clamp(230px, 40%, 440px);
-}
-
-/* In the hero the tree stands beyond the eave, its foot behind the beam
-   and its crown in full flower against the city. The drawing is cropped to
-   the tree (see `blossomTree`), so the width sets the scale: about 720px
-   wide by 400px tall on a wide screen, behind the subtitle and the buttons. */
-.ln-hero .ln-tree {
-  bottom: 20px;
-  left: -3%;
-  width: min(42%, 720px);
-  height: 400px;
 }
 
 /* ---------------------------------------------------------------------------
@@ -364,16 +363,6 @@
 .ln-skylantern-live .ln-skylantern-sway {
   display: block;
   animation: ln-drift var(--sway, 8s) ease-in-out var(--sway-delay, 0s) infinite alternate;
-}
-
-/* The hero is two columns only above 1080px, with the next-seminar card in the
-   right one. Below that the card stacks under the copy and fills the hero's
-   floor, so a tree rooted there sits behind an opaque card: invisible, and a
-   couple of hundred nodes rendered for nothing. */
-@media (max-width: 1080px) {
-  .ln-hero .ln-tree {
-    display: none;
-  }
 }
 
 /* Same breakpoint, the other way round. Top right is open while the card is
