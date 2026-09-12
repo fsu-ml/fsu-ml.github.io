@@ -5,13 +5,14 @@
  * cannot be derived from a month, so its dates live in `lunar-dates.js` and
  * both this file and the orchestrator read them from there.
  *
- * Two ideas carry the layer. Lanterns, strung off the eave of a glazed roof
- * across the top of the hero and off the footer, each carrying the zodiac
- * animal whose year is beginning — so the decoration says *which* new year
- * it is, and says something different in 2032 than it did in 2031. And a
- * plum tree in bloom across the hero, because 梅花 opens in the cold just
- * before the new year and is the flower the holiday is drawn with. Behind
- * the tree a city; over it, fireworks and sky lanterns.
+ * Two ideas carry the layer. Lanterns, strung off the eave of the glazed
+ * roof we stand on at the bottom of the hero and off the footer, each
+ * carrying the zodiac animal whose year is beginning — so the decoration
+ * says *which* new year it is, and says something different in 2032 than it
+ * did in 2031. And a plum tree in bloom, because 梅花 opens in the cold just
+ * before the new year and is the flower the holiday is drawn with. Beyond
+ * the roof a city, the tree against it, and over it fireworks and sky
+ * lanterns.
  *
  * The fireworks are the one canvas engine here, a small particle system on
  * the shared Surface and Loop. Everything else is markup on CSS keyframes:
@@ -405,96 +406,102 @@ const blossomTree = (seed, lush = false) =>
   });
 
 /* ---------------------------------------------------------------------------
-   The eave
+   The roof
    ---------------------------------------------------------------------------
-   The top of the hero is the edge of a glazed roof seen from just under it:
-   columns of yellow barrel tiles running up and away in perspective, rows of
-   channel tiles stepping down between them, the round end caps and pointed
-   drip tiles along the lip, and beneath that the painted beam — blue with a
-   gold fret — and the red timber the lanterns hang from.
+   We are standing on a roof looking out over the city, and the bottom of
+   the hero is that roof: columns of glazed yellow barrel tiles running down
+   and away from us to the eave, rows of channel tiles stepping down between
+   them, the round end caps and pointed drip tiles along the lip, and under
+   the lip the painted beam — blue with a gold fret — and the red timber the
+   lanterns hang from, below the hero's own edge.
 
-   Drawn in a fixed 2000-unit canvas because the columns converge on a
-   vanishing point, which a repeating pattern cannot do. `xMidYMax slice`
-   keeps the lip on the container's bottom edge and crops the sides on a
-   narrow screen, where the middle columns are the near-vertical ones.
+   Drawn in a fixed 2000-unit canvas because the columns converge (gently,
+   toward a point far below the lip), which a repeating pattern cannot do.
+   `xMidYMax slice` keeps the lip on the container's bottom edge and crops
+   the sides on a narrow screen.
    -------------------------------------------------------------------------- */
 
-const EAVE_W = 2000;
-const EAVE_H = 214;
-const EAVE_LIP = 160;
-const EAVE_VP = { x: 1000, y: -700 };
+const ROOF_W = 2000;
+const ROOF_H = 170;
+const ROOF_LIP = 120;
+const ROOF_VP = { x: 1000, y: ROOF_LIP + 900 };
 
-const eaveSvg = () => {
+const roofSvg = () => {
   const parts = [];
-  const toward = (xb, y) => EAVE_VP.x + (xb - EAVE_VP.x) * ((y - EAVE_VP.y) / (EAVE_LIP - EAVE_VP.y));
+  const spread = (xb, y) => ROOF_VP.x + (xb - ROOF_VP.x) * ((ROOF_VP.y - y) / (ROOF_VP.y - ROOF_LIP));
 
   /* Channel tiles: the field between the barrels. */
-  parts.push(`<rect x="0" y="0" width="${EAVE_W}" height="${EAVE_LIP}" fill="#b97d1e"/>`);
+  parts.push(`<rect x="0" y="0" width="${ROOF_W}" height="${ROOF_LIP}" fill="#b97d1e"/>`);
 
-  /* Barrel columns. */
+  /* Barrel columns: widest nearest us at the top, narrowing to the lip. */
   const step = 40;
-  for (let xb = 20; xb < EAVE_W; xb += step) {
-    const half = 9;
-    const xt = toward(xb, 0);
-    const halfT = half * ((0 - EAVE_VP.y) / (EAVE_LIP - EAVE_VP.y));
+  const half = 9;
+  const halfTop = half * ((ROOF_VP.y - 0) / (ROOF_VP.y - ROOF_LIP));
+  for (let xb = 20; xb < ROOF_W; xb += step) {
+    const xt = spread(xb, 0);
     parts.push(
-      `<path d="M${(xb - half).toFixed(1)} ${EAVE_LIP}L${(xb + half).toFixed(1)} ${EAVE_LIP}L${(xt + halfT).toFixed(1)} 0L${(xt - halfT).toFixed(1)} 0Z" fill="url(#ln-barrel)"/>`
+      `<path d="M${(xt - halfTop).toFixed(1)} 0L${(xt + halfTop).toFixed(1)} 0L${(xb + half).toFixed(1)} ${ROOF_LIP}L${(xb - half).toFixed(1)} ${ROOF_LIP}Z" fill="url(#ln-barrel)"/>`
     );
   }
 
-  /* Rows of tiles stepping down, closer together toward the top. */
-  let y = EAVE_LIP;
-  let gap = 28;
-  while (gap > 2.5) {
-    parts.push(`<line x1="0" y1="${y.toFixed(1)}" x2="${EAVE_W}" y2="${y.toFixed(1)}" stroke="rgba(80,44,8,.55)" stroke-width="${Math.max(1, gap / 9).toFixed(1)}"/>`);
-    parts.push(`<line x1="0" y1="${(y - gap * 0.12).toFixed(1)}" x2="${EAVE_W}" y2="${(y - gap * 0.12).toFixed(1)}" stroke="rgba(255,228,150,.35)" stroke-width="${Math.max(0.6, gap / 16).toFixed(1)}"/>`);
-    y -= gap;
-    gap *= 0.78;
+  /* Rows of tiles stepping down toward the eave, closer together as they
+     get farther away. */
+  let y = 0;
+  let gap = 30;
+  while (y + gap * 0.5 < ROOF_LIP) {
+    parts.push(`<line x1="0" y1="${y.toFixed(1)}" x2="${ROOF_W}" y2="${y.toFixed(1)}" stroke="rgba(80,44,8,.55)" stroke-width="${Math.max(1, gap / 9).toFixed(1)}"/>`);
+    parts.push(`<line x1="0" y1="${(y + gap * 0.12).toFixed(1)}" x2="${ROOF_W}" y2="${(y + gap * 0.12).toFixed(1)}" stroke="rgba(255,228,150,.35)" stroke-width="${Math.max(0.6, gap / 16).toFixed(1)}"/>`);
+    y += gap;
+    gap *= 0.8;
   }
 
-  /* Distance: the field darkens as it climbs away. */
-  parts.push(`<rect x="0" y="0" width="${EAVE_W}" height="${EAVE_LIP}" fill="url(#ln-eave-far)"/>`);
+  /* The ridge along the top edge, so the field has a finished near side. */
+  parts.push(`<rect x="0" y="0" width="${ROOF_W}" height="9" fill="#8a5510"/>`);
+  parts.push(`<rect x="0" y="2" width="${ROOF_W}" height="2" fill="rgba(255,228,150,.45)"/>`);
+
+  /* Distance: a little shade toward the lip. */
+  parts.push(`<rect x="0" y="0" width="${ROOF_W}" height="${ROOF_LIP}" fill="url(#ln-roof-far)"/>`);
 
   /* Drip tiles between the columns, then the end caps over them. */
-  for (let xb = 20; xb < EAVE_W; xb += step) {
+  for (let xb = 20; xb < ROOF_W; xb += step) {
     const x = xb + step / 2;
     parts.push(
-      `<path d="M${x - 13} ${EAVE_LIP - 6}Q${x} ${EAVE_LIP - 2} ${x + 13} ${EAVE_LIP - 6}L${x + 9} ${EAVE_LIP + 8}Q${x} ${EAVE_LIP + 18} ${x - 9} ${EAVE_LIP + 8}Z" fill="#d9a02b" stroke="#7a4a10" stroke-width="1.5"/>` +
-        `<path d="M${x - 5} ${EAVE_LIP + 2}Q${x} ${EAVE_LIP + 10} ${x + 5} ${EAVE_LIP + 2}" fill="none" stroke="#7a4a10" stroke-width="1"/>`
+      `<path d="M${x - 13} ${ROOF_LIP - 6}Q${x} ${ROOF_LIP - 2} ${x + 13} ${ROOF_LIP - 6}L${x + 9} ${ROOF_LIP + 8}Q${x} ${ROOF_LIP + 18} ${x - 9} ${ROOF_LIP + 8}Z" fill="#d9a02b" stroke="#7a4a10" stroke-width="1.5"/>` +
+        `<path d="M${x - 5} ${ROOF_LIP + 2}Q${x} ${ROOF_LIP + 10} ${x + 5} ${ROOF_LIP + 2}" fill="none" stroke="#7a4a10" stroke-width="1"/>`
     );
   }
-  for (let xb = 20; xb < EAVE_W; xb += step) {
+  for (let xb = 20; xb < ROOF_W; xb += step) {
     parts.push(
-      `<circle cx="${xb}" cy="${EAVE_LIP}" r="13" fill="#d9a02b" stroke="#7a4a10" stroke-width="2"/>` +
-        `<circle cx="${xb}" cy="${EAVE_LIP}" r="7.5" fill="none" stroke="#7a4a10" stroke-width="1.2"/>` +
-        `<circle cx="${xb}" cy="${EAVE_LIP}" r="2.4" fill="#7a4a10"/>` +
+      `<circle cx="${xb}" cy="${ROOF_LIP}" r="13" fill="#d9a02b" stroke="#7a4a10" stroke-width="2"/>` +
+        `<circle cx="${xb}" cy="${ROOF_LIP}" r="7.5" fill="none" stroke="#7a4a10" stroke-width="1.2"/>` +
+        `<circle cx="${xb}" cy="${ROOF_LIP}" r="2.4" fill="#7a4a10"/>` +
         [45, 135, 225, 315]
           .map((deg) => {
             const a = (deg * Math.PI) / 180;
-            return `<circle cx="${(xb + Math.cos(a) * 10).toFixed(1)}" cy="${(EAVE_LIP + Math.sin(a) * 10).toFixed(1)}" r="1.5" fill="#7a4a10"/>`;
+            return `<circle cx="${(xb + Math.cos(a) * 10).toFixed(1)}" cy="${(ROOF_LIP + Math.sin(a) * 10).toFixed(1)}" r="1.5" fill="#7a4a10"/>`;
           })
           .join("")
     );
   }
 
-  /* The beam: shadow under the lip, the painted band with its gold fret, a
-     green fillet, and the red timber. */
-  const beamTop = EAVE_LIP + 18;
-  parts.push(`<rect x="0" y="${beamTop}" width="${EAVE_W}" height="${EAVE_H - beamTop}" fill="#17365a"/>`);
-  parts.push(`<rect x="0" y="${beamTop}" width="${EAVE_W}" height="7" fill="rgba(0,0,0,.45)"/>`);
-  for (let x = 6; x < EAVE_W; x += 36) {
+  /* The beam under the lip: shadow, the painted band with its gold fret, a
+     green fillet, and the red timber at the hero's edge. */
+  const beamTop = ROOF_LIP + 18;
+  parts.push(`<rect x="0" y="${beamTop}" width="${ROOF_W}" height="${ROOF_H - beamTop}" fill="#17365a"/>`);
+  parts.push(`<rect x="0" y="${beamTop}" width="${ROOF_W}" height="7" fill="rgba(0,0,0,.45)"/>`);
+  for (let x = 6; x < ROOF_W; x += 36) {
     parts.push(
-      `<rect x="${x}" y="${beamTop + 11}" width="12" height="10" fill="none" stroke="#e8b64c" stroke-width="1.4"/>` +
-        `<rect x="${x + 4}" y="${beamTop + 15}" width="4" height="2" fill="#e8b64c"/>` +
-        `<circle cx="${x + 24}" cy="${beamTop + 16}" r="2.2" fill="#3fa88f"/>`
+      `<rect x="${x}" y="${beamTop + 10}" width="12" height="10" fill="none" stroke="#e8b64c" stroke-width="1.4"/>` +
+        `<rect x="${x + 4}" y="${beamTop + 14}" width="4" height="2" fill="#e8b64c"/>` +
+        `<circle cx="${x + 24}" cy="${beamTop + 15}" r="2.2" fill="#3fa88f"/>`
     );
   }
-  parts.push(`<rect x="0" y="${EAVE_H - 12}" width="${EAVE_W}" height="3" fill="#1f6b5a"/>`);
-  parts.push(`<rect x="0" y="${EAVE_H - 9}" width="${EAVE_W}" height="9" fill="#6b1a12"/>`);
-  parts.push(`<rect x="0" y="${EAVE_H - 9}" width="${EAVE_W}" height="1" fill="#e8b64c" opacity=".7"/>`);
+  parts.push(`<rect x="0" y="${ROOF_H - 12}" width="${ROOF_W}" height="3" fill="#1f6b5a"/>`);
+  parts.push(`<rect x="0" y="${ROOF_H - 9}" width="${ROOF_W}" height="9" fill="#6b1a12"/>`);
+  parts.push(`<rect x="0" y="${ROOF_H - 9}" width="${ROOF_W}" height="1" fill="#e8b64c" opacity=".7"/>`);
 
   return `
-    <svg class="ln-eave-art" viewBox="0 0 ${EAVE_W} ${EAVE_H}" preserveAspectRatio="xMidYMax slice"
+    <svg class="ln-roof-art" viewBox="0 0 ${ROOF_W} ${ROOF_H}" preserveAspectRatio="xMidYMax slice"
          aria-hidden="true" focusable="false">
       <defs>
         <linearGradient id="ln-barrel" x1="0" x2="1" y1="0" y2="0">
@@ -503,10 +510,9 @@ const eaveSvg = () => {
           <stop offset=".65" stop-color="#d9a02b"/>
           <stop offset="1" stop-color="#8a5510"/>
         </linearGradient>
-        <linearGradient id="ln-eave-far" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0" stop-color="rgba(22,7,9,.7)"/>
-          <stop offset=".6" stop-color="rgba(22,7,9,.15)"/>
-          <stop offset="1" stop-color="rgba(22,7,9,0)"/>
+        <linearGradient id="ln-roof-far" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="rgba(22,7,9,0)"/>
+          <stop offset="1" stop-color="rgba(22,7,9,.32)"/>
         </linearGradient>
       </defs>
       ${parts.join("")}
@@ -960,10 +966,12 @@ export const mount = ({ overlay, density, motion }) => {
   decorate(disposer, ".site-header", "season-edge-strip ln-edge", "");
 
   /* Hero, from the back: the sky and the moon, the fireworks canvas, sky
-     lanterns, the city, the tree, and in front of everything the eave along
-     the top with the lantern string hanging from its beam. The lanterns and
-     the fireworks come before the city so they start out behind it. */
-  const heroString = lanternString({ seed: 13, count: 9, animal, width: 32, sag: 6, motion });
+     lanterns, the city, the tree, and in front of everything the roof we
+     are standing on along the bottom, with the lantern string hanging off
+     its beam below the hero's edge. The lanterns and the fireworks come
+     before the city so they start out behind it, and the tree's trunk is
+     behind the roof. */
+  const heroString = lanternString({ seed: 13, count: 9, animal, width: 36, sag: 8, motion });
   const [heroScene] = decorate(
     disposer,
     ".hero",
@@ -974,8 +982,8 @@ export const mount = ({ overlay, density, motion }) => {
      <div class="ln-skylanterns">${skyLanternsHtml(31, 8, motion)}</div>
      <div class="ln-city">${citySvg(3, "ln-city-hero")}</div>
      ${blossomTree(7, true)}
-     <div class="ln-eave">${eaveSvg()}</div>
-     <div class="ln-hero-string">${heroString.html}</div>`
+     <div class="ln-roof">${roofSvg()}</div>
+     <div class="ln-roof-string">${heroString.html}</div>`
   );
 
   /* The fireworks run on the hero's own canvas, so they scroll away with it
@@ -1011,17 +1019,7 @@ export const mount = ({ overlay, density, motion }) => {
      <div class="ln-footer-tree">${blossomTree(23)}</div>`
   );
 
-  /* The seam under the hero: a shallower string draped over it, hanging into
-     the section below. It lives in the overview rather than the hero, because
-     the hero clips its children.
-
-     Deliberately small. A lantern is 1.6x as tall as it is wide, and these
-     hang into a section's top padding — about 50px before the kicker starts.
-     At the size the hero uses they land squarely on the heading. */
-  const seam = lanternString({ seed: 37, count: 7, animal, width: 20, sag: 12, motion });
-  decorate(disposer, ".section-overview", "season-scene ln-string ln-string-seam", seam.html, {
-    first: true
-  });
+  /* No seam string under the hero: the roof's own lanterns hang there. */
 
   /* The subpages reuse `.section-dashboard` as their only section with no
      overview before it, so a bare class selector would hang a second string

@@ -160,15 +160,19 @@
    Hero
    -------------------------------------------------------------------------- */
 
+/* The hero does not clip: the lanterns hang off the roof's beam into the
+   section below. */
 .ln-hero {
   inset: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
-/* The hero clips its children so the tree can run off the bottom-left corner
-   the way a real branch leaves the frame. */
 :root[data-season="lunar"] .hero {
-  overflow: hidden;
+  overflow: visible;
+  /* The section below is later in the document and would paint over the
+     lanterns; one step up puts the whole hero, scene included, in front of
+     it. The header's own z-index is 20, so it still passes over the top. */
+  z-index: 1;
 }
 
 /* Low and to the right, under the bough rather than behind it. Up in the
@@ -185,27 +189,33 @@
   box-shadow: 0 0 60px 18px rgba(255, 216, 150, 0.22);
 }
 
-/* Hangs from the beam under the eave, which is what the eave's height is. */
-.ln-hero-string {
+/* The lantern string hangs off the roof's beam, below the hero's own edge,
+   into the section beneath. That section reserves the room. */
+.ln-roof-string {
   position: absolute;
-  top: 214px;
+  top: 100%;
   right: 0;
   left: 0;
-  height: 90px;
+  height: 100px;
+  margin-top: -2px;
 }
 
-/* The eave and its lanterns take the top 275px or so of the hero, so the
-   hero's top padding grows for the season to keep the wordmark out from
-   under the lanterns: a little on a wide screen, where the copy is centred
-   in a tall hero anyway, and more once the columns stack and the copy
-   starts at the padding. */
+:root[data-season="lunar"] .section-overview {
+  padding-top: 124px;
+}
+
+/* The roof is 170px of the hero's floor. On a wide screen the copy is
+   centred in a tall hero and its buttons end just above that; a little more
+   bottom padding keeps them clear. Once the columns stack the seminar card
+   sits on the floor, so the padding grows to the roof's height and the card
+   sits above it. */
 :root[data-season="lunar"] .hero-inner {
-  padding-top: 160px;
+  padding-bottom: 72px;
 }
 
 @media (max-width: 1080px) {
   :root[data-season="lunar"] .hero-inner {
-    padding-top: 300px;
+    padding-bottom: 190px;
   }
 }
 
@@ -220,40 +230,35 @@
   height: clamp(230px, 40%, 440px);
 }
 
-/* In the hero the tree is half again as big and sunk a little below the
-   edge, so what shows is the crown in full flower against the city with the
-   fork of the trunk just under the edge. The drawing is cropped to the tree
-   (see `blossomTree`), so the width sets the scale: about 820px wide by
-   450px tall on a wide screen, behind the subtitle and the buttons. */
+/* In the hero the tree stands beyond the roof, its trunk behind the tiles
+   and its crown in full flower against the city. The drawing is cropped to
+   the tree (see `blossomTree`), so the width sets the scale: about 720px
+   wide by 400px tall on a wide screen, behind the subtitle and the buttons. */
 .ln-hero .ln-tree {
-  bottom: -70px;
-  left: -4%;
-  width: min(48%, 820px);
-  height: 620px;
+  bottom: 30px;
+  left: -3%;
+  width: min(42%, 720px);
+  height: 400px;
 }
 
 /* ---------------------------------------------------------------------------
-   The eave
+   The roof
    ---------------------------------------------------------------------------
-   Pinned across the top of the hero. The fixed header lies over its upper
-   rows of tiles, which is fine: the bar is translucent and blurred, so the
-   tiles show through it softly, and the lip with its end caps, the drip
-   tiles and the beam all clear it. The SVG is `xMidYMax slice`, so the lip
-   stays on this box's bottom edge at any width.
+   Pinned across the bottom of the hero, the lip of the eave on the hero's
+   edge. The SVG is `xMidYMax slice`, so the lip stays there at any width.
    -------------------------------------------------------------------------- */
 
-.ln-eave {
+.ln-roof {
   position: absolute;
-  top: 0;
   right: 0;
+  bottom: 0;
   left: 0;
-  height: 214px;
+  height: 170px;
   line-height: 0;
   pointer-events: none;
-  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.5));
 }
 
-.ln-eave-art {
+.ln-roof-art {
   display: block;
   width: 100%;
   height: 100%;
@@ -263,10 +268,11 @@
    The city
    -------------------------------------------------------------------------- */
 
+/* Beyond the roof: its foot is behind the tiles. */
 .ln-city {
   position: absolute;
   right: 0;
-  bottom: 0;
+  bottom: 130px;
   left: 0;
   height: 190px;
   line-height: 0;
@@ -281,6 +287,7 @@
 
 @media (max-width: 620px) {
   .ln-city {
+    bottom: 140px;
     height: 136px;
   }
 
