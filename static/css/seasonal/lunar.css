@@ -138,8 +138,7 @@
   animation: ln-sway var(--sway, 4s) ease-in-out var(--sway-delay, 0s) infinite;
 }
 
-/* The header carries a gold rule and nothing more. Anything with height hung
-   off this edge travels with the sticky bar and ends up over body copy. */
+/* The gold rule under the bar. */
 .ln-edge {
   top: 100%;
   background: linear-gradient(90deg, transparent, #c8102e 18%, #e8b64c 50%, #c8102e 82%, transparent);
@@ -147,6 +146,35 @@
 
 :root[data-season="lunar"] {
   --season-edge: 3px;
+}
+
+/* Three strands hung off the bar's bottom edge. The bar is fixed, so they
+   travel with it; nothing here is allowed to catch the pointer. */
+.ln-header-strands {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 80px;
+  margin-top: -2px;
+  pointer-events: none;
+}
+
+.ln-strand {
+  position: absolute;
+  inset: 0;
+}
+
+/* Three strands across a phone are a curtain. The shallow third one comes
+   off and the other two thin to every other lantern. */
+@media (max-width: 620px) {
+  .ln-strand-3 {
+    display: none;
+  }
+
+  .ln-strand .ln-lantern:nth-of-type(even) {
+    display: none;
+  }
 }
 
 /* Draped over the seam between two sections, hanging into the one below. The
@@ -189,17 +217,7 @@
   box-shadow: 0 0 60px 18px rgba(255, 216, 150, 0.22);
 }
 
-/* Below the header, not behind it. The bar is sticky and about 75px tall, so a
-   string at the hero's own top edge is simply hidden by it. */
-.ln-hero-string {
-  position: absolute;
-  top: 76px;
-  right: 0;
-  left: 0;
-  height: 150px;
-}
-
-/* A second string hangs off the roof's beam, below the hero's own edge,
+/* A string hangs off the roof's beam, below the hero's own edge,
    into the section beneath. That section reserves the room. */
 .ln-roof-string {
   position: absolute;

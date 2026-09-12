@@ -5,9 +5,9 @@
  * cannot be derived from a month, so its dates live in `lunar-dates.js` and
  * both this file and the orchestrator read them from there.
  *
- * Two ideas carry the layer. Lanterns, strung off the eave of the glazed
- * roof we stand on at the bottom of the hero and off the footer, each
- * carrying the zodiac animal whose year is beginning — so the decoration
+ * Two ideas carry the layer. Lanterns, strung in strands off the header,
+ * off the eave of the roof we stand on at the bottom of the hero and off
+ * the footer, each carrying the zodiac animal whose year is beginning — so the decoration
  * says *which* new year it is, and says something different in 2032 than it
  * did in 2031. And a plum tree in bloom, because 梅花 opens in the cold just
  * before the new year and is the flower the holiday is drawn with — in the
@@ -1033,22 +1033,28 @@ export const mount = ({ overlay, density, motion }) => {
 
   buildPetals(overlay, density, motion);
 
-  /* Header: a gold rule under the bar and nothing else.
-
-     Lanterns were strung off this edge first, the way Winter hangs its lights,
-     and it does not work here: the header is sticky, so a string hung off its
-     bottom travels down the page with it, and a 34px lantern dragged over body
-     copy is very different from a 6px bulb doing the same. The lanterns moved
-     to the hero, which does not move. */
+  /* Header: a gold rule under the bar, and three strands of lanterns hung
+     off it at different sags, so they cross and overlap the way strings put
+     up across a street do. The bar is fixed, so the strands travel down the
+     page with it; the lanterns are kept small for that reason. */
   decorate(disposer, ".site-header", "season-edge-strip ln-edge", "");
+  const strands = [
+    lanternString({ seed: 5, count: 10, animal, width: 24, sag: 14, motion }),
+    lanternString({ seed: 11, count: 8, animal, width: 18, sag: 28, motion }),
+    lanternString({ seed: 19, count: 14, animal, width: 14, sag: 8, motion })
+  ];
+  decorate(
+    disposer,
+    ".site-header",
+    "season-scene ln-header-strands",
+    strands.map((strand, i) => `<div class="ln-strand ln-strand-${i + 1}">${strand.html}</div>`).join("")
+  );
 
   /* Hero, from the back: the sky and the moon, the fireworks canvas, sky
-     lanterns, the city, a string of lanterns under the header, and in front
-     of everything the eave of the roof we are standing on along the bottom,
-     with a second string hanging off its beam below the hero's edge. The
-     sky lanterns and the fireworks come before the city so they start out
-     behind it. */
-  const headerString = lanternString({ seed: 13, count: 8, animal, width: 40, sag: 22, motion });
+     lanterns, the city, and in front of everything the eave of the roof we
+     are standing on along the bottom, with a string of lanterns hanging off
+     its beam below the hero's edge. The sky lanterns and the fireworks come
+     before the city so they start out behind it. */
   const roofString = lanternString({ seed: 17, count: 9, animal, width: 36, sag: 8, motion });
   const [heroScene] = decorate(
     disposer,
@@ -1059,7 +1065,6 @@ export const mount = ({ overlay, density, motion }) => {
      <canvas class="ln-canvas" aria-hidden="true"></canvas>
      <div class="ln-skylanterns">${skyLanternsHtml(31, 8, motion)}</div>
      <div class="ln-city">${citySvg(3, "ln-city-hero")}</div>
-     <div class="ln-hero-string">${headerString.html}</div>
      <div class="ln-roof">${roofSvg()}</div>
      <div class="ln-roof-string">${roofString.html}</div>`
   );
