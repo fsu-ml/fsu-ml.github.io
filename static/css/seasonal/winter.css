@@ -553,8 +553,11 @@
 /* ---------------------------------------------------------------------------
    The sleigh
    ---------------------------------------------------------------------------
-   Flies all season. It crosses the hero over the rooftops, behind the hero's
-   own copy, and drops gifts on the roofs as it goes.
+   Flies all season, high up beside the moon and small with distance: it
+   crosses the hero behind the copy and drops gifts that fall the full height
+   of the sky into the city, landing behind the near row of buildings and in
+   front of the far one (the flight sits between the two skyline drawings in
+   the markup).
 
    One cycle is `--wn-fly-cycle` long (set from winter.js). The crossing takes
    the first 68% of it and the sleigh waits off the right edge for the rest,
@@ -568,12 +571,13 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  --wn-sleigh-w: 300px;
-  /* The runner's height above the hero's bottom edge: over the near
-     rooftops, in front of the far row. */
-  --wn-flight-y: 96px;
-  /* How far a gift falls before it slips behind a roof. */
-  --wn-drop: 96px;
+  --wn-sleigh-w: 150px;
+  /* Level with the moon: the moon's centre is a token on the hero, so the
+     sleigh follows it wherever the layout puts it. */
+  --wn-flight-top: calc(var(--wn-moon-y) - var(--wn-sleigh-w) * 0.16);
+  /* Where a gift stops: among the far row's lower storeys, hidden by the
+     near row's, then gone. */
+  --wn-landing: 54px;
   --wn-fly-from: calc(var(--wn-sleigh-w) * -1.15);
   --wn-fly-to: 100vw;
 }
@@ -583,7 +587,7 @@
    runs the keyframes take over. */
 .wn-sleigh {
   position: absolute;
-  bottom: var(--wn-flight-y);
+  top: var(--wn-flight-top);
   left: 0;
   width: var(--wn-sleigh-w);
   transform: translateX(calc(56vw - var(--wn-sleigh-w) / 2));
@@ -594,10 +598,13 @@
   display: block;
 }
 
+/* A hair of blur and a little less than full opacity: it is far off, on the
+   moon's side of the sky, not on the roofs. */
 .wn-sleigh-art {
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+  opacity: 0.88;
+  filter: blur(0.7px);
 }
 
 @keyframes wn-fly {
@@ -618,10 +625,10 @@
    crossing instead of overwriting it. */
 @keyframes wn-bob {
   from {
-    transform: translateY(-4px) rotate(-1.2deg);
+    transform: translateY(-3px) rotate(-1.2deg);
   }
   to {
-    transform: translateY(4px) rotate(1.2deg);
+    transform: translateY(3px) rotate(1.2deg);
   }
 }
 
@@ -629,86 +636,88 @@
   animation: wn-bob 2.8s ease-in-out infinite alternate;
 }
 
-/* A gift leaves the sack at the back of the sleigh. Its x is the sleigh's x
-   at fraction `--t` of the crossing, plus the sack's offset into the drawing;
-   its height is the sack's, scaled with the sleigh. Hidden until its cue. */
+/* A gift's column: from the sack's underside (0.12 of the sleigh's width
+   below its top edge, see the drawing) down to the landing height, at the x
+   the sleigh had when it let go. The column is a size container so the box
+   inside can fall exactly its height in `cqh` — the hero's height is not
+   known to the stylesheet, and the fall has to reach the roofs whatever it
+   is. Nothing animates on the column itself. */
 .wn-gift {
   position: absolute;
-  bottom: calc(var(--wn-flight-y) + var(--wn-sleigh-w) * 0.16);
+  top: calc(var(--wn-flight-top) + var(--wn-sleigh-w) * 0.12);
+  bottom: var(--wn-landing);
   left: 0;
-  width: 16px;
-  height: 16px;
-  opacity: 0;
+  width: 12px;
+  container-type: size;
   --x: calc(var(--wn-fly-from) + (var(--wn-fly-to) - var(--wn-fly-from)) * var(--t, 0.5) + var(--wn-sleigh-w) * 0.04);
   transform: translateX(var(--x));
 }
 
-.wn-gift svg {
+.wn-gift-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  opacity: 0;
+}
+
+.wn-gift-box svg {
   display: block;
   width: 100%;
   height: 100%;
 }
 
-/* Falls with a gravity curve, tumbling, and fades out in the last stretch so
-   it reads as landing behind a roof. The fall is 9% of the cycle, about four
-   seconds; the rest of the cycle it is gone. */
+/* Falls with a gravity curve, tumbling and drifting a little with the
+   sleigh's direction, then fades over the last stretch as it drops in among
+   the buildings. The fall is 9% of the cycle, about four seconds; the rest
+   of the cycle it is gone. */
 @keyframes wn-drop {
   0% {
     opacity: 1;
-    transform: translate(var(--x), 0) rotate(0deg);
+    transform: translate(0, 0) rotate(0deg);
     animation-timing-function: cubic-bezier(0.4, 0, 0.85, 0.5);
   }
-  9% {
+  8% {
     opacity: 1;
-    transform: translate(calc(var(--x) + 12px), var(--wn-drop)) rotate(var(--spin, 300deg));
   }
-  11%,
+  9% {
+    opacity: 0;
+    transform: translate(14px, 100cqh) rotate(var(--spin, 300deg));
+  }
   100% {
     opacity: 0;
-    transform: translate(calc(var(--x) + 12px), var(--wn-drop)) rotate(var(--spin, 300deg));
+    transform: translate(14px, 100cqh) rotate(var(--spin, 300deg));
   }
 }
 
-.wn-flight-live .wn-gift {
+.wn-flight-live .wn-gift-box {
   animation: wn-drop var(--wn-fly-cycle, 46s) linear var(--gift-delay, 0s) infinite;
 }
 
-/* Once the hero's columns stack, the seminar card sits across the whole
-   skyline and a sleigh down there would only ever be seen through its glass.
-   So the flight moves up to the top of the hero, where it passes behind the
-   header's string of lights and above the wordmark. The fixed header is
-   translucent and would blur anything under it, so the flight starts just
-   below the bar — which is a line taller on a phone, where the title wraps.
-   The gifts still drop; they fade before they reach the wordmark. */
+/* Once the hero's columns stack the moon moves to the top-right corner
+   beside the wordmark, and the sleigh, still level with it, crosses under
+   the header's string of lights. The fixed header is translucent and would
+   blur anything under it, so the flight is held just below the bar — which
+   is a line taller on a phone, where the title wraps. The skyline is scaled
+   to 0.714 down there, so the landing height comes down with it. */
 @media (max-width: 1080px) {
   .wn-flight {
-    --wn-sleigh-w: 200px;
-    --wn-flight-top: 78px;
-    --wn-drop: 44px;
+    --wn-sleigh-w: 130px;
+    --wn-flight-top: max(78px, calc(var(--wn-moon-y) - var(--wn-sleigh-w) * 0.16));
   }
+}
 
-  .wn-sleigh,
-  .wn-gift {
-    bottom: auto;
-  }
-
-  .wn-sleigh {
-    top: var(--wn-flight-top);
-  }
-
-  /* The sack's underside is 0.375 of the drawing's height, which is 0.32 of
-     its width, so 0.12 of the width down from the sleigh's top edge. */
-  .wn-gift {
-    top: calc(var(--wn-flight-top) + var(--wn-sleigh-w) * 0.12);
-    width: 12px;
-    height: 12px;
+@media (max-width: 760px) {
+  .wn-flight {
+    --wn-landing: 40px;
   }
 }
 
 @media (max-width: 620px) {
   .wn-flight {
-    --wn-sleigh-w: 170px;
-    --wn-flight-top: 90px;
+    --wn-sleigh-w: 110px;
+    --wn-flight-top: max(90px, calc(var(--wn-moon-y) - var(--wn-sleigh-w) * 0.16));
   }
 }
 

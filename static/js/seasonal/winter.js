@@ -190,24 +190,34 @@ const skylineLayer = (rand, { minH, maxH, windows, animate }) => {
   return { bodies: bodies.join(""), lit, flicker: flicker.join("") };
 };
 
-const skylineSvg = (seed, motion) => {
+const skylineTile = (id, body) => `
+    <svg class="wn-skyline" width="100%" height="${SKY_H}" aria-hidden="true" focusable="false">
+      <defs>
+        <pattern id="${id}" patternUnits="userSpaceOnUse" width="${SKY_TILE}" height="${SKY_H}">${body}</pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#${id})"></rect>
+    </svg>`;
+
+/* The two rows are separate drawings so something can be put between them:
+   the sleigh's gifts land behind the near row and in front of the far one. */
+const skylineSvgs = (seed, motion) => {
   const rand = seeded(seed);
   const far = skylineLayer(rand, { minH: 70, maxH: 150, windows: true, animate: false });
   const near = skylineLayer(rand, { minH: 26, maxH: 104, windows: true, animate: motion });
-  return `
-    <svg class="wn-skyline" width="100%" height="${SKY_H}" aria-hidden="true" focusable="false">
-      <defs>
-        <pattern id="wn-sky-tile" patternUnits="userSpaceOnUse" width="${SKY_TILE}" height="${SKY_H}">
-          <path fill="#3a1721" d="${far.bodies}"></path>
-          <path fill="#f5d78a" opacity=".22" d="${far.lit.bright.join("")}${far.lit.dim.join("")}"></path>
-          <path fill="#160709" d="${near.bodies}"></path>
-          <path fill="#f5d78a" opacity=".85" d="${near.lit.bright.join("")}"></path>
-          <path fill="#f5d78a" opacity=".42" d="${near.lit.dim.join("")}"></path>
-          ${near.flicker}
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#wn-sky-tile)"></rect>
-    </svg>`;
+  return {
+    far: skylineTile(
+      "wn-sky-far",
+      `<path fill="#3a1721" d="${far.bodies}"></path>` +
+        `<path fill="#f5d78a" opacity=".22" d="${far.lit.bright.join("")}${far.lit.dim.join("")}"></path>`
+    ),
+    near: skylineTile(
+      "wn-sky-near",
+      `<path fill="#160709" d="${near.bodies}"></path>` +
+        `<path fill="#f5d78a" opacity=".85" d="${near.lit.bright.join("")}"></path>` +
+        `<path fill="#f5d78a" opacity=".42" d="${near.lit.dim.join("")}"></path>` +
+        near.flicker
+    )
+  };
 };
 
 /* A full moon, high on the right, with its halo painted on the sky. */
@@ -469,9 +479,11 @@ const fireworksHtml = (motion) => {
 /* ---------------------------------------------------------------------------
    The sleigh
    ---------------------------------------------------------------------------
-   All season long a sleigh crosses the hero over the rooftops, dropping
-   gifts onto them as it goes. It passes behind the hero's own copy,
-   the way the Halloween ghosts do, so nothing ever covers the headline.
+   All season long a small sleigh crosses the hero high up by the moon, a
+   little soft with distance, dropping gifts that fall the whole height of
+   the sky and land among the buildings — behind the near row, in front of
+   the far one. It passes behind the hero's own copy, the way the Halloween
+   ghosts do, so nothing ever covers the headline.
 
    All of the motion is CSS. The sleigh's crossing and each gift's fall are
    keyframe animations of the same length, so a gift released at fraction `t`
@@ -542,19 +554,20 @@ const sleighFlightHtml = (seed, motion) => {
   const rand = seeded(seed);
   const gifts = [];
   if (motion) {
-    /* Four drops spread along the crossing, each nudged so the rhythm is not
-       a metronome. The sack is at the back of the sleigh and the crossing
-       starts a full sleigh-length off the left edge, so the window opens a
-       third of the way across — earlier than that the first gift falls
-       before the sack is on screen, on a phone as much as on a monitor. With
-       motion off there is nothing to drop from a parked sleigh, so no gifts
-       are made. */
-    for (let i = 0; i < 4; i += 1) {
-      const t = 0.36 + i * 0.16 + rand() * 0.06;
+    /* A dozen drops, one every second and a half or so along the crossing,
+       each nudged so the rhythm is not a metronome. The sack is at the back
+       of the sleigh and the crossing starts a full sleigh-length off the left
+       edge, so the window opens a third of the way across — earlier than
+       that a gift falls before the sack is on screen, on a phone as much as
+       on a monitor. With motion off there is nothing to drop from a parked
+       sleigh, so no gifts are made. */
+    for (let i = 0; i < 12; i += 1) {
+      const t = 0.34 + i * 0.05 + rand() * 0.02;
       gifts.push(
         `<span class="wn-gift" style="--t:${t.toFixed(3)};` +
           `--gift-delay:${(FLY_START + t * FLY_FRACTION * FLY_CYCLE).toFixed(2)}s;` +
-          `--spin:${range(rand, 160, 420).toFixed(0)}deg;--gift:${pick(rand, GIFT_COLORS)}">${GIFT}</span>`
+          `--spin:${range(rand, 160, 420).toFixed(0)}deg;--gift:${pick(rand, GIFT_COLORS)}">` +
+          `<span class="wn-gift-box">${GIFT}</span></span>`
       );
     }
   }
@@ -638,7 +651,9 @@ export const mount = ({ overlay, density, motion }) => {
   }
 
   /* Hero: a moonlit night — sky, stars, the moon, frost creeping in from the
-     upper corners, and a city skyline along the bottom. */
+     upper corners, and a city skyline along the bottom, with the sleigh's
+     flight between the city's two rows. */
+  const skyline = skylineSvgs(7, motion);
   decorate(
     disposer,
     ".hero",
@@ -648,8 +663,9 @@ export const mount = ({ overlay, density, motion }) => {
      ${MOON}
      <div class="wn-frost wn-frost-left">${FROST_CORNER}</div>
      <div class="wn-frost wn-frost-right">${FROST_CORNER}</div>
-     ${skylineSvg(7, motion)}
-     ${sleighFlightHtml(53, motion)}`
+     ${skyline.far}
+     ${sleighFlightHtml(53, motion)}
+     ${skyline.near}`
   );
   if (isSolstice(night)) {
     /* The longest night: the moon rides higher and larger. */
