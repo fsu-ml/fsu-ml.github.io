@@ -1,10 +1,10 @@
 /* ---------------------------------------------------------------------------
    Día de Muertos — 1 to 5 November
    ---------------------------------------------------------------------------
-   Papel picado, cempasúchil petals, candles and marigolds. Warm and
-   celebratory, never spooky: the palette is orange, magenta, turquoise and
-   purple against the brand's own garnet, and nothing in here reads as a
-   graveyard.
+   Papel picado, cempasúchil petals, a marigold garden, an ofrenda and sugar
+   skulls in flower crowns. Warm and celebratory, never spooky: the palette is
+   orange, magenta, turquoise and purple against the brand's own garnet, and
+   nothing in here reads as a graveyard.
 
    Keyframes are namespaced `dm-`.
    -------------------------------------------------------------------------- */
@@ -24,8 +24,7 @@
   --season-sky: linear-gradient(180deg, #1a1013 0%, #3a1640 55%, #4a1c27 100%);
 }
 
-/* The hero stops clipping so the marigolds can lie across its bottom edge, and
-   several pieces of the layer are deliberately drawn a little past the edge
+/* Several pieces of the layer are deliberately drawn a little past the edge
    they hang from. None of that should be able to widen the document, so the
    season clips the page horizontally for as long as it is mounted. `clip`
    rather than `hidden`: `overflow: hidden` on the root turns the sticky header
@@ -239,21 +238,9 @@
   overflow: hidden;
 }
 
-/* The hero's scene does not clip. The marigold bed is meant to sit *on* the
-   hero's bottom edge rather than inside it, so the blooms break the line
-   between the hero and the section under it the way a real bed of flowers laid
-   along a step would. */
 .dm-hero {
   inset: 0;
-  overflow: visible;
-}
-
-:root[data-season="muertos"] .hero {
-  overflow: visible;
-  /* The section below is later in the document and would paint over the
-     blooms; one step up puts the whole hero, scene included, in front of it.
-     The header's own z-index is 20, so it still passes over the top. */
-  z-index: 1;
+  overflow: hidden;
 }
 
 .dm-footer-banner {
@@ -264,123 +251,164 @@
   height: 74px;
 }
 
-/* Candles standing in the marigold bed. They go on the left: the hero's right
-   column is the seminar card, and the scene sits behind `.hero-inner`, so
-   anything placed there is simply hidden by it. */
-.dm-hero-candles {
+/* ---------------------------------------------------------------------------
+   The ofrenda
+   ---------------------------------------------------------------------------
+   Stands in the hero's left margin, feet in the garden. The margin only
+   exists on wide screens: `.hero-inner` is capped at 1440px and centred, so
+   the space to its left is half of whatever the viewport has over 1440px
+   (less the scrollbar). From about 1800px that is room for a real altar,
+   sized to the margin and capped at 280px. Below that the copy starts at the
+   hero's left edge, so the altar drops to a small one under the button row,
+   and the hero's bottom padding grows a little to keep it clear of the
+   buttons. Once the columns stack (1080px) the seminar card fills the hero's
+   floor and it comes off altogether.
+   -------------------------------------------------------------------------- */
+
+.dm-ofrenda {
   position: absolute;
-  bottom: 34px;
-  left: 7%;
-  display: flex;
-  align-items: flex-end;
-  gap: 26px;
-  pointer-events: none;
-}
-
-.dm-candle {
-  position: relative;
+  bottom: 26px;
+  left: 16px;
   display: block;
-  width: 21px;
-  flex: none;
+  width: 128px;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
 }
 
-/* Three different heights, so the group reads as a row of candles someone set
-   down rather than as a comb. */
-.dm-hero-candles .dm-candle:nth-child(2) {
-  width: 16px;
-}
-
-.dm-hero-candles .dm-candle:nth-child(3) {
-  width: 24px;
-}
-
-.dm-candle svg {
-  position: relative;
+.dm-ofrenda-art {
   display: block;
   width: 100%;
   height: auto;
   overflow: visible;
 }
 
-/* The halo is a soft radial behind the flame rather than a shadow on it, so it
-   can breathe without the flame changing size.
+@media (max-width: 1803px) {
+  :root[data-season="muertos"] .hero-inner {
+    padding-bottom: 72px;
+  }
+}
 
-   Sized to a candle rather than to a bonfire: at four times the candle's width
-   the glow was a lantern hanging in the hero, and three of them washed out the
-   marigolds they were standing in. */
-.dm-candle-glow {
-  position: absolute;
-  top: -60%;
-  left: -70%;
-  width: 240%;
-  height: 240%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 182, 39, 0.34) 0%, rgba(255, 182, 39, 0) 70%);
-  animation: dm-glowpulse 3.6s ease-in-out infinite;
+@media (min-width: 1804px) {
+  .dm-ofrenda {
+    bottom: 40px;
+    width: min(280px, calc((100vw - 1440px) / 2 - 48px));
+  }
+}
+
+@media (max-width: 1080px) {
+  .dm-ofrenda {
+    display: none;
+  }
+}
+
+.dm-candle-halo {
+  animation: dm-glowpulse 3.6s ease-in-out var(--delay, 0s) infinite;
 }
 
 .dm-flame {
   transform-box: fill-box;
   transform-origin: 50% 100%;
-  animation: dm-flame 1.7s steps(1) infinite;
+  animation: dm-flame 1.7s steps(1) var(--delay, 0s) infinite;
 }
 
 /* ---------------------------------------------------------------------------
-   Marigold beds
+   The marigold garden
+   ---------------------------------------------------------------------------
+   A continuous bed along the bottom edge of the hero and the footer. It sits
+   flush with the edge rather than across it: a hedge of flowers in a row is
+   a garden, a scatter of blooms straddling a line is confetti.
    -------------------------------------------------------------------------- */
 
-.dm-bed {
+.dm-garden {
   position: absolute;
   right: 0;
   bottom: 0;
   left: 0;
   display: block;
-  height: 92px;
+  height: 120px;
+  pointer-events: none;
+  line-height: 0;
+}
+
+.dm-garden-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   Folk-art sprays
+   ---------------------------------------------------------------------------
+   Curling stems, leaves, dots and small flowers in the corners, from the
+   painted-border artboard. One drawing, reflected into each corner. Kept
+   translucent: they are the pattern on the cloth, not the things on it.
+   -------------------------------------------------------------------------- */
+
+.dm-spray {
+  position: absolute;
+  display: block;
+  width: 240px;
+  opacity: 0.55;
   pointer-events: none;
 }
 
-/* Raised out of the hero so the blooms lie across its bottom edge. The bed's
-   own children are placed from its bottom, so moving the box moves the whole
-   row without disturbing the scatter. */
-.dm-hero .dm-bed {
-  bottom: -26px;
-}
-
-.dm-bloom {
-  position: absolute;
-  display: block;
-  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
-}
-
-.dm-bloom svg,
-.dm-loose-petal svg {
+.dm-spray-art {
   display: block;
   width: 100%;
   height: auto;
   overflow: visible;
 }
 
-.dm-loose-petal {
-  position: absolute;
-  display: block;
-  opacity: 0.9;
+/* Below the fixed header, which is about 75px tall. */
+.dm-spray-tl {
+  top: 84px;
+  left: 0;
 }
 
-/* The bed is ~92px of flowers and the footer's own links are white on a dark
-   ground; the banner overhead hangs about 70px into the same box. Reserve both,
-   so a stacked column on a narrow screen can never land on the marigolds and
-   the link columns start below the flags rather than behind them. */
+.dm-spray-tr {
+  top: 84px;
+  right: 0;
+  transform: scaleX(-1);
+}
+
+/* In the footer the corners are at the bottom, above the garden. */
+.dm-spray-bl {
+  bottom: 96px;
+  left: 0;
+  transform: scaleY(-1);
+}
+
+.dm-spray-br {
+  right: 0;
+  bottom: 96px;
+  transform: scale(-1, -1);
+}
+
+/* On a phone the hero's top corners are where the wordmark sits and the
+   footer's are under its stacked columns, so the sprays come off. */
+@media (max-width: 760px) {
+  .dm-spray {
+    display: none;
+  }
+}
+
+/* The garden is 120px of flowers and the footer's own links are white on a
+   dark ground; the banner overhead hangs about 70px into the same box. Reserve
+   both, so a stacked column on a narrow screen can never land on the marigolds
+   and the link columns start below the flags rather than behind them. */
 :root[data-season="muertos"] .footer-inner {
   padding-top: 92px;
-  padding-bottom: 116px;
+  padding-bottom: 150px;
 }
 
-.dm-footer-calavera {
+/* Three sugar skulls resting in the footer's garden, each a different style. */
+.dm-footer-skulls {
   position: absolute;
-  right: 6%;
-  bottom: 44px;
-  display: block;
-  width: 58px;
+  right: 5%;
+  bottom: 34px;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
   pointer-events: none;
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
 }
@@ -392,12 +420,23 @@
   overflow: visible;
 }
 
-/* On a phone the calavera lands on the marigolds under the last link column,
-   and the hero's candles crowd the wordmark. Both come off. */
+/* On a phone the skulls land on the marigolds under the last link column. */
 @media (max-width: 620px) {
-  .dm-footer-calavera,
-  .dm-hero-candles {
+  .dm-footer-skulls {
     display: none;
+  }
+
+  /* The garden's blooms are drawn for a desktop band; on a phone they are
+     scaled down, and the band's box with them. */
+  .dm-garden {
+    height: 86px;
+  }
+
+  .dm-garden-art {
+    width: 140%;
+    height: 120px;
+    transform: scale(0.714);
+    transform-origin: 0 100%;
   }
 
   /* Sixteen flags across a phone hang shoulder to shoulder and the string stops
@@ -436,6 +475,42 @@
 }
 
 .dm-rule-mark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* A teal leaf either side of the bloom, the second one turned to face it. */
+.dm-rule-leaf {
+  display: block;
+  width: 30px;
+  margin: 0 4px;
+}
+
+.dm-rule-leaf svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.dm-rule-leaf-r {
+  transform: scaleX(-1);
+}
+
+/* A sugar skull in the corner of each speaker card. A watermark, not a
+   badge. */
+.dm-corner-skull {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  display: block;
+  width: 30px;
+  opacity: 0.32;
+}
+
+.dm-corner-skull svg {
   display: block;
   width: 100%;
   height: auto;
