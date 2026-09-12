@@ -225,10 +225,17 @@ const heartAt = (x, y, s, color) =>
    The bed is a user-unit <pattern>, so it repeats across any width rather
    than stretching. Anything near a tile's edge is drawn again one tile over,
    so the seam is invisible.
+
+   The tile is taller than the band it fills: the foliage base stops at
+   GARDEN_EDGE, which the stylesheet lines up with the host's bottom edge,
+   and only the front row's blooms and a few drooping leaves reach into the
+   strip below it. Hung over the hero's edge, that strip is what spills onto
+   the white of the section beneath — a scalloped hedge, not a cut line.
    -------------------------------------------------------------------------- */
 
 const GARDEN_W = 560;
-const GARDEN_H = 120;
+const GARDEN_EDGE = 120;
+const GARDEN_H = 152;
 
 const gardenSvg = (seed, id) => {
   const rand = seeded(seed);
@@ -244,17 +251,17 @@ const gardenSvg = (seed, id) => {
   };
 
   /* Foliage base with a gently rolling top, so nothing shows through under
-     the front row. */
+     the front row. It ends at the host's edge, not the tile's. */
   const crest = [];
   for (let x = 0; x <= GARDEN_W; x += 40) {
     crest.push(`${x} ${(90 + Math.sin((x / GARDEN_W) * Math.PI * 4) * 5).toFixed(1)}`);
   }
-  parts.push(`<path d="M0 ${GARDEN_H}L${crest.join("L")}L${GARDEN_W} ${GARDEN_H}Z" fill="${GREEN}"/>`);
+  parts.push(`<path d="M0 ${GARDEN_EDGE}L${crest.join("L")}L${GARDEN_W} ${GARDEN_EDGE}Z" fill="${GREEN}"/>`);
 
   /* Tall leaves at the back, in the artboard's purples and teals. */
   for (let i = 0; i < 18; i += 1) {
     const x = (i / 18) * GARDEN_W + rand() * 24;
-    const y = 62 + rand() * 20;
+    const y = 78 + rand() * 18;
     const left = rand() > 0.5;
     const rot = left ? -100 - rand() * 30 : -50 - rand() * 30;
     const color = pick(rand, [PURPLE, TEAL_DEEP, BLUE, PURPLE_LT]);
@@ -265,7 +272,7 @@ const gardenSvg = (seed, id) => {
   /* Back row: smaller blooms, a touch darker with distance. */
   for (let i = 0; i < 12; i += 1) {
     const x = ((i + 0.5) / 12) * GARDEN_W + rand() * 14 - 7;
-    const y = 66 + rand() * 10;
+    const y = 78 + rand() * 10;
     const s = 0.72 + rand() * 0.22;
     const v = rand() > 0.35 ? "orange" : "yellow";
     const rot = rand() * 90;
@@ -275,16 +282,39 @@ const gardenSvg = (seed, id) => {
   /* Small teal leaves poking up between the rows. */
   for (let i = 0; i < 14; i += 1) {
     const x = (i / 14) * GARDEN_W + rand() * 30;
-    const y = 80 + rand() * 12;
+    const y = 94 + rand() * 12;
     const rot = -130 + rand() * 80;
     put(x, (px) => leafAt(px, y, 0.9 + rand() * 0.4, rot, rand() > 0.5 ? TEAL : TEAL_DEEP));
   }
 
-  /* Front row: the big blooms, overlapping so the bed has no gaps. */
-  for (let i = 0; i < 13; i += 1) {
-    const x = (i / 13) * GARDEN_W + rand() * 12 - 6;
-    const y = 90 + rand() * 10;
-    const s = 1.0 + rand() * 0.34;
+  /* Leaves drooping over the edge, drawn before the front row so the blooms
+     sit on their stalks. */
+  for (let i = 0; i < 9; i += 1) {
+    const x = (i / 9) * GARDEN_W + rand() * 40;
+    const y = 110 + rand() * 8;
+    const rot = rand() > 0.5 ? 20 + rand() * 40 : 120 + rand() * 40;
+    put(x, (px) => leafAt(px, y, 0.9 + rand() * 0.4, rot, rand() > 0.5 ? TEAL : TEAL_DEEP));
+  }
+
+  /* A row of smaller blooms just under the edge, behind the front row, so a
+     gap between two front petals shows another flower rather than the line
+     where the host's colour ends. */
+  for (let i = 0; i < 16; i += 1) {
+    const x = ((i + 0.5) / 16) * GARDEN_W + rand() * 8 - 4;
+    const y = GARDEN_EDGE + 2 + rand() * 6;
+    const s = 0.78 + rand() * 0.2;
+    const v = rand() > 0.5 ? "orange" : "yellow";
+    const rot = rand() * 90;
+    put(x, (px) => bloomAt(px, y, s, v, rot));
+  }
+
+  /* Front row: the big blooms, packed so that neighbours overlap, with their
+     centres on the host's edge — so the widest part of every bloom lies
+     across the line and no straight edge shows between them. */
+  for (let i = 0; i < 18; i += 1) {
+    const x = (i / 18) * GARDEN_W + rand() * 8 - 4;
+    const y = GARDEN_EDGE - 6 + rand() * 12;
+    const s = 1.1 + rand() * 0.3;
     const v = rand() > 0.45 ? "orange" : "yellow";
     const rot = rand() * 90;
     put(x, (px) => bloomAt(px, y, s, v, rot));
@@ -765,10 +795,9 @@ export const mount = ({ overlay, density, motion }) => {
   );
 
   /* Footer: the same night with a banner overhead, sprays in the lower
-     corners, the garden along the bottom, and three sugar skulls resting in
-     it. No candles down here — the hero's ofrenda already carries them, and
-     a second set of live flames under the link columns is one flicker too
-     many on a page. */
+     corners and the garden along the bottom. No candles or skulls down here
+     — the hero's ofrenda already carries them, and a second set under the
+     link columns looked out of place. */
   decorate(
     disposer,
     ".site-footer",
@@ -779,12 +808,7 @@ export const mount = ({ overlay, density, motion }) => {
      }</div>
      <div class="dm-spray dm-spray-bl">${FOLK_SPRAY}</div>
      <div class="dm-spray dm-spray-br">${FOLK_SPRAY}</div>
-     <div class="dm-garden">${gardenSvg(11, "dm-garden-footer")}</div>
-     <div class="dm-footer-skulls">
-       ${calaveraSvg("azul", 'class="dm-calavera" style="width:44px"')}
-       ${calaveraSvg("classic", 'class="dm-calavera" style="width:58px"')}
-       ${calaveraSvg("noche", 'class="dm-calavera" style="width:42px"')}
-     </div>`
+     <div class="dm-garden">${gardenSvg(11, "dm-garden-footer")}</div>`
   );
 
   /* Section seam between the overview and the dashboard: the artboard's gold

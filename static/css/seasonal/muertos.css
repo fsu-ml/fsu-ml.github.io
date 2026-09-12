@@ -238,9 +238,20 @@
   overflow: hidden;
 }
 
+/* The hero's scene does not clip. The garden is meant to spill over the
+   hero's bottom edge onto the section below, so the transition between the
+   two is the hedge itself rather than a line. */
 .dm-hero {
   inset: 0;
-  overflow: hidden;
+  overflow: visible;
+}
+
+:root[data-season="muertos"] .hero {
+  overflow: visible;
+  /* The section below is later in the document and would paint over the
+     overhang; one step up puts the whole hero, scene included, in front of
+     it. The header's own z-index is 20, so it still passes over the top. */
+  z-index: 1;
 }
 
 .dm-footer-banner {
@@ -267,7 +278,7 @@
 
 .dm-ofrenda {
   position: absolute;
-  bottom: 26px;
+  bottom: 4px;
   left: 16px;
   display: block;
   width: 128px;
@@ -290,7 +301,7 @@
 
 @media (min-width: 1804px) {
   .dm-ofrenda {
-    bottom: 40px;
+    bottom: 12px;
     width: min(280px, calc((100vw - 1440px) / 2 - 48px));
   }
 }
@@ -314,18 +325,21 @@
 /* ---------------------------------------------------------------------------
    The marigold garden
    ---------------------------------------------------------------------------
-   A continuous bed along the bottom edge of the hero and the footer. It sits
-   flush with the edge rather than across it: a hedge of flowers in a row is
-   a garden, a scatter of blooms straddling a line is confetti.
+   A continuous bed along the bottom edge of the hero and the footer. The
+   drawing is 152px tall with its foliage base ending 32px above its bottom,
+   so hung 32px below the host's edge the base meets that edge exactly and
+   only the front blooms and a few leaves spill over it. In the hero that
+   spill lands on the white of the section below; the footer clips it, since
+   there is nothing under the footer to spill onto.
    -------------------------------------------------------------------------- */
 
 .dm-garden {
   position: absolute;
   right: 0;
-  bottom: 0;
+  bottom: -32px;
   left: 0;
   display: block;
-  height: 120px;
+  height: 152px;
   pointer-events: none;
   line-height: 0;
 }
@@ -347,7 +361,7 @@
 .dm-spray {
   position: absolute;
   display: block;
-  width: 240px;
+  width: 360px;
   opacity: 0.55;
   pointer-events: none;
 }
@@ -401,18 +415,6 @@
   padding-bottom: 150px;
 }
 
-/* Three sugar skulls resting in the footer's garden, each a different style. */
-.dm-footer-skulls {
-  position: absolute;
-  right: 5%;
-  bottom: 34px;
-  display: flex;
-  align-items: flex-end;
-  gap: 6px;
-  pointer-events: none;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
-}
-
 .dm-calavera {
   display: block;
   width: 100%;
@@ -420,21 +422,17 @@
   overflow: visible;
 }
 
-/* On a phone the skulls land on the marigolds under the last link column. */
 @media (max-width: 620px) {
-  .dm-footer-skulls {
-    display: none;
-  }
-
   /* The garden's blooms are drawn for a desktop band; on a phone they are
      scaled down, and the band's box with them. */
   .dm-garden {
-    height: 86px;
+    bottom: -23px;
+    height: 109px;
   }
 
   .dm-garden-art {
     width: 140%;
-    height: 120px;
+    height: 152px;
     transform: scale(0.714);
     transform-origin: 0 100%;
   }
