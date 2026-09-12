@@ -476,40 +476,163 @@ const roofSvg = () => {
 /* ---------------------------------------------------------------------------
    The city
    ---------------------------------------------------------------------------
-   Skyscrapers in silhouette along the bottom, in two rows for depth, with
-   lit windows. A user-unit pattern like Winter's, so it repeats rather than
-   stretches. Nothing fancy: it is the background the tree stands against.
+   A skyline along the bottom in two rows, and a Chinese one: the far row
+   carries the landmark shapes — a pearl tower with its spheres on a tripod,
+   a twisting tapered spire, a tiered spire in setbacks, a slab with an
+   opening through its top, an hourglass tower — among plain towers, and the
+   near row mixes pagodas, a gate tower and buildings with curved-eave
+   crowns in with the blocks, all with lit windows. Every building is a
+   subpath of one path per row, so the whole city is a handful of nodes.
+
+   A user-unit pattern like Winter's, so it repeats rather than stretches.
    -------------------------------------------------------------------------- */
 
-const CITY_W = 960;
-const CITY_H = 190;
+const CITY_W = 1200;
+const CITY_H = 240;
 
-const cityRow = (rand, { minH, maxH, windows }) => {
+/* A roof between (x, y) and (x + w, y) whose eaves sweep up at the tips,
+   ridge `h` above. */
+const eaveRoof = (x, y, w, h, lift = 6) =>
+  `M${x.toFixed(1)} ${(y - lift).toFixed(1)}` +
+  `C${(x + w * 0.12).toFixed(1)} ${(y - lift + 3).toFixed(1)} ${(x + w * 0.3).toFixed(1)} ${(y - h * 0.58).toFixed(1)} ${(x + w / 2).toFixed(1)} ${(y - h).toFixed(1)}` +
+  `C${(x + w * 0.7).toFixed(1)} ${(y - h * 0.58).toFixed(1)} ${(x + w * 0.88).toFixed(1)} ${(y - lift + 3).toFixed(1)} ${(x + w).toFixed(1)} ${(y - lift).toFixed(1)}` +
+  `Q${(x + w / 2).toFixed(1)} ${(y + lift * 0.7).toFixed(1)} ${x.toFixed(1)} ${(y - lift).toFixed(1)}Z`;
+
+const rect = (x, y, w, h) => `M${x.toFixed(1)} ${y.toFixed(1)}h${w.toFixed(1)}v${h.toFixed(1)}h${(-w).toFixed(1)}Z`;
+const disc = (cx, cy, r) => `M${(cx - r).toFixed(1)} ${cy.toFixed(1)}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0Z`;
+
+/* Landmarks, each drawn from a base at (x, CITY_H) across width w. */
+const LANDMARKS = {
+  /* Spheres on a tripod: the pearl tower. */
+  pearl: (x, w, h) => {
+    const cx = x + w / 2;
+    const top = CITY_H - h;
+    const R = w * 0.36;
+    return (
+      `M${x} ${CITY_H}L${cx - 3} ${CITY_H - h * 0.5}L${cx + 3} ${CITY_H - h * 0.5}L${x + w} ${CITY_H}Z` +
+      rect(cx - 3, top + 12, 6, h - 12) +
+      disc(cx, CITY_H - h * 0.5, R) +
+      disc(cx, top + 26, R * 0.55) +
+      `M${cx - 1} ${top + 12}h2v-12h-2Z`
+    );
+  },
+  /* A tapered tower with a slanted, curved crown. */
+  twist: (x, w, h) => {
+    const top = CITY_H - h;
+    return `M${x} ${CITY_H}L${x + w * 0.22} ${top + 10}Q${x + w * 0.5} ${top - 6} ${x + w * 0.8} ${top + 22}L${x + w} ${CITY_H}Z`;
+  },
+  /* Setbacks narrowing to a spire. */
+  tiered: (x, w, h) => {
+    const cx = x + w / 2;
+    let d = "";
+    const steps = 5;
+    for (let i = 0; i < steps; i += 1) {
+      const tw = w * (1 - i * 0.16);
+      const th = h * 0.16;
+      d += rect(cx - tw / 2, CITY_H - th * (i + 1), tw, th);
+    }
+    d += `M${cx - 2} ${CITY_H - h * 0.8}L${cx} ${CITY_H - h}L${cx + 2} ${CITY_H - h * 0.8}Z`;
+    return d;
+  },
+  /* A slab with an opening through its top. The inner subpath runs the
+     other way round, so it cuts a hole under the nonzero rule. */
+  opener: (x, w, h) => {
+    const top = CITY_H - h;
+    const hx = x + w * 0.3;
+    const hw = w * 0.4;
+    const hy = top + 14;
+    const hh = h * 0.16;
+    return (
+      `M${x + w * 0.1} ${CITY_H}L${x + w * 0.16} ${top}L${x + w * 0.84} ${top}L${x + w * 0.9} ${CITY_H}Z` +
+      `M${hx} ${hy}h${hw}v${hh}h${-hw}Z`.replace(`h${hw}v${hh}h${-hw}`, `v${hh}h${hw}v${-hh}`)
+    );
+  },
+  /* An hourglass lattice tower with a mast. */
+  hourglass: (x, w, h) => {
+    const cx = x + w / 2;
+    const top = CITY_H - h;
+    return (
+      `M${x} ${CITY_H}C${cx - w * 0.05} ${CITY_H - h * 0.55} ${cx - w * 0.05} ${top + 40} ${cx - w * 0.28} ${top + 18}` +
+      `L${cx + w * 0.28} ${top + 18}C${cx + w * 0.05} ${top + 40} ${cx + w * 0.05} ${CITY_H - h * 0.55} ${x + w} ${CITY_H}Z` +
+      rect(cx - 1.5, top, 3, 20)
+    );
+  }
+};
+
+const cityRow = (rand, { minH, maxH, windows, landmarks, traditional }) => {
   const bodies = [];
   const lit = { bright: [], dim: [] };
   let x = 0;
+  let sinceLandmark = 0;
   while (x < CITY_W) {
     const w = range(rand, 26, 80);
+    const x1 = Math.min(x + w, CITY_W);
+    const ww = x1 - x;
     const h = range(rand, minH, maxH);
     const top = CITY_H - h;
-    const x1 = Math.min(x + w, CITY_W);
-    const roof = rand();
-    let d = `M${x.toFixed(1)} ${CITY_H}V${top.toFixed(1)}`;
-    if (roof < 0.2) {
-      const mx = x + (x1 - x) / 2;
-      d += `H${(mx - 1.2).toFixed(1)}V${(top - range(rand, 10, 28)).toFixed(1)}h2.4V${top.toFixed(1)}`;
-    } else if (roof < 0.42) {
-      const inset = (x1 - x) * range(rand, 0.18, 0.3);
-      const rise = range(rand, 8, 18);
-      d += `H${(x + inset).toFixed(1)}V${(top - rise).toFixed(1)}H${(x1 - inset).toFixed(1)}V${top.toFixed(1)}`;
-    } else if (roof < 0.52) {
-      d += `L${(x + (x1 - x) / 2).toFixed(1)} ${(top - range(rand, 14, 30)).toFixed(1)}`;
+    const kind = rand();
+    sinceLandmark += 1;
+
+    if (landmarks && sinceLandmark > 1 && kind < 0.34 && ww > 40) {
+      const keys = Object.keys(LANDMARKS);
+      const pickKey = keys[Math.floor(rand() * keys.length)];
+      bodies.push(LANDMARKS[pickKey](x, Math.max(ww, 56), range(rand, maxH * 0.92, maxH)));
+      sinceLandmark = 0;
+      x = x1 + range(rand, 6, 18);
+      continue;
     }
-    d += `H${x1.toFixed(1)}V${CITY_H}Z`;
+
+    if (traditional && kind < 0.18 && ww > 40) {
+      /* A pagoda: stacked eaves narrowing upward, a spire on top. */
+      const tiers = 3 + Math.floor(rand() * 3);
+      const cx = x + ww / 2;
+      const tierH = Math.min(30, h / tiers);
+      let d = "";
+      for (let t = 0; t < tiers; t += 1) {
+        const tw = ww * (1 - t * 0.14);
+        const ty = CITY_H - t * tierH;
+        d += rect(cx - tw * 0.3, ty - tierH, tw * 0.6, tierH);
+        d += eaveRoof(cx - tw / 2, ty - tierH + 6, tw, 16, 7);
+      }
+      const spireBase = CITY_H - tiers * tierH - 10;
+      d += `M${cx - 2} ${spireBase}L${cx} ${spireBase - 22}L${cx + 2} ${spireBase}Z`;
+      bodies.push(d);
+      x = x1 + range(rand, 4, 14);
+      continue;
+    }
+
+    if (traditional && kind < 0.28 && ww > 50) {
+      /* A gate tower: a broad wall with a two-tier pavilion on top. */
+      const wallH = h * 0.45;
+      const cx = x + ww / 2;
+      const pw = ww * 0.7;
+      let d = rect(x, CITY_H - wallH, ww, wallH);
+      d += rect(cx - pw * 0.4, CITY_H - wallH - 22, pw * 0.8, 22);
+      d += eaveRoof(cx - pw / 2, CITY_H - wallH - 18, pw, 14, 6);
+      d += rect(cx - pw * 0.3, CITY_H - wallH - 40, pw * 0.6, 18);
+      d += eaveRoof(cx - pw * 0.42, CITY_H - wallH - 36, pw * 0.84, 14, 6);
+      bodies.push(d);
+      x = x1 + range(rand, 4, 14);
+      continue;
+    }
+
+    /* A tower. Some carry a curved-eave crown with a finial, which is the
+       silhouette of half the office blocks in a Chinese city. */
+    let d = rect(x, top, ww, h);
+    const roof = rand();
+    if (roof < 0.34) {
+      d += eaveRoof(x - 3, top + 4, ww + 6, 14, 6);
+      d += `M${x + ww / 2 - 1} ${top - 10}h2v-14h-2Z`;
+    } else if (roof < 0.5) {
+      d += rect(x + ww / 2 - 1.2, top - range(rand, 10, 26), 2.4, 30);
+    } else if (roof < 0.66) {
+      const inset = ww * range(rand, 0.18, 0.3);
+      d += rect(x + inset, top - range(rand, 8, 18), ww - inset * 2, 20);
+    }
     bodies.push(d);
 
     if (windows) {
-      const cols = Math.floor((x1 - x - 8) / 11);
+      const cols = Math.floor((ww - 8) / 11);
       const rows = Math.floor((h - 12) / 15);
       for (let r = 0; r < rows; r += 1) {
         for (let c = 0; c < cols; c += 1) {
@@ -517,8 +640,8 @@ const cityRow = (rand, { minH, maxH, windows }) => {
           if (on > 0.5) {
             continue;
           }
-          const rect = `M${(x + 5 + c * 11).toFixed(1)} ${(top + 8 + r * 15).toFixed(1)}h4v6h-4z`;
-          (on < 0.2 ? lit.bright : lit.dim).push(rect);
+          const wr = `M${(x + 5 + c * 11).toFixed(1)} ${(top + 8 + r * 15).toFixed(1)}h4v6h-4z`;
+          (on < 0.2 ? lit.bright : lit.dim).push(wr);
         }
       }
     }
@@ -529,13 +652,13 @@ const cityRow = (rand, { minH, maxH, windows }) => {
 
 const citySvg = (seed, id) => {
   const rand = seeded(seed);
-  const far = cityRow(rand, { minH: 80, maxH: 170, windows: true });
-  const near = cityRow(rand, { minH: 30, maxH: 110, windows: true });
+  const far = cityRow(rand, { minH: 90, maxH: 215, windows: true, landmarks: true, traditional: false });
+  const near = cityRow(rand, { minH: 34, maxH: 120, windows: true, landmarks: false, traditional: true });
   return `
     <svg class="ln-city-art" width="100%" height="${CITY_H}" aria-hidden="true" focusable="false">
       <defs>
         <pattern id="${id}" patternUnits="userSpaceOnUse" width="${CITY_W}" height="${CITY_H}">
-          <path d="${far.bodies}" fill="#3a0a16" opacity=".85"/>
+          <path d="${far.bodies}" fill="#4a1022" opacity=".92"/>
           <path d="${far.lit.bright.join("")}${far.lit.dim.join("")}" fill="#c9773d" opacity=".45"/>
           <path d="${near.bodies}" fill="#15030a"/>
           <path d="${near.lit.bright.join("")}" fill="#ffcf6b" opacity=".95"/>

@@ -268,7 +268,7 @@
   right: 0;
   bottom: 30px;
   left: 0;
-  height: 190px;
+  height: 240px;
   line-height: 0;
   pointer-events: none;
 }
@@ -282,12 +282,12 @@
 @media (max-width: 620px) {
   .ln-city {
     bottom: 30px;
-    height: 136px;
+    height: 171px;
   }
 
   .ln-city-art {
     width: 140%;
-    height: 190px;
+    height: 240px;
     transform: scale(0.714);
     transform-origin: 0 100%;
   }
