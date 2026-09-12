@@ -292,10 +292,14 @@ const TREE_H = 400;
  * first generation is identical either way, which is the point: one generator,
  * and the composition is a matter of where it is told to start.
  */
-const blossom = ({ seed, roots, align = "xMinYMax", fit = "meet", cls = "ln-tree" }) => {
+const blossom = ({ seed, roots, align = "xMinYMax", fit = "meet", cls = "ln-tree", lush = false, box = `0 0 ${TREE_W} ${TREE_H}` }) => {
   const rand = seeded(seed);
   const limbs = [];
   const sites = [];
+  /* A lush tree grows one generation further and puts two or three blooms
+     at every site instead of one, so the crown fills in the way a tree in
+     full flower does rather than a tree just coming into it. */
+  const maxDepth = lush ? 6 : 5;
 
   const grow = (x, y, ang, len, wid, depth) => {
     /* Nothing in the tree is ever a ruler-straight stick: the control point is
@@ -310,7 +314,7 @@ const blossom = ({ seed, roots, align = "xMinYMax", fit = "meet", cls = "ln-tree
       w: wid
     });
 
-    if (depth >= 5 || len < 14) {
+    if (depth >= maxDepth || len < (lush ? 10 : 14)) {
       sites.push([x2, y2, depth]);
       return;
     }
@@ -344,17 +348,27 @@ const blossom = ({ seed, roots, align = "xMinYMax", fit = "meet", cls = "ln-tree
     }).join("") +
     `<circle r=".2" fill="${GOLD}"/></g></defs>`;
 
+  const bloomAt = (x, y, depth) => {
+    const r = (depth >= 4 ? 7.5 : depth >= 3 ? 9.5 : 11) * (0.78 + rand() * 0.5);
+    if (rand() < 0.2) {
+      return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r * 0.42).toFixed(1)}" fill="${PETAL_DEEP}"/>`;
+    }
+    return `<use href="#ln-bloom" color="${rand() < 0.34 ? PETAL_DEEP : PETAL}" ` +
+      `transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${(rand() * 72).toFixed(0)}) scale(${r.toFixed(2)})"/>`;
+  };
   const blooms = sites
     .map(([x, y, depth]) => {
-      if (rand() < 0.12) {
+      if (rand() < (lush ? 0.05 : 0.12)) {
         return "";
       }
-      const r = (depth >= 4 ? 7.5 : depth >= 3 ? 9.5 : 11) * (0.78 + rand() * 0.5);
-      if (rand() < 0.2) {
-        return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r * 0.42).toFixed(1)}" fill="${PETAL_DEEP}"/>`;
+      let out = bloomAt(x, y, depth);
+      if (lush) {
+        const extra = rand() < 0.65 ? (rand() < 0.4 ? 2 : 1) : 0;
+        for (let i = 0; i < extra; i += 1) {
+          out += bloomAt(x + (rand() - 0.5) * 22, y + (rand() - 0.5) * 22, depth);
+        }
       }
-      return `<use href="#ln-bloom" color="${rand() < 0.34 ? PETAL_DEEP : PETAL}" ` +
-        `transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${(rand() * 72).toFixed(0)}) scale(${r.toFixed(2)})"/>`;
+      return out;
     })
     .join("");
 
@@ -369,19 +383,237 @@ const blossom = ({ seed, roots, align = "xMinYMax", fit = "meet", cls = "ln-tree
      and crops whatever does not fit, which lops the crown or the trunk off a
      tree whose box is not exactly 3:1. Fitting the whole drawing inside and
      letting the box letterbox it is what keeps a tree a whole tree. */
-  return `<svg class="${cls}" viewBox="0 0 ${TREE_W} ${TREE_H}" preserveAspectRatio="${align} ${fit}" ` +
+  return `<svg class="${cls}" viewBox="${box}" preserveAspectRatio="${align} ${fit}" ` +
     `aria-hidden="true" focusable="false">${def}${wood}${blooms}</svg>`;
 };
 
-/* A tree: a trunk off the bottom edge with a second, lower stem beside it. */
-const blossomTree = (seed) =>
+/* A tree: a trunk off the bottom edge with a second, lower stem beside it.
+   The lush one is cropped to the tree's own extent — the generator's canvas
+   is three times wider than the tree, and fitting all of that into a box
+   leaves the crown a third of the size the box suggests. */
+const blossomTree = (seed, lush = false) =>
   blossom({
     seed,
+    lush,
+    box: lush ? "0 0 720 400" : undefined,
     roots: [
       { x: 232, y: TREE_H - 4, ang: -Math.PI / 2 + 0.3, len: 108, wid: 26 },
       { x: 248, y: TREE_H - 2, ang: -Math.PI / 2 + 0.64, len: 62, wid: 14, depth: 1 }
     ]
   });
+
+/* ---------------------------------------------------------------------------
+   Rooftops
+   ---------------------------------------------------------------------------
+   A street of houses along the bottom of the hero in silhouette against the
+   red of the horizon: walls under roofs whose eaves sweep up at the tips,
+   the odd two-storey house with a second roof, a pagoda, lit windows, and
+   red lanterns hanging from the eave tips with their glow on the tiles. Two
+   rows — a paler, taller one behind for depth.
+
+   A user-unit <pattern>, like Winter's skyline, so it repeats across any
+   width rather than stretching. Houses are laid end to end across exactly
+   one tile, so nothing crosses the seam.
+   -------------------------------------------------------------------------- */
+
+const ROOF_W = 720;
+const ROOF_H = 150;
+
+/* A roof between eave tips at (x, y - lift) and (x + w, y - lift), ridge
+   `h` above the eave line. The upper edge sweeps concave from tip to ridge,
+   which is what makes it a Chinese roof rather than a gable. */
+const roofPath = (x, y, w, h, lift) =>
+  `M${x} ${y - lift}` +
+  `C${x + w * 0.12} ${y - lift + 3} ${x + w * 0.3} ${y - h * 0.58} ${x + w / 2} ${y - h}` +
+  `C${x + w * 0.7} ${y - h * 0.58} ${x + w * 0.88} ${y - lift + 3} ${x + w} ${y - lift}` +
+  `Q${x + w / 2} ${y + lift * 0.7} ${x} ${y - lift}Z`;
+
+const rooftopsSvg = (seed, id) => {
+  const rand = seeded(seed);
+  const far = [];
+  const near = [];
+  const lights = [];
+
+  /* Far row: taller, paler, no detail — a pagoda and a few big halls. */
+  let x = 0;
+  while (x < ROOF_W) {
+    const w = range(rand, 70, 130);
+    const wEnd = Math.min(x + w, ROOF_W);
+    const ww = wEnd - x;
+    if (rand() < 0.22 && ww > 80) {
+      /* Pagoda: stacked roofs narrowing upward, a spire on top. */
+      const tiers = 3 + Math.floor(rand() * 2);
+      const base = ROOF_H - range(rand, 40, 60);
+      const cx = x + ww / 2;
+      far.push(`<rect x="${(cx - ww * 0.22).toFixed(1)}" y="${base}" width="${(ww * 0.44).toFixed(1)}" height="${ROOF_H - base}"/>`);
+      for (let t = 0; t < tiers; t += 1) {
+        const tw = ww * (0.9 - t * 0.18);
+        const ty = base - t * 26;
+        far.push(roofPath(cx - tw / 2, ty, tw, 18, 7));
+        far.push(`<rect x="${(cx - tw * 0.24).toFixed(1)}" y="${ty - 26}" width="${(tw * 0.48).toFixed(1)}" height="26"/>`);
+      }
+      const top = base - tiers * 26;
+      far.push(`<path d="M${cx - 3} ${top}L${cx} ${top - 22}L${cx + 3} ${top}Z"/>`);
+    } else {
+      const wallTop = ROOF_H - range(rand, 46, 78);
+      far.push(`<rect x="${(x + ww * 0.08).toFixed(1)}" y="${wallTop}" width="${(ww * 0.84).toFixed(1)}" height="${ROOF_H - wallTop}"/>`);
+      far.push(roofPath(x, wallTop, ww, range(rand, 16, 26), 8));
+    }
+    x = wEnd;
+  }
+
+  /* Near row: the houses themselves, with windows and lanterns. */
+  x = 0;
+  while (x < ROOF_W) {
+    const w = range(rand, 54, 104);
+    const wEnd = Math.min(x + w, ROOF_W);
+    const ww = wEnd - x;
+    const storeys = rand() < 0.3 ? 2 : 1;
+    const wallH = range(rand, 34, 50);
+    let top = ROOF_H;
+    for (let sIdx = 0; sIdx < storeys; sIdx += 1) {
+      const inset = sIdx === 0 ? 0.1 : 0.2;
+      const wallTop = top - wallH;
+      const wx = x + ww * inset;
+      const wwidth = ww * (1 - inset * 2);
+      near.push(`<rect x="${wx.toFixed(1)}" y="${wallTop.toFixed(1)}" width="${wwidth.toFixed(1)}" height="${(top - wallTop + 2).toFixed(1)}"/>`);
+      /* Windows: a row of lit panes, some dark. */
+      const n = Math.max(1, Math.floor(wwidth / 16));
+      for (let i = 0; i < n; i += 1) {
+        if (rand() < 0.3) {
+          continue;
+        }
+        const px = wx + 5 + i * (wwidth - 8) / n;
+        lights.push(`<rect x="${px.toFixed(1)}" y="${(wallTop + 10).toFixed(1)}" width="7" height="11" rx="1" fill="#ffcf6b" opacity="${(0.7 + rand() * 0.3).toFixed(2)}"/>`);
+      }
+      const rw = ww * (sIdx === 0 ? 1 : 0.8);
+      const rx = x + (ww - rw) / 2;
+      const lift = 9;
+      const h = range(rand, 18, 28);
+      near.push(roofPath(rx, wallTop, rw, h, lift));
+      /* Ridge ornaments at the ends. */
+      near.push(`<circle cx="${(rx + rw / 2).toFixed(1)}" cy="${(wallTop - h - 1).toFixed(1)}" r="2.2"/>`);
+      /* Lanterns hanging from the eave tips, kept off the tile's own edges. */
+      for (const tipX of [rx + 3, rx + rw - 3]) {
+        if (tipX > 8 && tipX < ROOF_W - 8 && rand() < 0.8) {
+          const ly = wallTop - lift + 11;
+          lights.push(
+            `<circle cx="${tipX.toFixed(1)}" cy="${ly.toFixed(1)}" r="14" fill="url(#${id}-glow)"/>` +
+              `<path d="M${tipX.toFixed(1)} ${(ly - 8).toFixed(1)}v-4" stroke="#e8b64c" stroke-width="1"/>` +
+              `<ellipse cx="${tipX.toFixed(1)}" cy="${ly.toFixed(1)}" rx="4.4" ry="5.6" fill="#e0192f"/>` +
+              `<rect x="${(tipX - 2.6).toFixed(1)}" y="${(ly - 6.6).toFixed(1)}" width="5.2" height="1.6" fill="#e8b64c"/>` +
+              `<rect x="${(tipX - 2.6).toFixed(1)}" y="${(ly + 5).toFixed(1)}" width="5.2" height="1.6" fill="#e8b64c"/>` +
+              `<path d="M${tipX.toFixed(1)} ${(ly + 6.6).toFixed(1)}v4" stroke="#e8b64c" stroke-width="1"/>`
+          );
+        }
+      }
+      top = wallTop - h * 0.5;
+    }
+    x = wEnd;
+  }
+
+  return `
+    <svg class="ln-rooftops-art" width="100%" height="${ROOF_H}" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="${id}-glow">
+          <stop offset="0" stop-color="rgba(255,120,60,.5)"/>
+          <stop offset="1" stop-color="rgba(255,120,60,0)"/>
+        </radialGradient>
+        <pattern id="${id}" patternUnits="userSpaceOnUse" width="${ROOF_W}" height="${ROOF_H}">
+          <g fill="#3a0a16" opacity=".85">${far.join("")}</g>
+          <g fill="#150307">${near.join("")}</g>
+          ${lights.join("")}
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#${id})"></rect>
+    </svg>`;
+};
+
+/* ---------------------------------------------------------------------------
+   Fireworks and sky lanterns
+   ---------------------------------------------------------------------------
+   Fireworks go up before they open: each is a rocket — a short bright trail
+   — that climbs from behind the rooftops to its own height, and a burst
+   that blooms there the moment the rocket arrives. Both are keyframes on
+   the same cycle, offset per firework so the sky is never quiet and never
+   all at once.
+
+   Sky lanterns rise slowly out of the street, drifting a little as they
+   go, and fade high in the sky. They are emitted before the rooftops in the
+   markup, so each one appears from behind a roof rather than out of the
+   ground.
+   -------------------------------------------------------------------------- */
+
+const FIREWORK_COLORS = ["#ffd98a", "#ff4d5e", "#ff9fbb", "#e8b64c"];
+
+const burstSvg = (rand, color) => {
+  const rays = [];
+  const n = 18;
+  for (let i = 0; i < n; i += 1) {
+    const a = (i / n) * Math.PI * 2 + rand() * 0.1;
+    const r = 30 + rand() * 12;
+    const ex = Math.cos(a) * r;
+    const ey = Math.sin(a) * r;
+    rays.push(
+      `<line x1="${(ex * 0.25).toFixed(1)}" y1="${(ey * 0.25).toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}"/>` +
+        `<circle cx="${(ex * 1.12).toFixed(1)}" cy="${(ey * 1.12).toFixed(1)}" r="1.8"/>`
+    );
+  }
+  for (let i = 0; i < 10; i += 1) {
+    const a = (i / 10) * Math.PI * 2 + 0.3;
+    rays.push(`<circle cx="${(Math.cos(a) * 14).toFixed(1)}" cy="${(Math.sin(a) * 14).toFixed(1)}" r="1.4"/>`);
+  }
+  return `<svg class="ln-burst" viewBox="-50 -50 100 100" aria-hidden="true" focusable="false">` +
+    `<g stroke="${color}" fill="${color}" stroke-width="1.2" stroke-linecap="round" opacity=".95">${rays.join("")}</g></svg>`;
+};
+
+const fireworksHtml = (seed, n, motion) => {
+  const rand = seeded(seed);
+  const cycle = 11;
+  return Array.from({ length: n }, (_, k) => {
+    const color = pick(rand, FIREWORK_COLORS);
+    const left = 6 + ((k + 0.5) / n) * 88 + (rand() - 0.5) * 8;
+    const rise = Math.round(range(rand, 300, 520));
+    /* Spread through the cycle rather than random, so two never fire
+       together and the gaps are even. */
+    const delay = (k / n) * cycle + rand() * 1.2;
+    return (
+      `<span class="ln-firework${motion ? " ln-firework-live" : ""}" ` +
+      `style="left:${left.toFixed(1)}%;--rise:${rise}px;--cycle:${cycle}s;--delay:${delay.toFixed(1)}s;--size:${Math.round(range(rand, 110, 170))}px">` +
+      `<span class="ln-rocket" style="background:linear-gradient(to top, transparent, ${color})"></span>` +
+      burstSvg(rand, color) +
+      `</span>`
+    );
+  }).join("");
+};
+
+const SKY_LANTERN =
+  `<svg viewBox="0 0 24 34" aria-hidden="true" focusable="false">` +
+  `<path d="M5 4Q12 0 19 4L22 25Q12 30 2 25Z" fill="#ffb347"/>` +
+  `<path d="M8 6Q12 4 16 6L17 22Q12 25 7 22Z" fill="#ffd98a" opacity=".85"/>` +
+  `<path d="M5 4Q12 0 19 4L18.4 8Q12 5 5.6 8Z" fill="#e8892c"/>` +
+  `<path d="M2 25Q12 30 22 25L21.6 28Q12 33 2.4 28Z" fill="#b85c1a"/>` +
+  `<circle cx="12" cy="27" r="2" fill="#fff4d2"/>` +
+  `</svg>`;
+
+const skyLanternsHtml = (seed, n, motion) => {
+  const rand = seeded(seed);
+  return Array.from({ length: n }, () => {
+    const dur = range(rand, 48, 78);
+    const size = Math.round(range(rand, 18, 32));
+    const left = range(rand, 4, 94);
+    const rise = Math.round(range(rand, 620, 900));
+    /* With motion off the lanterns are already up: each holds a seeded
+       height, so the sky still has lanterns in it, just a still one. */
+    const still = motion ? "" : `bottom:${Math.round(range(rand, 180, 620))}px;`;
+    return (
+      `<span class="ln-skylantern${motion ? " ln-skylantern-live" : ""}" ` +
+      `style="left:${left.toFixed(1)}%;width:${size}px;${still}--rise:${rise}px;--dur:${dur.toFixed(1)}s;` +
+      `--delay:${(-rand() * dur).toFixed(1)}s;--sway:${range(rand, 6, 10).toFixed(1)}s;--sway-delay:${(-rand() * 8).toFixed(1)}s">` +
+      `<span class="ln-skylantern-sway">${SKY_LANTERN}</span></span>`
+    );
+  }).join("");
+};
 
 /* A single petal, drawn in a 14x12 box, for the drift and for card corners. */
 const petalSvg = (color) =>
@@ -489,8 +721,12 @@ export const mount = ({ overlay, density, motion }) => {
      to the hero, which does not move. */
   decorate(disposer, ".site-header", "season-edge-strip ln-edge", "");
 
-  /* Hero: a night that goes to red at the horizon, a moon, a string of
-     lanterns across the top, and a bough of plum reaching in from the left. */
+  /* Hero: a night that goes to red at the horizon, a moon, fireworks going
+     up over a street of rooftops along the bottom, sky lanterns rising out
+     of it, a string of lanterns across the top, and the crown of a plum tree
+     in full flower filling the left. Paint order matters here: the fireworks
+     and the sky lanterns come before the rooftops so they start out behind
+     the roofs, and the tree comes last so it stands in front of the street. */
   const heroString = lanternString({ seed: 13, count: 8, animal, width: 40, sag: 22, motion });
   decorate(
     disposer,
@@ -498,8 +734,11 @@ export const mount = ({ overlay, density, motion }) => {
     "season-scene ln-hero",
     `<div class="season-sky"></div>
      <span class="ln-moon"></span>
+     <div class="ln-fireworks">${fireworksHtml(17, 5, motion)}</div>
+     <div class="ln-skylanterns">${skyLanternsHtml(31, 6, motion)}</div>
+     <div class="ln-rooftops">${rooftopsSvg(3, "ln-roofs-hero")}</div>
      <div class="ln-hero-string">${heroString.html}</div>
-     ${blossomTree(7)}`
+     ${blossomTree(7, true)}`
   );
 
   /* Footer: the same night, mirrored, with a second tree and its own string. */
