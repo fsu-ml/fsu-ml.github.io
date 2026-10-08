@@ -177,7 +177,7 @@ What changes on the site, with no other edit:
 - The schedule table, talk cards, speaker roster, archive and flyer gallery strike the title through, tag it **Cancelled** / **Postponed** and show the reason (a storm icon for weather reasons — hurricane, tropical storm, flood, tornado).
 - The hero **Next Seminar** card keeps showing the called-off talk until its hour has passed, turned over to say so: an amber edge, a **Cancelled · reason** label, the title and time struck through, and the room/Zoom line replaced by a pointer to the next seminar that is going ahead. The hero's Zoom / registration button always follows that next real talk.
 - A called-off talk is never tagged **Next up** in the schedule table; the tag moves to the next talk that is going ahead.
-- A notice appears in the homepage hero, directly above the department wordmark, and at the top of `/schedule/`, from **7 days before** the talk until **48 hours after** it would have ended. A weather reason also adds rain over the hero, stacked on top of the seasonal theme (the seasonal theme is never paused).
+- A notice appears from **7 days before** the talk until **48 hours after** it would have ended. On the homepage it is one short line ("October 9 seminar cancelled due to Hurricane Isaias…") directly above the department wordmark; at the top of `/schedule/` it also lists each called-off talk. A weather reason also adds rain over the hero, stacked on top of the seasonal theme (the seasonal theme is never paused).
 - The page publishes schema.org `Event` data with `eventStatus` set to `EventCancelled` / `EventPostponed`.
 - The archive keeps the talk, labelled, and counts it separately ("5 talks · 1 called off").
 
