@@ -10,6 +10,8 @@ import {
   renderSchedule,
   renderSpeakers
 } from "./js/render/sections.js";
+import { renderSiteNotice } from "./js/render/notices.js";
+import { renderTalkStructuredData } from "./js/render/structured-data.js";
 import { bindNavigation } from "./js/ui/navigation.js";
 import { bindHashScroll, scrollToHashAfterPaint } from "./js/ui/scroll-to-hash.js";
 import { bindHeaderChrome } from "./js/ui/chrome.js";
@@ -23,12 +25,14 @@ const init = async () => {
 
   const templates = await loadTemplates();
   renderNavigation("home");
+  await renderSiteNotice();
   await renderHero(templates);
   renderOverview(templates);
   await renderSchedule(templates);
   await renderSpeakers(templates);
   renderCommunity(templates);
   renderFooter();
+  await renderTalkStructuredData();
   bindNavigation();
   bindHeaderChrome();
   bindFlyerLightbox();

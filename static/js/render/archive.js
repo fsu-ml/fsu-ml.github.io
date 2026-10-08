@@ -1,6 +1,14 @@
 import { groupPastTalksBySeason } from "../data/archive-schedule.js";
 import { loadSpeakersFromCsv } from "../data/speakers.js";
+import { isCalledOff } from "../data/talk-status.js";
 import { renderArchiveSpeakerLine } from "./speaker-links.js";
+import {
+  statusClasses,
+  statusDataAttrs,
+  statusReasonMarkup,
+  statusTagMarkup,
+  statusTitleMarkup
+} from "./talk-status-markup.js";
 import { qs } from "../utils/dom.js";
 import { escapeHtml } from "../utils/html.js";
 import { dateBadge, readableDate } from "../utils/dates.js";
@@ -12,6 +20,14 @@ const formatTalkCount = (count = 0) => {
     return "1 talk";
   }
   return `${count} talks`;
+};
+
+// Called-off talks stay in the archive so the semester's history is complete,
+// but they were never given, so they are counted separately.
+const formatSemesterCount = (talks = []) => {
+  const calledOff = talks.filter(isCalledOff).length;
+  const held = formatTalkCount(talks.length - calledOff);
+  return calledOff ? `${held} · ${calledOff} called off` : held;
 };
 
 // Flyers ride in the same chip row as slides and video: from a reader's point
@@ -46,14 +62,15 @@ const renderArchiveTalk = (talk) => {
     : "";
 
   return `
-    <article class="archive-talk" data-reveal="up">
+    <article class="${["archive-talk", ...statusClasses(talk)].join(" ")}"${statusDataAttrs(talk)} data-reveal="up">
       <div class="archive-talk-date">
         <span class="sr-only">${escapeHtml(readableDate(talk.talkDate))}</span>
         <span class="archive-date-month" aria-hidden="true">${escapeHtml(badge.month)}</span>
         <span class="archive-date-day" aria-hidden="true">${escapeHtml(badge.day)}</span>
       </div>
       <div class="archive-talk-main">
-        <h3 class="archive-talk-title">${escapeHtml(talk.talkTitle || "Talk TBA")}</h3>
+        <h3 class="archive-talk-title">${statusTitleMarkup(talk, talk.talkTitle || "Talk TBA")}</h3>
+        ${isCalledOff(talk) ? `<p class="archive-talk-status">${statusTagMarkup(talk)}${statusReasonMarkup(talk)}</p>` : ""}
         ${description}
       </div>
       <div class="archive-talk-meta">
@@ -68,7 +85,7 @@ const renderSemesterSection = (semester) => `
   <section id="${escapeHtml(semester.anchorId)}" class="archive-semester" aria-labelledby="${escapeHtml(semester.anchorId)}-title">
     <header class="archive-semester-header" data-reveal="up">
       <h2 id="${escapeHtml(semester.anchorId)}-title">${escapeHtml(semester.heading)}</h2>
-      <p class="archive-semester-count">${escapeHtml(formatTalkCount(semester.talks.length))}</p>
+      <p class="archive-semester-count">${escapeHtml(formatSemesterCount(semester.talks))}</p>
     </header>
     <div class="archive-talk-list">
       ${semester.talks.map(renderArchiveTalk).join("")}

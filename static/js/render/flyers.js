@@ -4,6 +4,8 @@ import { qs } from "../utils/dom.js";
 import { readableDate } from "../utils/dates.js";
 import { escapeHtml } from "../utils/html.js";
 import { flyerTriggerAttrs } from "../utils/flyers.js";
+import { isCalledOff, statusLabel, statusReason } from "../data/talk-status.js";
+import { statusClasses, statusDataAttrs } from "./talk-status-markup.js";
 
 const formatFlyerCount = (count = 0) => (count === 1 ? "1 flyer" : `${count} flyers`);
 
@@ -17,9 +19,15 @@ const renderFlyerCard = (talk) => {
   const [primary] = talk.flyerList;
   const many = talk.flyerList.length > 1;
   const speaker = (talk.name || "").trim();
+  const calledOff = isCalledOff(talk);
+  // The poster still advertises the original date, so a called-off talk gets
+  // a stamp across the artwork and the status ahead of the date line.
+  const statusLine = calledOff
+    ? [statusLabel(talk), statusReason(talk)].filter(Boolean).join(" · ")
+    : "";
 
   return `
-    <article class="flyer-card" data-reveal="up">
+    <article class="${["flyer-card", ...statusClasses(talk)].join(" ")}"${statusDataAttrs(talk)} data-reveal="up">
       <div class="flyer-card-art">
         <img
           src="${escapeHtml(primary.href)}"
@@ -27,6 +35,7 @@ const renderFlyerCard = (talk) => {
           loading="lazy"
           decoding="async"
         >
+        ${calledOff ? `<span class="flyer-card-stamp" aria-hidden="true">${escapeHtml(statusLabel(talk))}</span>` : ""}
         ${many ? `<span class="flyer-card-count">${escapeHtml(formatFlyerCount(talk.flyerList.length))}</span>` : ""}
       </div>
       <div class="flyer-card-body">
@@ -38,7 +47,7 @@ const renderFlyerCard = (talk) => {
           >${escapeHtml(talk.talkTitle || "Talk")}<span class="sr-only"> — open flyer</span></button>
         </h3>
         ${speaker ? `<p class="flyer-card-speaker">${escapeHtml(speaker)}</p>` : ""}
-        <p class="flyer-card-meta">${escapeHtml(readableDate(talk.talkDate))}</p>
+        <p class="flyer-card-meta">${calledOff ? `<strong class="flyer-card-status">${escapeHtml(statusLine)}</strong> &middot; ` : ""}${escapeHtml(readableDate(talk.talkDate))}</p>
       </div>
     </article>
   `;

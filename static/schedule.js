@@ -2,6 +2,8 @@ import { pageData } from "./js/data/page-data.js";
 import { loadTemplates } from "./js/data/templates.js";
 import { qs } from "./js/utils/dom.js";
 import { renderFooter, renderFullSchedule, renderNavigation } from "./js/render/sections.js";
+import { renderSiteNotice } from "./js/render/notices.js";
+import { renderTalkStructuredData } from "./js/render/structured-data.js";
 import { bindNavigation } from "./js/ui/navigation.js";
 import { bindHeaderChrome } from "./js/ui/chrome.js";
 import { bindFlyerLightbox } from "./js/ui/lightbox.js";
@@ -17,8 +19,10 @@ const init = async () => {
 
   await loadTemplates();
   renderNavigation("schedule");
+  await renderSiteNotice({ detailed: true });
   await renderFullSchedule();
   renderFooter();
+  await renderTalkStructuredData();
   bindNavigation();
   bindHeaderChrome();
   bindFlyerLightbox();

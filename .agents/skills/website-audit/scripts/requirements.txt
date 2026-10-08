@@ -1,0 +1,17 @@
+# Dependencies for the website-audit scripts.
+#
+# check_headers.py needs NOTHING from this file — it is standard library only,
+# by design, so the 60-second security baseline always works.
+#
+# After installing, you must also download the browser binary:
+#
+#     playwright install chromium
+#
+# Optional, not installed here because it is a Node package:
+#
+#     npm install -g lighthouse   # enables audit_performance.py --lighthouse
+#     npm install axe-core        # lets audit_a11y.py work offline
+#
+# Python 3.11 or newer.
+
+playwright>=1.44,<2

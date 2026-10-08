@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+
+# Audit run artifacts — keep the report, not the raw output
+audit-output/

@@ -28,6 +28,12 @@ const icons = {
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>',
   "chevron-right":
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg>',
+  // A cyclone seen from above: an eye with three spiral bands. The bands sit in
+  // their own group so the notice can turn them about the eye.
+  storm:
+    '<svg class="storm-glyph" viewBox="0 0 24 24" aria-hidden="true"><g class="storm-glyph-arms"><circle cx="12" cy="12" r="1.7"></circle><path d="M12 8.8L12.82 8.18 13.86 7.88 15.03 7.9 16.24 8.25 17.42 8.96 18.45 10.01 19.25 11.37 19.73 12.97 19.84 14.74 19.52 16.6 18.75 18.42 17.53 20.11 15.89 21.55 13.88 22.64"></path><path d="M14.77 13.6L14.9 14.62 14.64 15.67 14.04 16.67 13.12 17.55 11.92 18.21 10.5 18.58 8.93 18.59 7.29 18.21 5.7 17.42 4.26 16.22 3.06 14.64 2.21 12.73 1.79 10.59 1.85 8.31"></path><path d="M9.23 13.6L8.28 13.2 7.5 12.45 6.93 11.43 6.63 10.2 6.66 8.83 7.06 7.41 7.83 6.04 8.97 4.82 10.46 3.84 12.22 3.19 14.19 2.94 16.26 3.16 18.33 3.86 20.27 5.06"></path></g></svg>',
+  "calendar-off":
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path><path d="m9.5 12.5 5 5M14.5 12.5l-5 5"></path></svg>',
   linkedin: brandIcons.linkedin,
   discord: brandIcons.discord
 };

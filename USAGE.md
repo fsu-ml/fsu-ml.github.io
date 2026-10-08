@@ -7,6 +7,7 @@ file. You should not need to touch HTML for normal content changes.
 - [Quick reference: "I want to…"](#quick-reference-i-want-to)
 - [Running the site locally](#running-the-site-locally)
 - [Adding or editing a talk](#adding-or-editing-a-talk)
+  - [Cancelling or postponing a talk](#cancelling-or-postponing-a-talk)
 - [Adding or editing a speaker](#adding-or-editing-a-speaker)
 - [Writing a talk description](#writing-a-talk-description)
   - [What to collect before adding a speaker](#what-to-collect-before-adding-a-speaker)
@@ -30,6 +31,7 @@ file. You should not need to touch HTML for normal content changes.
 | Add a new speaker's bio, photo, or links | `data/speaker-profiles.csv` (+ `data/speaker-images/`) |
 | Find out what to ask a new speaker for | [Intake checklist](#what-to-collect-before-adding-a-speaker) |
 | Add a holiday or break row to the schedule | `data/speakers.csv` (see [Break rows](#break-and-no-seminar-rows)) |
+| Cancel or postpone a talk (hurricane, illness, travel…) | `status` + `status_reason` in `data/speakers.csv` — see [Cancelling or postponing a talk](#cancelling-or-postponing-a-talk) |
 | Add a flyer / poster for a talk | `flyers` column in `data/speakers.csv` (+ `data/flyers/`) — see [Flyers](#flyers) |
 | Add slides / video links to a past talk | `materials` column in `data/speakers.csv` |
 | Change the Discord, Zoom, mailing list, or room link | `static/js/data/page-data.js` |
@@ -69,7 +71,7 @@ All talks — upcoming, past, and holiday placeholders — live in one file:
 Header row:
 
 ```csv
-season,name,talk_title,talk_date,description,materials,event_image,location_note,start_time,location,registration_url,flyers
+season,name,talk_title,talk_date,description,materials,event_image,location_note,start_time,location,registration_url,flyers,status,status_reason
 ```
 
 | Column | Required | Meaning |
@@ -86,6 +88,8 @@ season,name,talk_title,talk_date,description,materials,event_image,location_note
 | `location` | no | Room when it is not the standing DSL/SC-499 (`Love 106`). |
 | `registration_url` | no | Where to go to attend online when the standing Zoom room is not the way in. Renders as **Register to join** instead of the Zoom link. |
 | `flyers` | no | Semicolon-separated filenames from `data/flyers/`, each with an optional `\|Label`. See [Flyers](#flyers). |
+| `status` | no | Blank means the talk goes ahead. `cancelled` or `postponed` means it does not. Read by the site **and by Otto**. See [Cancelling or postponing a talk](#cancelling-or-postponing-a-talk). |
+| `status_reason` | no | Short reason shown with the status and quoted in Otto's notices: `Hurricane Isaias`, `Speaker illness`. |
 
 ### Sessions that move
 
@@ -144,6 +148,51 @@ used today):
 2026-Spring,☀️🍹☀️,Spring Break,2026-03-20,,
 2026-Fall,🦃,Thanksgiving Holiday,2026-11-26,,,thanksgiving.webp
 ```
+
+### Cancelling or postponing a talk
+
+Set `status` on the talk's row and give a short `status_reason`. **Do not delete the
+row and do not change its date.**
+
+```csv
+2026-Fall,Xiuwen Liu,Anatomy of an Outlier: …,2026-10-09,"…",,,,,,,2026-10-09_xiuwen_liu.webp|Wide; 2026-10-09_xiuwen_liu_vertical.webp|Vertical,cancelled,Hurricane Isaias
+```
+
+Most rows stop early, so count commas: `status` is the 13th column and
+`status_reason` the 14th. A row that ends after `description` needs the empty
+columns in between (`…,"description",,,,,,,,cancelled,Hurricane Isaias` — eight commas).
+
+| `status` | Meaning |
+| --- | --- |
+| *(blank)* | Goes ahead as listed. Nearly every row. |
+| `cancelled` | Will not happen. |
+| `postponed` | Will not happen on this date. If a new date is set, add a **new row** for it and leave this one `postponed`. |
+
+These are the only values. Anything else is treated as `cancelled` by both the
+site and Otto (and logs a warning), so a typo can never make a called-off talk look
+scheduled. Adding a new value needs Otto support first.
+
+What changes on the site, with no other edit:
+
+- The schedule table, talk cards, speaker roster, archive and flyer gallery strike the title through, tag it **Cancelled** / **Postponed** and show the reason (a storm icon for weather reasons — hurricane, tropical storm, flood, tornado).
+- The hero **Next Seminar** card keeps showing the called-off talk until its hour has passed, turned over to say so: an amber edge, a **Cancelled · reason** label, the title and time struck through, and the room/Zoom line replaced by a pointer to the next seminar that is going ahead. The hero's Zoom / registration button always follows that next real talk.
+- A called-off talk is never tagged **Next up** in the schedule table; the tag moves to the next talk that is going ahead.
+- A notice appears in the homepage hero, directly above the department wordmark, and at the top of `/schedule/`, from **7 days before** the talk until **48 hours after** it would have ended. A weather reason also adds rain over the hero, stacked on top of the seasonal theme (the seasonal theme is never paused).
+- The page publishes schema.org `Event` data with `eventStatus` set to `EventCancelled` / `EventPostponed`.
+- The archive keeps the talk, labelled, and counts it separately ("5 talks · 1 called off").
+
+What changes in Otto: it stops every pending announcement for that date, and — once its
+status support is in place — posts a cancellation notice to anyone who was already
+announced the talk. Otto picks the edit up within about ten minutes.
+
+Rules:
+
+- **Never delete the row to cancel a talk.** Otto would treat it as vanished, the history is lost, and the site has nothing to show.
+- **Never move `talk_date` to postpone.** Otto identifies an event by its season and date, so a moved date looks like one talk vanishing and an unrelated one appearing. Mark the old row `postponed`; add a new row.
+- **Un-cancel by clearing both cells.**
+- **Co-speaker rows:** a talk with several speakers on one date is several rows only if it was entered that way. Set the status on every row for that date.
+- **Keep the reason out of `talk_title`.** Titles containing *break*, *holiday*, *recess* or *no classes* become break rows.
+- A whole-campus closure is still per talk: flag each affected date. The notice groups them.
 
 ---
 
@@ -592,8 +641,10 @@ The homepage and `/schedule/` show **upcoming talks for one semester only**:
 2. If that semester has no upcoming talks, roll forward to the next one (Spring → Fall, Fall → next Spring).
 3. If neither has anything scheduled, show a break message — "Taking a Break for the Summer…" before Fall, "…for the Winter…" before Spring.
 
-The next chronological non-break talk is highlighted and tagged **Next up**. Talks
-already past within the displayed semester render greyed out rather than disappearing.
+The next chronological non-break talk that is not cancelled or postponed is
+highlighted and tagged **Next up**. Talks already past within the displayed semester
+render greyed out rather than disappearing. Called-off talks stay in the table,
+struck through — see [Cancelling or postponing a talk](#cancelling-or-postponing-a-talk).
 
 `/archive/` shows everything dated before today, grouped by season with the newest
 semester first, and turns the `materials` column into link chips.
@@ -616,7 +667,12 @@ static/css/components/  Per-component styling (header, hero, content-sections, f
 static/css/components/motion.css  Motion tokens, scroll-reveal states, skeletons, reduced-motion
 static/css/responsive.css  Breakpoint overrides
 static/app.js           JS entrypoint — only orchestrates initialization
-static/js/data/         page-data.js, speakers.js, semester-schedule.js, archive-schedule.js, flyer-schedule.js, templates.js
+static/js/data/         page-data.js, speakers.js, semester-schedule.js, archive-schedule.js, flyer-schedule.js, templates.js,
+                        talk-status.js (status vocabulary, break-row detection)
+static/js/render/notices.js            Front-page notice and hero storm layer for called-off talks
+static/js/render/talk-status-markup.js Shared "Cancelled" tag, reason chip and struck title
+static/js/render/structured-data.js    schema.org Event JSON-LD with eventStatus
+static/css/components/notices.css      Styling for all of the above
 static/js/render/       Functions that turn data into markup
 static/js/ui/           Navigation, icons, scroll behavior, reveal.js, chrome.js, lightbox.js
 static/js/utils/        CSV parsing, DOM helpers, HTML escaping, date formatting, materials and flyer links
@@ -634,6 +690,8 @@ images/                 Banner and general artwork
 - Do not duplicate card or button markup inside JavaScript when a template in `templates/` can be used.
 - Escape any user-facing string interpolated into markup with `escapeHtml` from `static/js/utils/html.js`.
 - Use relative or root-relative URLs (`/schedule/`, `data/speakers.csv`) — never absolute paths to a local machine.
+- `data/speakers.csv` and `data/speaker-profiles.csv` are also read by the Otto announcement bot. Columns may be added, never renamed, reordered or removed. See `AGENTS.md`.
+- Seasonal themes are never paused or replaced by other features. Notices and storm visuals stack on top of them.
 
 ### Design rules
 

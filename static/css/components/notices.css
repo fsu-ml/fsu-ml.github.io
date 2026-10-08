@@ -1,0 +1,477 @@
+/* ---------------------------------------------------------------------------
+   Called-off talks and the front-page notice
+   ---------------------------------------------------------------------------
+   Everything here keys off the `status` column in speakers.csv. A cancelled or
+   postponed talk gets a storm-slate and amber treatment rather than garnet:
+   garnet is the brand and says nothing, amber reads as "warning" at a glance.
+   The status is always spelled out in text as well, never carried by colour or
+   strikethrough alone.
+
+   The storm layer stacks on top of whatever seasonal theme is running. It never
+   replaces or pauses it.
+   -------------------------------------------------------------------------- */
+
+/* A 64x128 tile of rain streaks, all parallel to (-1, 2). Moving the layer by
+   exactly one tile along that vector loops seamlessly on the compositor. */
+.hero-storm-rain,
+.site-notice.is-weather::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='128'%3E%3Cg stroke='%23c8deff' stroke-opacity='.55' stroke-width='1.2' stroke-linecap='round'%3E%3Cline x1='20' y1='10' x2='12' y2='26'/%3E%3Cline x1='52' y1='58' x2='44' y2='74'/%3E%3Cline x1='38' y1='98' x2='30' y2='114'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 64px 128px;
+}
+
+@keyframes storm-rain {
+  to {
+    translate: -64px 128px;
+  }
+}
+
+/* Counter-clockwise, the way a northern-hemisphere storm turns. */
+@keyframes storm-spin {
+  to {
+    rotate: -360deg;
+  }
+}
+
+.storm-glyph {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* --- Shared status pieces -------------------------------------------------- */
+
+.status-tag {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--storm-amber);
+  color: var(--storm-amber-ink);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.status-reason {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 7px;
+  margin-top: 9px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--storm-slate);
+  color: var(--white);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.status-reason svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.status-reason.is-weather svg {
+  color: var(--storm-amber);
+}
+
+/* --- Schedule table -------------------------------------------------------- */
+
+.schedule-table-topic .status-tag {
+  margin-left: 8px;
+}
+
+.schedule-table-row.is-called-off {
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(29, 39, 51, 0.04) 0 10px,
+    transparent 10px 20px
+  );
+  box-shadow: inset 3px 0 0 var(--storm-amber);
+}
+
+.schedule-table-row.is-called-off .schedule-table-title,
+.schedule-table-row.is-called-off:hover .schedule-table-title {
+  color: #5b6573;
+}
+
+.schedule-table-row.is-called-off s,
+.talk-card.is-called-off h3 s,
+.archive-talk.is-called-off .archive-talk-title s {
+  text-decoration-thickness: 2px;
+  text-decoration-color: rgba(29, 39, 51, 0.5);
+}
+
+.schedule-table-row.is-called-off .schedule-table-date-badge {
+  border-color: transparent;
+  background: var(--storm-slate);
+  color: var(--white);
+}
+
+.schedule-table-row.is-called-off .schedule-table-date-badge .date-month {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.schedule-table-row.is-called-off .schedule-table-description {
+  color: rgba(20, 32, 51, 0.45);
+}
+
+/* --- Talk cards (/schedule/) and archive ----------------------------------- */
+
+.talk-card.is-called-off {
+  box-shadow: inset 0 3px 0 var(--storm-amber), var(--shadow-card);
+}
+
+.talk-card.is-called-off h3 {
+  color: #5b6573;
+}
+
+.talk-card.is-called-off .talk-speaker-row,
+.talk-card.is-called-off .talk-description {
+  opacity: 0.7;
+}
+
+.talk-card p.talk-card-status,
+.archive-talk-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 9px auto 0;
+}
+
+.archive-talk-status {
+  justify-content: flex-start;
+  margin: 0 0 8px;
+}
+
+.talk-card-status .status-reason,
+.archive-talk-status .status-reason {
+  margin-top: 0;
+}
+
+.archive-talk.is-called-off .archive-talk-title {
+  color: #5b6573;
+}
+
+/* --- Speaker roster -------------------------------------------------------- */
+
+.speaker-directory-topic-date .status-tag {
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 0.62rem;
+}
+
+/* --- Flyer gallery --------------------------------------------------------- */
+
+.flyer-card.is-called-off .flyer-card-art img {
+  filter: grayscale(0.7) drop-shadow(0 10px 16px rgba(55, 24, 29, 0.18));
+  opacity: 0.75;
+}
+
+.flyer-card-stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 6px 18px;
+  border: 2px solid var(--storm-amber);
+  border-radius: 6px;
+  background: rgba(29, 39, 51, 0.86);
+  color: var(--white);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%) rotate(-10deg);
+  pointer-events: none;
+}
+
+.flyer-card-status {
+  color: #7a4d00;
+}
+
+/* --- Hero card, called-off state ----------------------------------------- */
+
+/* The card keeps the talk but turns amber at the edge and in the label, so it
+   reads as "this one is off" before a word of it is read. */
+.seminar-card-body.is-called-off {
+  box-shadow: inset 0 4px 0 var(--storm-amber);
+}
+
+.seminar-card-body.is-called-off .seminar-label {
+  background: var(--storm-amber);
+  color: var(--storm-amber-ink);
+}
+
+.seminar-card-body.is-called-off .seminar-label svg {
+  color: var(--storm-amber-ink);
+}
+
+.seminar-card-body.is-weather .seminar-label svg {
+  animation: storm-spin 8s linear infinite;
+}
+
+.seminar-card-body.is-called-off .seminar-title s {
+  text-decoration-thickness: 3px;
+  text-decoration-color: rgba(242, 177, 52, 0.85);
+}
+
+.seminar-card-body.is-called-off .seminar-description,
+.seminar-card-body.is-called-off .seminar-speaker-row {
+  opacity: 0.72;
+}
+
+.seminar-card-body.is-called-off .meta-row s {
+  text-decoration-color: rgba(242, 177, 52, 0.85);
+}
+
+.meta-row-next {
+  color: #ffe3a6;
+  font-size: 0.94rem;
+}
+
+.meta-row-next .meta-icon {
+  color: var(--storm-amber);
+}
+
+/* --- Front-page notice ----------------------------------------------------- */
+
+/* Heads the hero copy column, directly above the department wordmark, so the
+   seminar card keeps the full height of the right-hand column. */
+.hero-notice {
+  margin-bottom: 28px;
+}
+
+.page-notice {
+  margin: 0 0 28px;
+}
+
+.hero-notice[hidden],
+.page-notice[hidden] {
+  display: none;
+}
+
+.site-notice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px 16px 24px;
+  overflow: hidden;
+  border: 1px solid rgba(242, 177, 52, 0.5);
+  border-radius: var(--radius);
+  background: linear-gradient(120deg, rgba(12, 19, 30, 0.94), rgba(29, 39, 51, 0.9));
+  box-shadow: var(--shadow);
+  color: var(--white);
+  backdrop-filter: blur(14px) saturate(1.2);
+}
+
+.site-notice::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 4px;
+  background: var(--storm-amber);
+  content: "";
+}
+
+.site-notice.is-weather::after {
+  position: absolute;
+  inset: -128px -64px;
+  opacity: 0.45;
+  pointer-events: none;
+  content: "";
+  animation: storm-rain 0.9s linear infinite;
+}
+
+.site-notice-visual {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(242, 177, 52, 0.24), transparent 70%);
+  color: var(--storm-amber);
+}
+
+.site-notice-visual svg {
+  width: 40px;
+  height: 40px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.site-notice.is-weather .site-notice-visual svg {
+  animation: storm-spin 6s linear infinite;
+}
+
+.site-notice-copy {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  flex: 1;
+}
+
+
+.site-notice .site-notice-title {
+  margin: 0;
+  color: var(--white);
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  line-height: 1.2;
+}
+
+
+
+
+
+
+
+/* Detailed version (/schedule/): a kicker above the headline and one line per
+   called-off talk. The homepage shows only the headline and the closing line. */
+.site-notice.is-detailed {
+  align-items: flex-start;
+  padding: 20px 24px 20px 28px;
+}
+
+.site-notice-kicker {
+  margin: 0 0 4px;
+  color: var(--storm-amber);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.site-notice-list {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-notice-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.site-notice-date {
+  color: #ffe3a6;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.site-notice-talk {
+  min-width: 0;
+  flex: 1;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.9rem;
+}
+
+.site-notice-talk s {
+  text-decoration-color: rgba(255, 255, 255, 0.55);
+}
+
+.site-notice-speaker {
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.site-notice.is-detailed .site-notice-foot {
+  margin-top: 12px;
+}
+
+.site-notice-foot {
+  margin: 4px 0 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.86rem;
+}
+
+/* --- Hero storm layer ------------------------------------------------------ */
+
+/* z-index 1 puts it over the seasonal scene (which carries none) while
+   .hero-inner, also z-index 1 but later in the tree, stays on top of it. */
+.hero-storm {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 74% 46%, rgba(120, 150, 190, 0.16), transparent 40%),
+    linear-gradient(180deg, rgba(8, 14, 24, 0.4), transparent 55%);
+  pointer-events: none;
+}
+
+.hero-storm-rain {
+  position: absolute;
+  inset: -128px -64px;
+  opacity: 0.32;
+  animation: storm-rain 0.8s linear infinite;
+  will-change: translate;
+}
+
+
+@media (max-width: 560px) {
+  .site-notice.is-detailed {
+    flex-direction: column;
+    gap: 12px;
+    padding: 18px 18px 18px 22px;
+  }
+
+  .site-notice-visual {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+
+  .site-notice-visual svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Stacked rather than wrapped: a long title squeezed beside the date and
+     tag breaks one word per line. */
+  .site-notice-item {
+    display: grid;
+    justify-items: start;
+    gap: 6px;
+  }
+
+  .site-notice .status-tag {
+    order: -1;
+  }
+}
+
+/* Everything settles to its resting frame: the storm still reads, nothing
+   moves. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-storm-rain,
+  .site-notice.is-weather::after,
+  .site-notice.is-weather .site-notice-visual svg,
+  .seminar-card-body.is-weather .seminar-label svg {
+    animation: none;
+  }
+}

@@ -13,7 +13,22 @@ import {
   loadUniqueSpeakersFromCsv,
   speakerProfileHref
 } from "../data/speakers.js";
+import {
+  isBreakEntry,
+  isCalledOff,
+  isWeatherReason,
+  statusLabel,
+  statusReason
+} from "../data/talk-status.js";
 import { renderSpeakerNameLinks } from "./speaker-links.js";
+import {
+  statusClasses,
+  statusDataAttrs,
+  statusIconName,
+  statusReasonMarkup,
+  statusTagMarkup,
+  statusTitleMarkup
+} from "./talk-status-markup.js";
 import { icon } from "../ui/icons.js";
 import { activateMotion } from "../ui/reveal.js";
 import { qs } from "../utils/dom.js";
@@ -130,9 +145,6 @@ const loadResolvedSchedule = async () => {
   };
 };
 
-const isBreakEntry = (talk = {}) =>
-  /\b(no classes|holiday|break|recess)\b/i.test(talk.talkTitle || "");
-
 // Talks inherit one standing time, room and Zoom from page-data. A row may
 // override any part of that with start_time, location and registration_url;
 // whatever it leaves blank keeps the standing value, so a blank location means
@@ -199,6 +211,7 @@ const scheduleRowClasses = (talk, nextTalkDate) => {
   if (isBreakEntry(talk)) {
     classes.push("is-break");
   }
+  classes.push(...statusClasses(talk));
   if (!isUpcoming(talk.talkDate)) {
     classes.push("is-past");
   } else if (talk.talkDate === nextTalkDate) {
@@ -209,10 +222,10 @@ const scheduleRowClasses = (talk, nextTalkDate) => {
 
 const renderScheduleRow = (talk, nextTalkDate) => {
   const badge = dateBadge(talk.talkDate);
-  const isNext = talk.talkDate === nextTalkDate && !isBreakEntry(talk);
+  const isNext = talk.talkDate === nextTalkDate && !isBreakEntry(talk) && !isCalledOff(talk);
   const rowFlyerMarkup = flyerChipMarkup(talk, { compact: true });
   return `
-    <tr class="${scheduleRowClasses(talk, nextTalkDate)}" data-reveal="row">
+    <tr class="${scheduleRowClasses(talk, nextTalkDate)}"${statusDataAttrs(talk)} data-reveal="row">
       <th class="schedule-table-date" scope="row">
         <span class="schedule-table-date-badge" aria-hidden="true">
           <span class="date-month">${escapeHtml(badge.month)}</span>
@@ -222,9 +235,11 @@ const renderScheduleRow = (talk, nextTalkDate) => {
         ${rowFlyerMarkup ? `<span class="schedule-table-date-flyer">${rowFlyerMarkup}</span>` : ""}
       </th>
       <td class="schedule-table-topic">
-        <span class="schedule-table-title">${escapeHtml(talk.talkTitle)}</span>
+        <span class="schedule-table-title">${statusTitleMarkup(talk)}</span>
         ${isNext ? '<span class="schedule-table-next-tag">Next up</span>' : ""}
-        ${sessionSummaryMarkup(talk)}
+        ${statusTagMarkup(talk)}
+        ${statusReasonMarkup(talk)}
+        ${isCalledOff(talk) ? "" : sessionSummaryMarkup(talk)}
       </td>
       <td class="schedule-table-description">${
         talk.description
@@ -237,7 +252,9 @@ const renderScheduleRow = (talk, nextTalkDate) => {
 };
 
 const renderScheduleTable = (talks) => {
-  const nextTalk = talks.find((talk) => isUpcoming(talk.talkDate) && !isBreakEntry(talk));
+  const nextTalk = talks.find(
+    (talk) => isUpcoming(talk.talkDate) && !isBreakEntry(talk) && !isCalledOff(talk)
+  );
   const nextTalkDate = nextTalk?.talkDate || "";
   return `
     <div class="schedule-table-wrap">
@@ -321,19 +338,21 @@ const renderTalkCard = (speaker, details = {}) => {
     ? ""
     : ` href="${escapeHtml(speakerWebsite(primarySpeaker))}"`;
   const talkFlyerMarkup = flyerChipMarkup(speaker);
+  const calledOff = isCalledOff(speaker);
+  const cardClasses = ["talk-card", ...statusClasses(speaker)].join(" ");
 
   return `
-    <article class="talk-card" data-reveal="up">
+    <article class="${cardClasses}"${statusDataAttrs(speaker)} data-reveal="up">
       <div class="talk-card-header">
         <div class="date-badge">
           <span class="sr-only">${escapeHtml(readableDate(speaker.talkDate))}</span>
           <span class="date-month" aria-hidden="true">${escapeHtml(badge.month)}</span>
           <span class="date-day" aria-hidden="true">${escapeHtml(badge.day)}</span>
         </div>
-        <h3>${escapeHtml(speaker.talkTitle)}</h3>
+        <h3>${statusTitleMarkup(speaker)}</h3>
         ${talkFlyerMarkup ? `<div class="talk-card-flyer">${talkFlyerMarkup}</div>` : ""}
       </div>
-      ${sessionSummaryMarkup(speaker, "p")}
+      ${calledOff ? `<p class="talk-card-status">${statusTagMarkup(speaker)}${statusReasonMarkup(speaker)}</p>` : sessionSummaryMarkup(speaker, "p")}
       <p class="talk-description">${escapeHtml(description)}</p>
       <div class="talk-card-spacer" aria-hidden="true"></div>
       <${speakerRowTag} class="talk-speaker-row"${speakerRowAttrs}>
@@ -409,12 +428,15 @@ const typedTitle = (text = "") => {
 export const renderHero = async (templates) => {
   const seminar = pageData.hero.nextSeminarCard;
   const resolved = await loadResolvedSchedule();
-  const upcomingTalk = resolved?.status === "break" ? null : resolved?.talks?.[0];
+  // The next talk that is actually going ahead. The card itself still shows a
+  // called-off talk (below), but the Zoom button must never lead to one.
+  const upcoming = resolved?.status === "break" ? [] : resolved?.talks || [];
+  const goingAhead = upcoming.find((talk) => !isCalledOff(talk));
 
   // The hero offers the standing Zoom room, which is the wrong door for a
   // session joined by registering elsewhere. Retarget it while that talk is the
   // next one up; every other week the button is untouched.
-  const heroRegistrationUrl = sessionRegistration(upcomingTalk || {});
+  const heroRegistrationUrl = sessionRegistration(goingAhead || {});
   qs("[data-hero-actions]").innerHTML = pageData.hero.content.buttons
     .map((button) =>
       heroRegistrationUrl && button.icon === "zoom"
@@ -454,7 +476,16 @@ export const renderHero = async (templates) => {
   const dateTime = useCsv
     ? `${readableDate(speaker.talkDate)} - ${sessionTime(speaker) || STANDING_TIME}`
     : seminar.dateTime;
-  const seminarLabel = nextSeminarLabel(speaker.talkDate, seminar.dateTime);
+  // A called-off talk keeps its place on the card until its hour has passed,
+  // so anyone looking for it finds it. The card turns over to say so: the label
+  // carries the status and reason, the title is struck, and the room/Zoom row -
+  // no longer a way in - points at the next talk that is going ahead instead.
+  const calledOff = useCsv && isCalledOff(speaker);
+  const weather = calledOff && isWeatherReason(speaker);
+  const seminarLabel = calledOff
+    ? [statusLabel(speaker), statusReason(speaker)].filter(Boolean).join(" · ")
+    : nextSeminarLabel(speaker.talkDate, seminar.dateTime);
+  const labelIcon = calledOff ? statusIconName(speaker) : "calendar";
 
   // page-data lists the standing room first and the standing Zoom second. A row
   // overriding one keeps the other, so the two are resolved independently.
@@ -475,11 +506,23 @@ export const renderHero = async (templates) => {
       name
     )}</span><span>${inner}</span></div>`;
   const talkLocationNote = locationNote(speaker);
-  const metaRowsMarkup = [
-    metaRow("clock", escapeHtml(dateTime)),
-    metaRow("map-pin", [roomMarkup, onlineMarkup].filter(Boolean).join(" + ")),
-    talkLocationNote ? metaRow("map-pin", escapeHtml(talkLocationNote), " meta-row-note") : ""
-  ]
+  const nextUpMarkup = goingAhead
+    ? `Next seminar: ${escapeHtml(readableDate(goingAhead.talkDate))} &middot; <a href="/schedule/">${escapeHtml(
+        goingAhead.talkTitle
+      )}</a>`
+    : "No further seminars are scheduled yet.";
+  const metaRowsMarkup = (
+    calledOff
+      ? [
+          metaRow("clock", `<s>${escapeHtml(dateTime)}</s>`),
+          metaRow("calendar", nextUpMarkup, " meta-row-next")
+        ]
+      : [
+          metaRow("clock", escapeHtml(dateTime)),
+          metaRow("map-pin", [roomMarkup, onlineMarkup].filter(Boolean).join(" + ")),
+          talkLocationNote ? metaRow("map-pin", escapeHtml(talkLocationNote), " meta-row-note") : ""
+        ]
+  )
     .filter(Boolean)
     .join("\n        ");
   const speakerInitialsMarkup = escapeHtml(speakerInitials(primarySpeaker.name || speakerName));
@@ -507,9 +550,11 @@ export const renderHero = async (templates) => {
   const heroFlyerMarkup = flyerChipMarkup(speaker);
 
   swapSeminarCard(`
-    <div class="seminar-card-body">
-      <p class="seminar-label">${icon("calendar")}<span>${escapeHtml(seminarLabel)}</span></p>
-      <h2 class="seminar-title">${typedTitle(talkTitle)}</h2>
+    <div class="seminar-card-body${calledOff ? " is-called-off" : ""}${weather ? " is-weather" : ""}"${
+      useCsv ? statusDataAttrs(speaker) : ""
+    }>
+      <p class="seminar-label">${icon(labelIcon)}<span>${escapeHtml(seminarLabel)}</span></p>
+      <h2 class="seminar-title">${calledOff ? statusTitleMarkup(speaker, talkTitle) : typedTitle(talkTitle)}</h2>
       <p class="seminar-description">${escapeHtml(talkDescription)}</p>
       <div class="seminar-card-spacer" aria-hidden="true"></div>
       <div class="seminar-speaker-row">
@@ -621,7 +666,7 @@ const collectSemesterSpeakers = (talks = []) => {
       }
       const entry = byKey.get(key);
       if (talk.talkTitle && !entry.talks.some((item) => item.title === talk.talkTitle)) {
-        entry.talks.push({ title: talk.talkTitle, date: talk.talkDate });
+        entry.talks.push({ title: talk.talkTitle, date: talk.talkDate, talk });
       }
     });
   });
@@ -673,11 +718,12 @@ export const renderSpeakers = async (templates) => {
         topicsMarkup: speaker.talks
           .map(
             (talk) =>
-              `<li><span class="speaker-directory-topic-title">${escapeHtml(
+              `<li${statusDataAttrs(talk.talk)}><span class="speaker-directory-topic-title">${statusTitleMarkup(
+                talk.talk,
                 talk.title
               )}</span><span class="speaker-directory-topic-date">${escapeHtml(
                 readableDate(talk.date)
-              )}</span></li>`
+              )}${statusTagMarkup(talk.talk)}</span></li>`
           )
           .join(""),
         website: escapeHtml(speakerProfileHref(speaker, "/speakers/")),

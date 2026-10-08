@@ -101,6 +101,9 @@
               <a class="button-link button-primary panel-button" href="/speakers/">View speakers</a>
             </div>
           </div>
+          <!-- Filled by renderSiteNotice when a talk in speakers.csv carries a
+               status (cancelled / postponed). Empty and hidden otherwise. -->
+          <div class="page-notice" data-site-notice hidden></div>
           <div class="talk-showcase-grid" data-full-schedule-list data-skeleton style="--skeleton-height: 460px"></div>
         </div>
       </section>

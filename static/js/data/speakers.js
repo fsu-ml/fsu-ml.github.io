@@ -1,4 +1,5 @@
 import { parseCsv } from "../utils/csv.js";
+import { normalizeStatus } from "./talk-status.js";
 
 const speakerImagesUrl = new URL("../../../data/speaker-images/", import.meta.url);
 const eventImagesUrl = new URL("../../../data/event-images/", import.meta.url);
@@ -143,6 +144,8 @@ const mapSpeakerRecord = (profile, schedule = {}, { hasProfile: profileListed = 
   location: schedule.location || "",
   registrationUrl: schedule.registration_url || "",
   flyers: schedule.flyers || "",
+  status: normalizeStatus(schedule.status),
+  statusReason: schedule.status_reason || "",
   eventImage: schedule.event_image ? new URL(schedule.event_image, eventImagesUrl).href : "",
   image: profile.image ? new URL(profile.image, speakerImagesUrl).href : "",
   hasProfile: profileListed
@@ -218,7 +221,8 @@ export const loadUniqueSpeakersFromCsv = async ({ featuredOnly = true } = {}) =>
     const merged = mapSpeakerRecord(profile, schedule, {
       hasProfile: hasProfile(profilesByKey, canonicalName)
     });
-    const hasTalk = Boolean(merged.talkTitle || merged.talkDate);
+    // A called-off talk was never given, so it does not count toward the total.
+    const hasTalk = Boolean(merged.talkTitle || merged.talkDate) && !merged.status;
     const specialties = (merged.topic || "")
       .split(";")
       .map((item) => item.trim())
