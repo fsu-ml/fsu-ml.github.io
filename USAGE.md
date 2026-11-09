@@ -676,6 +676,9 @@ static/css/components/notices.css      Styling for all of the above
 static/js/render/       Functions that turn data into markup
 static/js/ui/           Navigation, icons, scroll behavior, reveal.js, chrome.js, lightbox.js
 static/js/utils/        CSV parsing, DOM helpers, HTML escaping, date formatting, materials and flyer links
+static/js/seasonal/     Date-driven seasonal themes (season.js picks one, engine.js is the shared runtime)
+static/js/seasonal/thanksgiving/  Thanksgiving's parts: misty-ridges hero, card vine, harvest-table footer
+static/css/seasonal/    One stylesheet per theme (Thanksgiving is split into -hero, -cards, -footer)
 data/                   speakers.csv, speaker-profiles.csv, images, flyers, archived HTML
 images/                 Banner and general artwork
 ```

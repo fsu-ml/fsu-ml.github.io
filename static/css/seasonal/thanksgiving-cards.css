@@ -1,0 +1,114 @@
+/* ---------------------------------------------------------------------------
+   Thanksgiving — card hover: the vine
+   ---------------------------------------------------------------------------
+   On hover a vine draws itself along the card's own edges, just inside the
+   border, leaves budding as the tip passes them and a pumpkin setting in the
+   top-right corner (thanksgiving/cards.js). The artwork is a
+   `.season-card-art`, clipped to the card's rounded corners, so nothing
+   hangs outside the card.
+
+   Decoration only: no text colour, no background under text and no focus
+   ring changes, and the artwork never takes the pointer. Every state answers
+   :focus-within as well as :hover, so tabbing to a link inside a card shows
+   the same thing.
+
+   Coming back off the card, everything retracts quickly and without the
+   per-leaf delays, so a pointer passing over a row of cards does not leave a
+   trail of half-grown vines behind it.
+   -------------------------------------------------------------------------- */
+
+.tg-vine-line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.tg-vine-line path {
+  fill: none;
+  stroke: rgba(107, 74, 30, 0.72);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 320ms var(--ease-out-soft);
+}
+
+/* A zero-size anchor on the vine; the leaf grows out of it from its stem. */
+.tg-vine-leaf {
+  position: absolute;
+  width: 0;
+  height: 0;
+  transform: rotate(var(--rot, 0deg)) scale(0);
+  transition: transform 220ms var(--ease-out-soft);
+}
+
+.tg-vine-leaf svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: block;
+  translate: -50% 0;
+}
+
+.tg-vine-fruit {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  display: block;
+  transform: scale(0) rotate(-20deg);
+  transform-origin: 50% 100%;
+  transition: transform 220ms var(--ease-out-soft);
+}
+
+.tg-vine-fruit svg {
+  display: block;
+  filter: drop-shadow(0 1px 1px rgba(42, 17, 24, 0.3));
+}
+
+:is(.feature-card, .community-card, .talk-card, .speaker-directory-card):is(:hover, :focus-within) > .tg-vine .tg-vine-line path {
+  stroke-dashoffset: 0;
+  transition-duration: 900ms;
+}
+
+:is(.feature-card, .community-card, .talk-card, .speaker-directory-card):is(:hover, :focus-within) > .tg-vine .tg-vine-leaf {
+  transform: rotate(var(--rot, 0deg)) scale(1);
+  transition: transform 460ms var(--ease-spring) var(--wait, 0ms);
+}
+
+:is(.feature-card, .community-card, .talk-card, .speaker-directory-card):is(:hover, :focus-within) > .tg-vine .tg-vine-fruit {
+  transform: scale(1) rotate(0deg);
+  transition: transform 520ms var(--ease-spring) 880ms;
+}
+
+/* ---------------------------------------------------------------------------
+   Schedule rows
+   ---------------------------------------------------------------------------
+   The row's date badge already hops on hover; a leaf tucks in behind it.
+   -------------------------------------------------------------------------- */
+
+:root[data-season="thanksgiving"] .schedule-table-date-badge {
+  position: relative;
+}
+
+:root[data-season="thanksgiving"] .schedule-table-date-badge::after {
+  position: absolute;
+  top: -9px;
+  right: -9px;
+  width: 18px;
+  height: 18px;
+  content: "";
+  background: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23c8641f' d='M50 98V80L31 88l3-13-21-4 10-10L7 47l16-2-6-16 16 6 3-17 8 13 6-25 6 25 8-13 3 17 16-6-6 16 16 2-15 14 10 10-21 4 3 13-19-8z'/%3E%3Cpath d='M50 96V14' stroke='rgba%2842%2C17%2C10%2C.35%29' stroke-width='3'/%3E%3C/svg%3E");
+  opacity: 0;
+  transform: translate(-6px, 6px) rotate(-60deg) scale(0.6);
+  pointer-events: none;
+  transition:
+    opacity var(--dur-base) var(--ease-out-soft),
+    transform var(--dur-slow) var(--ease-spring);
+}
+
+:root[data-season="thanksgiving"] .schedule-table-row:hover .schedule-table-date-badge::after {
+  opacity: 1;
+  transform: rotate(18deg);
+}

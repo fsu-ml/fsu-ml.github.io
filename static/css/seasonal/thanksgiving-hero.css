@@ -1,0 +1,162 @@
+/* ---------------------------------------------------------------------------
+   Thanksgiving — hero: misty ridges
+   ---------------------------------------------------------------------------
+   Five ridges stepping back into a low autumn sun, with round trees in rust,
+   ochre and gold along the crests, bands of fog drifting between them, slow
+   rays turning behind the sun and a pointer parallax (thanksgiving/
+   hero-ridges.js). As the page is read the sun sinks and the sky deepens to
+   dusk, driven by `--season-progress`.
+
+   The banner photograph and its overlay go, as Winter and Halloween do. The
+   scene sits behind `.hero-inner` (no z-index of its own), so the copy and
+   the seminar card keep the contrast they were audited with: the ridges stay
+   low on the copy's side, and a shade there keeps white and the gold
+   headline over a sky in the garnet-to-rust range.
+   -------------------------------------------------------------------------- */
+
+:root[data-season="thanksgiving"] .hero-media,
+:root[data-season="thanksgiving"] .hero-overlay {
+  display: none;
+}
+
+/* The top of the sky, so there is no flash of the site's navy before the
+   scene mounts. */
+:root[data-season="thanksgiving"] .hero {
+  background: #2a0f14;
+}
+
+/* A shade on the copy's side, deepest behind the subtitle and buttons. */
+.tg-hero-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 62%, rgba(10, 4, 8, 0.4), transparent 72%),
+    linear-gradient(90deg, rgba(10, 4, 8, 0.5) 0%, rgba(10, 4, 8, 0.26) 40%, transparent 62%);
+  pointer-events: none;
+}
+
+@media (max-width: 1080px) {
+  /* Stacked: the copy runs the full width at the top. */
+  .tg-hero-shade {
+    background: linear-gradient(180deg, rgba(10, 4, 8, 0.4) 0%, rgba(10, 4, 8, 0.22) 45%, transparent 70%);
+  }
+}
+
+/* The seminar card is frosted glass beside the sun; a warm rim on the sun's
+   side says where its light comes from. */
+:root[data-season="thanksgiving"] .next-seminar {
+  border-color: rgba(240, 180, 100, 0.5);
+  box-shadow:
+    0 30px 72px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 220, 170, 0.18),
+    -24px 0 60px -30px rgba(242, 150, 70, 0.45);
+}
+
+@keyframes tg-rays {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes tg-fog {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.tg-hero-ridges .season-sky {
+  background:
+    radial-gradient(circle at var(--tg-sun-x, 60%) calc(100% - var(--tg-sun-y, 200px)), rgba(255, 214, 140, 0.5), rgba(255, 180, 90, 0.16) 14%, transparent 34%),
+    linear-gradient(180deg, #2a0f14 0%, #43161a 26%, #632218 50%, #8e3a1e 68%, #c46a30 84%, #ecaa58 100%);
+}
+
+.tg-ridge-sun {
+  position: absolute;
+  bottom: var(--tg-sun-y, 200px);
+  left: var(--tg-sun-x, 60%);
+  width: 92px;
+  height: 92px;
+  margin: 0 0 -46px -46px;
+  /* Sinks as the page is read, like the original hero's sunset. */
+  transform: translateY(calc(var(--season-progress, 0) * 80px));
+}
+
+.tg-ridge-disc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 42%, #fff4d2, #f9cc6c 56%, #f2a742 100%);
+  box-shadow:
+    0 0 36px 12px rgba(255, 200, 110, 0.5),
+    0 0 120px 50px rgba(240, 150, 60, 0.28);
+}
+
+.tg-ridge-rays {
+  position: absolute;
+  inset: -300px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 226, 170, 0.16) 0deg 5deg, transparent 5deg 20deg);
+  -webkit-mask-image: radial-gradient(circle, #000 12%, transparent 66%);
+  mask-image: radial-gradient(circle, #000 12%, transparent 66%);
+  animation: tg-rays 240s linear infinite;
+}
+
+/* Each ridge is its own box, wider than the hero so the pointer parallax
+   never shows an edge, and drawn under `xMidYMax slice` so it crops rather
+   than stretches on a phone. */
+.tg-ridge {
+  position: absolute;
+  right: -48px;
+  bottom: 0;
+  left: -48px;
+  height: 58%;
+  min-height: 300px;
+  transform: translate3d(
+    calc(var(--tg-px, 0) * var(--depth) * 1px),
+    calc(var(--tg-py, 0) * var(--depth) * 0.3px),
+    0
+  );
+}
+
+.tg-ridge svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Fog: soft ellipses on a tile twice the hero's width, scrolled one tile so
+   the loop is seamless, and shoved along a little further by each gust. */
+.tg-fog {
+  position: absolute;
+  bottom: var(--bottom);
+  left: 0;
+  width: 200%;
+  height: var(--h);
+  background:
+    radial-gradient(ellipse 16% 46% at 12% 52%, rgba(255, 222, 190, var(--alpha)), transparent 70%),
+    radial-gradient(ellipse 22% 40% at 38% 58%, rgba(255, 222, 190, var(--alpha)), transparent 70%),
+    radial-gradient(ellipse 14% 50% at 63% 44%, rgba(255, 222, 190, var(--alpha)), transparent 70%),
+    radial-gradient(ellipse 20% 44% at 86% 54%, rgba(255, 222, 190, var(--alpha)), transparent 70%);
+  background-size: 50% 100%;
+  background-repeat: repeat-x;
+  translate: calc(var(--wind, 0) * 0.8px) 0;
+  transition: translate 1.2s ease-out;
+  animation: tg-fog var(--dur) linear infinite;
+}
+
+.tg-hero-ridges .tg-geese {
+  top: 22%;
+}
+
+/* A second sky laid over the first and cross-faded by scroll progress, so the
+   hero deepens from golden hour to dusk as the page is read. Cross-fading two
+   whole gradients is the only way to interpolate between them. */
+.tg-dusk {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 42% 14%, rgba(74, 28, 39, 0.34), transparent 46%),
+    linear-gradient(180deg, rgba(28, 10, 16, 0.82) 0%, rgba(60, 22, 30, 0.6) 58%, rgba(130, 56, 30, 0.34) 100%);
+  opacity: calc(var(--season-progress, 0) * 0.85);
+  pointer-events: none;
+}

@@ -3,22 +3,24 @@
  *
  * The idea that separates this from Winter is the wind. One JS source writes a
  * single unitless `--wind` to the document root each frame; every consumer —
- * leaves, wheat, the garland — reads it through `calc()`. One variable, zero
- * per-element JavaScript, which is what keeps a whole page of reacting parts
- * cheap.
+ * leaves, fog, the garland, candle flames — reads it, either through `calc()`
+ * or from `wind.value` in a canvas. One variable, zero per-element JavaScript
+ * for the CSS side, which is what keeps a whole page of reacting parts cheap.
  *
- * Leaves are the exception and live on a canvas, because they need to tumble in
- * three axes, flee the pointer and settle individually along the bottom, none
- * of which a keyframe can do.
+ * The page gets misty autumn ridges in the hero, a vine that grows along each
+ * card's edges on hover, and a candlelit harvest table in the footer. There is
+ * one wind, one leaf field and one rAF loop; anything else that animates per
+ * frame is a "part" with `step(dt)` and `draw()` that the loop drives, and
+ * parts scrolled out of view are skipped.
  */
 
 import {
   Disposer,
-  decorate,
   Loop,
   Surface,
   bindProgress,
   clamp,
+  decorate,
   make,
   onButtonPress,
   range,
@@ -26,21 +28,13 @@ import {
   smoothstep,
   trackPointer
 } from "./engine.js";
-
-/* Amber, burnt orange, rust, ochre, brown, and one garnet to keep the brand
-   in the mix. It was half garnet and wine, which read as the dinner rather
-   than the season. */
-const LEAF_COLORS = ["#d98e3f", "#c8641f", "#b4562c", "#e0a83c", "#7a3b1c", "#8e1f31"];
-const LEAF_KINDS = ["maple", "oak", "birch", "ovate"];
-const LEAF_PATH = {
-  maple: "M12 2l2 5 5-1-3 4 4 3-5 1 1 5-4-3-4 3 1-5-5-1 4-3-3-4 5 1z",
-  oak: "M12 2c-3 0-4 3-3 5-3 0-4 3-2 5-2 2 0 5 3 4l2 6 2-6c3 1 5-2 3-4 2-2 1-5-2-5 1-2 0-5-3-5z",
-  birch: "M12 2C7 6 5 11 6 16c1 3 4 5 6 6 2-1 5-3 6-6 1-5-1-10-6-14z",
-  ovate: "M12 2C5 5 3 12 6 21c7-1 12-7 12-14 0-2-1-4-2-5-1 3-3 5-5 6 2-2 2-5 1-6z"
-};
+import { LEAF_COLORS, LEAF_KINDS, drawLeaf, leafSvg, pickOf } from "./thanksgiving/art.js";
+import { mountCards } from "./thanksgiving/cards.js";
+import { mountFooter } from "./thanksgiving/footer.js";
+import { mountRidgesHero } from "./thanksgiving/hero-ridges.js";
 
 /* Tuned so the hero reads as a leaf fall at the default density: at 45 that
-   is 20 leaves, where it was 11. */
+   is 20 leaves. */
 const leafCount = (density) => Math.min(48, Math.round(density / 2.2));
 
 /* ---------------------------------------------------------------------------
@@ -117,10 +111,6 @@ class LeafField {
     this.pointer = null;
     this.t = 0;
     this._filled = false;
-    this.paths = {};
-    for (const kind of LEAF_KINDS) {
-      this.paths[kind] = new Path2D(LEAF_PATH[kind]);
-    }
   }
 
   make(fromTop) {
@@ -129,13 +119,11 @@ class LeafField {
       /* Depth drives size, fall speed, opacity and how hard the wind shoves
          it, so one number gives the field its parallax. */
       d,
-      size: 12 + d * 10,
+      size: 14 + d * 11,
       x: Math.random() * this.surface.width,
-      y: fromTop
-        ? range(Math.random, -80, -20)
-        : range(Math.random, -this.surface.height, this.surface.height),
-      kind: LEAF_KINDS[Math.floor(Math.random() * LEAF_KINDS.length)],
-      color: LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)],
+      y: fromTop ? range(Math.random, -80, -20) : range(Math.random, -this.surface.height, this.surface.height),
+      kind: pickOf(Math.random, LEAF_KINDS),
+      color: pickOf(Math.random, LEAF_COLORS),
       vx: 0,
       vy: 0.6 + d * 0.9,
       rot: Math.random() * 6.28,
@@ -156,8 +144,6 @@ class LeafField {
     const P = this.pointer && this.pointer.active ? this.pointer : null;
     this.t += dt;
 
-    /* The first fill spreads leaves through the whole column of air; refills
-       after that drop in from above. */
     while (this.leaves.length < this.target) {
       this.leaves.push(this.make(this._filled));
     }
@@ -201,8 +187,6 @@ class LeafField {
         l.x = -30;
       }
       if (l.y > H + 12) {
-        /* Landed. It joins a bounded set of settled leaves along the bottom
-           and a fresh one enters at the top, so the field stays at target. */
         if (this.settled.length >= 36) {
           this.settled.shift();
         }
@@ -211,34 +195,11 @@ class LeafField {
       }
     }
 
-    /* Settled leaves fade out after a couple of minutes, so the bottom of a
-       long-open page does not silently accumulate a solid band. */
     for (let i = this.settled.length - 1; i >= 0; i -= 1) {
       if (this.t - this.settled[i].t > 150) {
         this.settled.splice(i, 1);
       }
     }
-  }
-
-  drawLeaf(ctx, x, y, rot, flip, size, kind, color, alpha) {
-    const sc = size / 24;
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(rot);
-    /* `flip` is the cosine of the tumble phase, so scaling y by it turns the
-       leaf edge-on and back: a tumble in three dimensions from a 2D context. */
-    ctx.scale(sc, sc * flip);
-    ctx.globalAlpha = alpha;
-    ctx.translate(-12, -12);
-    ctx.fillStyle = color;
-    ctx.fill(this.paths[kind]);
-    ctx.strokeStyle = "rgba(42,17,24,.35)";
-    ctx.lineWidth = 0.8;
-    ctx.beginPath();
-    ctx.moveTo(12, 4);
-    ctx.lineTo(12, 20);
-    ctx.stroke();
-    ctx.restore();
   }
 
   draw() {
@@ -249,39 +210,15 @@ class LeafField {
     const H = this.surface.height;
     for (const s of this.settled) {
       const age = this.t - s.t;
-      this.drawLeaf(
-        ctx,
-        s.x,
-        H - s.size * 0.32,
-        s.rot,
-        1,
-        s.size,
-        s.kind,
-        s.color,
-        0.85 * Math.min(1, (150 - age) / 40)
-      );
+      drawLeaf(ctx, s.kind, s.x, H - s.size * 0.32, s.size, s.rot, s.color, 0.85 * Math.min(1, (150 - age) / 40));
     }
     for (const l of this.leaves) {
       const flip = Math.cos(l.ph);
-      this.drawLeaf(
-        ctx,
-        l.x,
-        l.y,
-        l.rot,
-        Math.abs(flip) < 0.12 ? 0.12 : flip,
-        l.size,
-        l.kind,
-        l.color,
-        0.5 + l.d * 0.3
-      );
+      drawLeaf(ctx, l.kind, l.x, l.y, l.size, l.rot, l.color, 0.55 + l.d * 0.28, Math.abs(flip) < 0.12 ? 0.12 : flip);
     }
   }
 
-  /**
-   * Throws n leaves out of a point, for the burst a button fires on click.
-   * They are ordinary field members from the next frame on, so they tumble,
-   * catch the wind and settle exactly like the rest.
-   */
+  /** Throws n leaves out of a point, for the burst a button fires on click. */
   burst(x, y, n) {
     for (let i = 0; i < n; i += 1) {
       const leaf = this.make(true);
@@ -290,8 +227,6 @@ class LeafField {
       Object.assign(leaf, { x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1.4 });
       this.leaves.push(leaf);
     }
-    /* The extra leaves are over target, so `step` trims the field back down
-       over the following frames rather than letting a click inflate it. */
   }
 
   /** Reduced motion: a scattering of leaves already lying along the bottom. */
@@ -305,30 +240,69 @@ class LeafField {
     const W = this.surface.width;
     const n = Math.max(6, Math.round(this.target * 0.8));
     for (let i = 0; i < n; i += 1) {
-      const size = range(rand, 12, 26);
-      this.drawLeaf(
-        ctx,
-        rand() * W,
-        H - size * 0.32,
-        rand() * 6.28,
-        1,
-        size,
-        LEAF_KINDS[Math.floor(rand() * LEAF_KINDS.length)],
-        LEAF_COLORS[Math.floor(rand() * LEAF_COLORS.length)],
-        0.85
-      );
+      const size = range(rand, 14, 28);
+      drawLeaf(ctx, pickOf(rand, LEAF_KINDS), rand() * W, H - size * 0.32, size, rand() * 6.28, pickOf(rand, LEAF_COLORS), 0.85);
     }
   }
 }
 
 /* ---------------------------------------------------------------------------
-   Artwork
+   Part helpers
    -------------------------------------------------------------------------- */
 
-const leafSvg = (kind, color, size, extra = "") =>
-  `<svg viewBox="0 0 24 24" width="${size}" height="${size}" aria-hidden="true" ${extra}>
-     <path d="${LEAF_PATH[kind]}" fill="${color}"></path>
-   </svg>`;
+/**
+ * Caches an element's viewport box, refreshed on scroll and resize rather
+ * than read inside the frame loop: the loop writes `--wind` every frame, so a
+ * read there would force a style recalculation each time.
+ */
+const rectTracker = (disposer) => (el) => {
+  const box = { left: 0, top: 0, width: 0, height: 0, bottom: 0 };
+  const read = () => {
+    const r = el.getBoundingClientRect();
+    box.left = r.left;
+    box.top = r.top;
+    box.width = r.width;
+    box.height = r.height;
+    box.bottom = r.bottom;
+  };
+  disposer.listen(window, "scroll", read, { passive: true });
+  disposer.listen(window, "resize", read, { passive: true });
+  const ro = new ResizeObserver(read);
+  ro.observe(el);
+  disposer.add(() => ro.disconnect());
+  read();
+  /** The pointer in this element's coordinates, or null when it is away. */
+  box.local = (pointer) => {
+    if (!pointer.active) {
+      return null;
+    }
+    const x = pointer.x - box.left;
+    const y = pointer.y - box.top;
+    return x < -40 || y < -40 || x > box.width + 40 || y > box.height + 40 ? null : { x, y };
+  };
+  return box;
+};
+
+/* Parts off screen are skipped entirely: no step, no draw. */
+const watchVisible = (disposer, part) => {
+  if (!part.el || typeof IntersectionObserver !== "function") {
+    return;
+  }
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        part.visible = entry.isIntersecting;
+      }
+    },
+    { rootMargin: "120px" }
+  );
+  io.observe(part.el);
+  disposer.add(() => io.disconnect());
+};
+
+/* ---------------------------------------------------------------------------
+   Chrome artwork
+   -------------------------------------------------------------------------- */
 
 /* Garland of individual leaves and berries along the bar's bottom edge. Kept
    static: a whole row of leaves swaying under the navigation was movement
@@ -341,13 +315,9 @@ const garland = (seed, count = 26) => {
     const size = 15 + rand() * 9;
     const rot = -60 + rand() * 120;
     parts.push(
-      `<span class="tg-garland-leaf" style="left:${x.toFixed(2)}%;top:${(-size * 0.42).toFixed(
-        1
-      )}px;transform:rotate(${rot.toFixed(0)}deg)">${leafSvg(
-        LEAF_KINDS[Math.floor(rand() * 4)],
-        LEAF_COLORS[Math.floor(rand() * 4)],
-        size
-      )}</span>`
+      `<span class="tg-garland-leaf" style="left:${x.toFixed(2)}%;top:${(-size * 0.42).toFixed(1)}px;transform:rotate(${rot.toFixed(
+        0
+      )}deg)">${leafSvg(pickOf(rand, LEAF_KINDS), pickOf(rand, LEAF_COLORS.slice(0, 4)), size.toFixed(0), { veins: false })}</span>`
     );
     if (rand() > 0.55) {
       parts.push(`<span class="tg-berry" style="left:${(x + 2).toFixed(2)}%"></span>`);
@@ -356,43 +326,6 @@ const garland = (seed, count = 26) => {
   return parts.join("");
 };
 
-const starfield = (seed, n) => {
-  const rand = seeded(seed);
-  return Array.from(
-    { length: n },
-    () =>
-      `<span class="tg-star" style="left:${(rand() * 100).toFixed(1)}%;top:${(
-        rand() * 52
-      ).toFixed(1)}%;--delay:${(-rand() * 3).toFixed(1)}s"></span>`
-  ).join("");
-};
-
-/* A V of seven geese. One shared flap phase with a per-bird delay, so the
-   formation beats together without being in perfect lockstep. */
-const GEESE = (() => {
-  const offsets = [
-    [0, 0],
-    [-16, 9],
-    [16, 9],
-    [-32, 18],
-    [32, 18],
-    [-48, 27],
-    [48, 27]
-  ];
-  const birds = offsets
-    .map(
-      ([dx, dy], i) =>
-        `<g class="tg-goose" style="animation-delay:${(-i * 0.07).toFixed(2)}s"
-            transform="translate(${dx + 60} ${dy + 6})">
-           <path d="M0 6 L7 0 L9 3 L11 0 L18 6" fill="none" stroke="#4a1c27"
-                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-         </g>`
-    )
-    .join("");
-  return `<div class="tg-geese"><svg viewBox="0 0 180 40" aria-hidden="true" focusable="false">${birds}</svg></div>`;
-})();
-
-/* Section divider: a hairline rule with an acorn at its centre. */
 const ACORN = `
   <svg viewBox="0 0 24 30" aria-hidden="true" focusable="false">
     <path d="M5 12h14c0 8-4 14-7 16-3-2-7-8-7-16z" fill="#b4562c"></path>
@@ -404,168 +337,6 @@ const DIVIDER = `
   <span class="tg-rule"></span>
   <span class="tg-rule-mark">${ACORN}</span>
   <span class="tg-rule"></span>`;
-
-/* Card treatment: leaves slide in on hover and settle on the card's top edge —
-   one at the left corner and two at the right. They rest above the edge, which
-   is what makes them read as having landed on the card rather than being
-   printed on it. */
-const cardLeaves = (seed) => {
-  const rand = seeded(seed);
-  /* [side, offset from that side, top, resting angle] */
-  const spots = [
-    ["left", 10, -16, -24],
-    ["right", 34, -18, 20],
-    ["right", 8, -8, -12]
-  ];
-  return `<div class="tg-card-leaves">${spots
-    .map(
-      ([side, offset, top, rot], i) =>
-        `<span style="${side}:${offset}px;top:${top}px;--turn:${rot}deg;--from:${
-          side === "left" ? "-10px" : "10px"
-        };--wait:${i * 90}ms">${leafSvg(
-          LEAF_KINDS[Math.floor(rand() * 4)],
-          LEAF_COLORS[Math.floor(rand() * 4)],
-          22 + rand() * 8
-        )}</span>`
-    )
-    .join("")}</div>`;
-};
-
-/* Leaf-scatter border: leaves set all the way round the edge of a card, from
-   the artboard's card-outline set. A frame, not a reaction, so it does not
-   wait on hover. */
-const leafScatter = (seed) => {
-  const rand = seeded(seed);
-  const out = [];
-  const put = (css) => {
-    const size = 14 + rand() * 8;
-    out.push(
-      `<span class="tg-edge-leaf" style="${css};width:${size.toFixed(1)}px;margin:${(
-        -size / 2
-      ).toFixed(1)}px 0 0 ${(-size / 2).toFixed(1)}px;transform:rotate(${(rand() * 360).toFixed(
-        0
-      )}deg)">${leafSvg(
-        LEAF_KINDS[Math.floor(rand() * 4)],
-        LEAF_COLORS[Math.floor(rand() * 4)],
-        size
-      )}</span>`
-    );
-  };
-  for (let i = 0; i < 9; i += 1) {
-    put(`left:${(4 + i * 11.5).toFixed(1)}%;top:0`);
-    put(`left:${(9 + i * 11.5).toFixed(1)}%;top:100%`);
-  }
-  for (let i = 0; i < 4; i += 1) {
-    put(`left:0;top:${18 + i * 22}%`);
-    put(`left:100%;top:${12 + i * 24}%`);
-  }
-  return `<div class="tg-scatter">${out.join("")}</div>`;
-};
-
-/* ---------------------------------------------------------------------------
-   Hero: hills, trees, grass
-   ---------------------------------------------------------------------------
-   Rolling hills in three depths, lit from behind by the sun: the far row is
-   a sunlit haze, the middle row rust, the near row nearly black. Bare trees
-   stand on the middle ridge. The drawing is 1440x220 and is never stretched
-   (see `.tg-ground` in the stylesheet), so the trees keep their shape.
-   -------------------------------------------------------------------------- */
-
-const GROUND_W = 1440;
-const GROUND_H = 220;
-
-/* A bare tree, drawn upward from its base at (0, 0). */
-const TREE = `M0 0V-40M0 -13L-10 -25M-10 -25L-14 -36M0 -19L11 -33M11 -33L9 -44M0 -26L-7 -42M0 -32L7 -48M0 -40L-2 -58`;
-
-const tree = (x, y, scale, flip = false) =>
-  `<path d="${TREE}" transform="translate(${x} ${y}) scale(${flip ? -scale : scale} ${scale})"
-         fill="none" stroke="#2a0e07" stroke-width="${(2.2 / scale).toFixed(2)}"
-         stroke-linecap="round" stroke-linejoin="round"></path>`;
-
-const groundSvg = () => {
-  const far = `M0 118C150 72 300 92 460 100S760 42 940 82S1260 62 ${GROUND_W} 112V${GROUND_H}H0Z`;
-  const mid = `M0 152C200 112 380 132 560 142S900 94 1080 132S1320 122 ${GROUND_W} 152V${GROUND_H}H0Z`;
-  const near = `M0 188C240 164 420 178 640 180S980 154 1200 176S1360 184 ${GROUND_W} 178V${GROUND_H}H0Z`;
-  /* Trees stand on the middle ridge, so their bases follow its curve. */
-  const trees = [
-    tree(118, 138, 1.05),
-    tree(154, 141, 0.7, true),
-    tree(392, 136, 0.85),
-    tree(1002, 130, 1.1, true),
-    tree(1038, 131, 0.75),
-    tree(1312, 134, 0.95)
-  ].join("");
-  return `
-    <svg viewBox="0 0 ${GROUND_W} ${GROUND_H}" preserveAspectRatio="xMidYMax slice"
-         aria-hidden="true" focusable="false">
-      <path d="${far}" fill="#c26a22" opacity=".85"></path>
-      <path d="${mid}" fill="#7a3116"></path>
-      ${trees}
-      <path d="${near}" fill="#3b150a"></path>
-    </svg>`;
-};
-
-/* Grass and wheat along the bottom edge, in a user-unit pattern so the tufts
-   repeat across any width rather than stretching. Some stalks carry a wheat
-   head, which is the harvest note in the hero. */
-const grassSvg = (seed) => {
-  const rand = seeded(seed);
-  const tile = 140;
-  const H = 56;
-  const stalks = [];
-  const heads = [];
-  for (let i = 0; i < 16; i += 1) {
-    const x = rand() * tile;
-    const h = range(rand, 16, 46);
-    const lean = range(rand, -6, 6);
-    const top = H - h;
-    stalks.push(`M${x.toFixed(1)} ${H}Q${(x + lean * 0.4).toFixed(1)} ${(H - h * 0.55).toFixed(1)} ${(x + lean).toFixed(1)} ${top.toFixed(1)}`);
-    if (rand() < 0.3) {
-      heads.push(
-        `<ellipse cx="${(x + lean).toFixed(1)}" cy="${(top - 2).toFixed(1)}" rx="1.9" ry="5.5"
-                  transform="rotate(${(lean * 2.5).toFixed(0)} ${(x + lean).toFixed(1)} ${(top - 2).toFixed(1)})"></ellipse>`
-      );
-    }
-  }
-  return `
-    <svg width="100%" height="${H}" aria-hidden="true" focusable="false">
-      <defs>
-        <pattern id="tg-grass-tile" patternUnits="userSpaceOnUse" width="${tile}" height="${H}">
-          <path d="${stalks.join("")}" fill="none" stroke="#1f0904" stroke-width="1.6"
-                stroke-linecap="round"></path>
-          <g fill="#b9772a" opacity=".9">${heads.join("")}</g>
-        </pattern>
-      </defs>
-      <rect width="100%" height="${H}" fill="url(#tg-grass-tile)"></rect>
-    </svg>`;
-};
-
-/* Leaves lying on the near hill and in the grass. */
-const groundLeaves = (seed, n = 22) => {
-  const rand = seeded(seed);
-  const out = [];
-  for (let i = 0; i < n; i += 1) {
-    const size = range(rand, 16, 32);
-    out.push(
-      `<span style="left:${(rand() * 100).toFixed(1)}%;bottom:${range(rand, 2, 42).toFixed(0)}px;transform:rotate(${(
-        rand() * 360
-      ).toFixed(0)}deg) scaleY(${range(rand, 0.55, 0.9).toFixed(2)});opacity:${range(rand, 0.75, 0.95).toFixed(2)}">${leafSvg(
-        LEAF_KINDS[Math.floor(rand() * 4)],
-        LEAF_COLORS[Math.floor(rand() * LEAF_COLORS.length)],
-        size
-      )}</span>`
-    );
-  }
-  return `<div class="tg-ground-leaves">${out.join("")}</div>`;
-};
-
-const HERO = () => `
-  <div class="season-sky"></div>
-  <div class="tg-sun"></div>
-  <div class="tg-dusk"></div>
-  <div class="tg-ground">${groundSvg()}</div>
-  <div class="tg-grass">${grassSvg(29)}</div>
-  ${groundLeaves(53)}`;
 
 /* ---------------------------------------------------------------------------
    Mount
@@ -580,28 +351,69 @@ export const mount = ({ overlay, density, motion, root }) => {
   disposer.add(() => surface.destroy());
 
   const wind = new Wind(root);
-  /* The variable lives on the document root for the life of the theme, so it
-     has to be cleaned up explicitly — the scene nodes going away would not
-     remove it. */
   disposer.add(() => root.style.removeProperty("--wind"));
 
+  const pointer = trackPointer(disposer);
   const leaves = new LeafField(surface, { target: leafCount(density), wind });
-  leaves.pointer = trackPointer(disposer);
+  leaves.pointer = pointer;
+  const rect = rectTracker(disposer);
+  const opts = { disposer, wind, pointer, motion, rect };
+
+  /* Everything else that animates per frame is a part the one loop drives. */
+  const parts = [];
+  const add = (part) => {
+    if (part) {
+      parts.push(part);
+      watchVisible(disposer, part);
+    }
+    return part;
+  };
+
+  /* Hero: misty ridges in a low sun. Behind `.hero-inner`, so the copy and
+     the seminar card keep the contrast they were audited with. */
+  const hero = add(mountRidgesHero(opts));
+  /* Footer: the harvest table under a night sky. */
+  add(mountFooter(opts));
+  /* Cards: a vine grows along the edges on hover. */
+  mountCards(opts);
 
   const loop = new Loop({
     motion,
     step: (dt) => {
       wind.step(dt);
       leaves.step(dt);
+      for (const part of parts) {
+        if (part.visible) {
+          part.step(dt);
+        }
+      }
     },
-    draw: () => (motion ? leaves.draw() : leaves.drawStatic())
+    draw: () => {
+      if (!motion) {
+        leaves.drawStatic();
+        for (const part of parts) {
+          part.draw();
+        }
+        return;
+      }
+      leaves.draw();
+      for (const part of parts) {
+        if (part.visible) {
+          part.draw();
+        }
+      }
+    }
   });
   disposer.add(() => loop.destroy());
-  surface.onChange = () => loop.draw();
+  surface.onChange = () => {
+    if (!motion) {
+      loop.draw();
+    }
+  };
 
   if (!motion) {
-    /* A held breeze rather than dead calm: the wheat and garland read as
-       caught mid-gust instead of collapsed to zero. */
+    /* A held breeze rather than dead calm: the fog, flames and garland read
+       as caught mid-gust instead of collapsed to zero. */
     wind.settle();
   }
   loop.start();
@@ -609,52 +421,25 @@ export const mount = ({ overlay, density, motion, root }) => {
   /* Header: a garland hanging off the bar's bottom edge. */
   decorate(disposer, ".site-header", "season-edge-strip tg-garland", garland(6));
 
-  /* Hero: golden hour over the hills. Sky, sun, the scroll-driven dusk, then
-     the ground in front. Everything sits behind `.hero-inner`, so the copy and
-     the seminar card keep the contrast they were audited with. */
-  decorate(disposer, ".hero", "season-scene tg-hero", HERO());
-
-  /* Footer: the artboard's own composition — the table after dinner under a
-     night sky, with the link columns sitting unchanged above it. */
-  decorate(
-    disposer,
-    ".site-footer",
-    "season-scene tg-footer",
-    `<div class="season-sky"></div>
-     ${starfield(63, 16)}
-     ${GEESE}`
-  );
-
-  /* Drives the hero's sunset: the sky deepens from gold to dusk as the page
-     is scrolled. One variable, read by CSS. */
+  /* Drives the hero's sunset: the sun sinks and the sky deepens to dusk as
+     the page is scrolled. One variable, read by CSS. */
   const syncProgress = bindProgress(disposer, root);
 
   /* Click a primary action and a handful of leaves tumble out of it. */
   onButtonPress(disposer, ".button-primary", (x, y) => leaves.burst(x, y, 9));
 
-  /* Section seam between the overview and the dashboard.
-     The adjacent-sibling selector matters: the subpages reuse
-     `.section-dashboard` as their only section, with no overview before it, so
-     a bare class selector hangs a seam divider directly under the header on
-     every one of them. */
+  /* Section seam between the overview and the dashboard. The adjacent-sibling
+     selector keeps it off the subpages, which reuse `.section-dashboard` as
+     their only section. */
   decorate(disposer, ".section-overview + .section-dashboard", "season-divider tg-divider", DIVIDER, { first: true });
-
-  /* Speaker and talk cards get leaves sliding onto their top edge on hover. */
-  decorate(
-    disposer,
-    ".speaker-directory-card, .feature-card, .talk-card",
-    "season-frame tg-frame tg-leaf-frame",
-    cardLeaves(87)
-  );
-
-  /* Community cards get the artboard's leaf-scatter border. */
-  decorate(disposer, ".community-card", "season-frame tg-frame tg-scatter-frame", leafScatter(61));
 
   return {
     /* Exposed for tuning and for verification: hidden documents never fire
-       rAF, so this is the only way to advance either engine off-screen. */
+       rAF, so this is the only way to advance the engine off-screen. */
     wind,
     leaves,
+    hero,
+    parts,
     loop,
     syncProgress,
     destroy() {
